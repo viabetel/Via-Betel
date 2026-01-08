@@ -55,8 +55,8 @@ export default function HomePage() {
         <FeaturedProducts />
         <HowItWorksSection />
         <MaterialsSection />
-        <ResourcesSection />
         <RegionalInstructorsSection />
+        <ResourcesSection />
         <Footer />
       </main>
     </>

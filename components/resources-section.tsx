@@ -284,6 +284,24 @@ export function ResourcesSection() {
     if (activeResource === "podcast") {
       return (
         <div className="space-y-3">
+          <div className="relative h-48 rounded-xl overflow-hidden mb-3">
+            <img
+              src="/images/pexels-george-milton-6954192.jpg"
+              alt="Podcast Direção Segura"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+            <div className="absolute bottom-3 left-3 right-3 text-white">
+              <div className="flex items-center gap-2 mb-1">
+                <Mic className="w-4 h-4" />
+                <span className="text-xs font-bold">PODCAST DIREÇÃO SEGURA</span>
+              </div>
+              <p className="text-[10px] text-white/90">
+                Conversas inspiradoras sobre mobilidade, segurança e histórias reais
+              </p>
+            </div>
+          </div>
+
           <h4 className="text-sm font-bold text-gray-800 mb-2">Últimos Episódios:</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {podcastData.map((episode, idx) => (
@@ -346,51 +364,52 @@ export function ResourcesSection() {
   }
 
   return (
-    <section className="relative py-8 md:py-13 overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-50">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-emerald-300 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-teal-300 rounded-full blur-3xl" />
+    <section className="relative py-8 sm:py-10 md:py-12 overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-50 w-full max-w-full">
+      <div className="absolute inset-0 opacity-20 sm:opacity-30">
+        <div className="absolute top-10 sm:top-20 left-5 sm:left-10 w-48 h-48 sm:w-64 sm:h-64 md:w-72 md:h-72 bg-emerald-300 rounded-full blur-2xl sm:blur-3xl" />
+        <div className="absolute bottom-10 sm:bottom-20 right-5 sm:right-10 w-48 h-48 sm:w-64 sm:h-64 md:w-72 md:h-72 bg-teal-300 rounded-full blur-2xl sm:blur-3xl" />
       </div>
 
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container mx-auto px-3 sm:px-4 md:px-6 relative z-10 w-full max-w-full">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-5 md:mb-7"
+          className="text-center mb-5 sm:mb-6 md:mb-7"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 bg-emerald-100 border border-emerald-200 rounded-full px-2.5 py-1 mb-2.5"
+            className="inline-flex items-center gap-1.5 sm:gap-2 bg-emerald-100 border border-emerald-200 rounded-full px-2 sm:px-3 py-1 sm:py-0.5 mb-2 sm:mb-3"
           >
-            <BookOpen className="w-3.5 h-3.5 text-emerald-600" />
-            <span className="text-xs text-emerald-700 font-semibold">Recursos Via Betel</span>
+            <BookOpen className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-600" />
+            <span className="text-[10px] sm:text-xs text-emerald-700 font-semibold">Recursos Via Betel</span>
           </motion.div>
 
-          <h2 className="text-lg md:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 text-balance">
+          <h2
+            className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-1.5 sm:mb-2 text-balance px-2"
+            style={{ fontSize: "clamp(1.125rem, 4vw, 2rem)" }}
+          >
             Conteúdos que{" "}
             <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
               Transformam
             </span>
           </h2>
-          <p className="text-xs md:text-sm text-gray-600 max-w-2xl mx-auto text-pretty">
+          <p className="text-xs sm:text-sm text-gray-600 max-w-2xl mx-auto text-pretty px-2">
             Acesse materiais exclusivos, eventos e conteúdos que vão além da sala de aula
           </p>
         </motion.div>
 
         {/* Resource Cards - Tab Style */}
-        <div className="max-w-5xl mx-auto">
-          {/* Tab Navigation */}
+        <div className="max-w-5xl mx-auto w-full">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex flex-wrap justify-center gap-2 mb-5"
+            className="flex flex-wrap justify-center gap-1.5 sm:gap-2 mb-4 sm:mb-5 px-2"
           >
             {resources.map((resource) => {
               const Icon = resource.icon
@@ -403,16 +422,19 @@ export function ResourcesSection() {
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   className={cn(
-                    "group relative px-3 py-1.5 rounded-xl font-semibold text-xs transition-all duration-300",
+                    "group relative px-2.5 sm:px-3 py-1.5 sm:py-1 rounded-xl font-semibold text-[11px] sm:text-xs transition-all duration-300 min-h-[40px] flex items-center gap-1.5",
                     isActive
                       ? `bg-gradient-to-r ${resource.gradient} text-white shadow-xl`
                       : "bg-white text-gray-700 hover:bg-gray-50 shadow-md border border-gray-200",
                   )}
                 >
-                  <div className="flex items-center gap-1.5">
-                    <Icon className={cn("w-3.5 h-3.5 transition-transform", isActive && "scale-110")} />
-                    <span>{resource.title}</span>
-                  </div>
+                  <Icon
+                    className={cn(
+                      "w-3 h-3 sm:w-3.5 sm:h-3.5 transition-transform flex-shrink-0",
+                      isActive && "scale-110",
+                    )}
+                  />
+                  <span className="whitespace-nowrap">{resource.title}</span>
 
                   {isActive && (
                     <motion.div
@@ -430,178 +452,15 @@ export function ResourcesSection() {
           <AnimatePresence mode="wait">
             <motion.div
               key={activeResource}
-              initial={{ opacity: 0, y: 30, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -30, scale: 0.95 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
-              className={cn(
-                "relative rounded-2xl p-5 md:p-6 shadow-2xl overflow-hidden",
-                `bg-gradient-to-br ${active.bgGradient}`,
-              )}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className={`rounded-2xl bg-gradient-to-br ${active.bgGradient} p-4 sm:p-5 md:p-6 shadow-xl border border-gray-200 w-full max-w-full min-w-0`}
             >
-              {/* Decorative gradient overlay */}
-              <div
-                className={cn(
-                  "absolute top-0 right-0 w-96 h-96 opacity-20 blur-3xl bg-gradient-to-br",
-                  active.gradient,
-                )}
-              />
-
-              <div className="relative z-10 grid md:grid-cols-2 gap-5 items-center">
-                {/* Left: Icon and Content */}
-                <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
-                  <motion.div
-                    className={cn("inline-flex p-2.5 rounded-xl mb-3 bg-gradient-to-br", active.gradient, "shadow-xl")}
-                    animate={{
-                      rotate: [0, 5, 0, -5, 0],
-                    }}
-                    transition={{
-                      duration: 4,
-                      repeat: Number.POSITIVE_INFINITY,
-                      ease: "easeInOut",
-                    }}
-                  >
-                    <active.icon className="w-6 h-6 text-white" strokeWidth={2} />
-                  </motion.div>
-
-                  <div className="mb-1.5">
-                    <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      {active.subtitle}
-                    </span>
-                  </div>
-
-                  <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">{active.title}</h3>
-
-                  <p className="text-sm text-gray-700 mb-3 leading-relaxed">{active.description}</p>
-
-                  {/* Highlights */}
-                  <div className="flex flex-wrap gap-1.5 mb-4">
-                    {active.highlights.map((highlight, idx) => (
-                      <motion.div
-                        key={idx}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.3 + idx * 0.1 }}
-                        className="flex items-center gap-1.5 bg-white/60 backdrop-blur-sm border border-gray-200 rounded-full px-2.5 py-1 text-xs text-gray-700 font-medium"
-                      >
-                        <div className={cn("w-1.5 h-1.5 rounded-full bg-gradient-to-r", active.gradient)} />
-                        {highlight}
-                      </motion.div>
-                    ))}
-                  </div>
-
-                  <motion.a
-                    href={active.buttonHref}
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={cn(
-                      "group inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-white shadow-2xl transition-all text-sm",
-                      `bg-gradient-to-r ${active.gradient} hover:shadow-3xl`,
-                    )}
-                  >
-                    <active.buttonIcon className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                    {active.buttonText}
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform ml-1" />
-                  </motion.a>
-                </motion.div>
-
-                {/* Right: Visual Element */}
-                <motion.div
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="hidden md:flex items-center justify-center"
-                >
-                  <div className="relative w-48 h-48">
-                    {/* Animated circles */}
-                    <motion.div
-                      className={cn("absolute inset-0 rounded-full bg-gradient-to-br", active.gradient, "opacity-20")}
-                      animate={{
-                        scale: [1, 1.1, 1],
-                        rotate: [0, 180, 360],
-                      }}
-                      transition={{
-                        duration: 8,
-                        repeat: Number.POSITIVE_INFINITY,
-                        ease: "linear",
-                      }}
-                    />
-                    <motion.div
-                      className={cn("absolute inset-6 rounded-full bg-gradient-to-tr", active.gradient, "opacity-30")}
-                      animate={{
-                        scale: [1, 1.15, 1],
-                        rotate: [360, 180, 0],
-                      }}
-                      transition={{
-                        duration: 10,
-                        repeat: Number.POSITIVE_INFINITY,
-                        ease: "linear",
-                      }}
-                    />
-                    <motion.div
-                      className={cn("absolute inset-12 rounded-full bg-gradient-to-bl", active.gradient, "opacity-40")}
-                      animate={{
-                        scale: [1, 1.2, 1],
-                      }}
-                      transition={{
-                        duration: 6,
-                        repeat: Number.POSITIVE_INFINITY,
-                        ease: "easeInOut",
-                      }}
-                    />
-
-                    {/* Center icon */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <motion.div
-                        animate={{
-                          y: [0, -10, 0],
-                        }}
-                        transition={{
-                          duration: 3,
-                          repeat: Number.POSITIVE_INFINITY,
-                          ease: "easeInOut",
-                        }}
-                      >
-                        <active.icon className="w-20 h-20 text-gray-700 drop-shadow-2xl" strokeWidth={1.5} />
-                      </motion.div>
-                    </div>
-                  </div>
-                </motion.div>
-              </div>
-
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-                {renderDynamicContent()}
-              </motion.div>
+              {renderDynamicContent()}
             </motion.div>
           </AnimatePresence>
-
-          {/* Stats Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-6"
-          >
-            <div className="bg-white rounded-xl p-3 shadow-lg border border-gray-200 text-center">
-              <div className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent mb-1">
-                25+
-              </div>
-              <div className="text-gray-600 font-medium text-sm">Estudos Publicados</div>
-            </div>
-            <div className="bg-white rounded-xl p-3 shadow-lg border border-gray-200 text-center">
-              <div className="text-xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent mb-1">
-                150+
-              </div>
-              <div className="text-gray-600 font-medium text-sm">Eventos Realizados</div>
-            </div>
-            <div className="bg-white rounded-xl p-3 shadow-lg border border-gray-200 text-center">
-              <div className="text-xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent mb-1">
-                80+
-              </div>
-              <div className="text-gray-600 font-medium text-sm">Episódios de Podcast</div>
-            </div>
-          </motion.div>
         </div>
       </div>
     </section>

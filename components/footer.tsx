@@ -73,10 +73,10 @@ export function Footer() {
   }
 
   return (
-    <footer className="bg-neutral-900 border-t border-green-800/20 mt-24">
-      <div className="container-custom py-12 lg:py-16">
+    <footer className="bg-neutral-900 border-t border-green-800/20 mt-16 sm:mt-20 md:mt-24">
+      <div className="container mx-auto px-4 sm:px-6 py-10 sm:py-12 lg:py-16 max-w-7xl w-full">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 mb-10">
           {/* Coluna 1 - Via Betel */}
           <div className="lg:col-span-3">
             <motion.div
@@ -131,7 +131,7 @@ export function Footer() {
 
           {/* Colunas 2-5 - Links */}
           <div className="lg:col-span-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8">
               {Object.entries(footerLinks).map(([category, links], index) => (
                 <motion.div
                   key={category}
@@ -217,29 +217,31 @@ export function Footer() {
 
         {/* Newsletter Section */}
         <motion.div
-          className="border-t border-green-800/20 pt-8 pb-6"
+          className="border-t border-green-800/20 pt-6 sm:pt-8 pb-4 sm:pb-6"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           viewport={{ once: true }}
         >
           <div className="max-w-2xl mx-auto text-center">
-            <h4 className="text-lg font-semibold text-neutral-200 mb-2">Receba dicas de direção e novidades</h4>
-            <p className="text-sm text-neutral-400 mb-4">
+            <h4 className="text-base sm:text-lg font-semibold text-neutral-200 mb-2">
+              Receba dicas de direção e novidades
+            </h4>
+            <p className="text-xs sm:text-sm text-neutral-400 mb-4">
               Fique por dentro das melhores dicas e promoções da Via Betel
             </p>
-            <form onSubmit={handleNewsletterSubmit} className="flex gap-2 max-w-md mx-auto">
+            <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Seu melhor e-mail"
-                className="flex-1 px-4 py-2.5 bg-white/5 border border-green-800/30 rounded-lg text-sm text-neutral-200 placeholder:text-neutral-500 focus:outline-none focus:border-green-600 transition-colors"
+                className="flex-1 px-4 py-3 bg-white/5 border border-green-800/30 rounded-lg text-sm text-neutral-200 placeholder:text-neutral-500 focus:outline-none focus:border-green-600 transition-colors min-h-[44px]"
                 required
               />
               <button
                 type="submit"
-                className="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-neutral-900 font-medium rounded-lg transition-colors text-sm"
+                className="w-full sm:w-auto px-6 py-3 bg-amber-500 hover:bg-amber-600 text-neutral-900 font-medium rounded-lg transition-colors text-sm min-h-[44px]"
               >
                 Inscrever
               </button>
@@ -265,48 +267,41 @@ export function Footer() {
           </Link>
         </motion.div>
 
+        {/* Government Badges */}
         <motion.div
-          className="border-t border-green-800/20 pt-8 pb-6"
+          className="border-t border-green-800/20 pt-6 sm:pt-8 pb-4 sm:pb-6"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.5 }}
           viewport={{ once: true }}
         >
-          <div className="text-center mb-6">
-            <h4 className="text-sm font-semibold text-amber-400 mb-2">Regulamentado e certificado por</h4>
-            <p className="text-xs text-neutral-500">Plataforma em conformidade com órgãos reguladores</p>
+          <div className="text-center mb-4 sm:mb-6">
+            <h4 className="text-xs sm:text-sm font-semibold text-amber-400 mb-2">Regulamentado e certificado por</h4>
+            <p className="text-[10px] sm:text-xs text-neutral-500">Plataforma em conformidade com órgãos reguladores</p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto">
             {governmentBadges.map((badge, index) => (
               <motion.a
                 key={badge.name}
                 href={badge.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group bg-white/5 hover:bg-white/10 border border-green-800/20 hover:border-amber-500/50 rounded-lg p-4 transition-all duration-300"
+                className="group bg-neutral-800/50 hover:bg-neutral-800 border border-green-800/20 hover:border-amber-500/50 rounded-lg p-4 sm:p-6 transition-all duration-300 flex items-center justify-center min-w-0"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                whileHover={{ scale: 1.03 }}
+                whileHover={{ scale: 1.05 }}
               >
-                <div className="flex flex-col items-center justify-center h-full space-y-2">
-                  <div className="relative w-16 h-16 flex items-center justify-center">
-                    <Image
-                      src={badge.logo || "/placeholder.svg"}
-                      alt={`Logo ${badge.name}`}
-                      width={64}
-                      height={64}
-                      className="object-contain opacity-90 group-hover:opacity-100 transition-opacity"
-                    />
-                  </div>
-                  <div className="text-center">
-                    <p className="font-bold text-neutral-200 text-sm group-hover:text-amber-400 transition-colors">
-                      {badge.name}
-                    </p>
-                    <p className="text-[10px] text-neutral-500 mt-1 leading-tight">{badge.description}</p>
-                  </div>
+                <div className="relative w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center">
+                  <Image
+                    src={badge.logo || "/placeholder.svg"}
+                    alt={`Logo ${badge.name}`}
+                    width={80}
+                    height={80}
+                    className="object-contain opacity-90 group-hover:opacity-100 transition-opacity"
+                  />
                 </div>
               </motion.a>
             ))}
@@ -321,16 +316,16 @@ export function Footer() {
 
         {/* Bottom Copyright Bar */}
         <motion.div
-          className="pt-6 border-t border-green-800/20 flex flex-col md:flex-row justify-between items-center gap-4"
+          className="pt-4 sm:pt-6 border-t border-green-800/20 flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.4 }}
           viewport={{ once: true }}
         >
-          <div className="text-sm text-neutral-500 text-center md:text-left">
+          <div className="text-xs sm:text-sm text-neutral-500 text-center md:text-left">
             <p>&copy; {currentYear} Via Betel. Todos os direitos reservados.</p>
           </div>
-          <div className="flex flex-wrap justify-center gap-4 text-sm text-neutral-500">
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-4 text-xs sm:text-sm text-neutral-500">
             <Link href="#privacidade" className="hover:text-green-400 transition-colors">
               Privacidade
             </Link>

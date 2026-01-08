@@ -127,6 +127,30 @@
   --text-8xl: 6rem;
   --text-9xl: 8rem;
 
+  /* Added Via Betel semantic color tokens */
+  --color-brand-primary: var(--color-emerald-600);
+  --color-brand-primary-dark: var(--color-emerald-700);
+  --color-brand-primary-darker: var(--color-emerald-800);
+  --color-brand-primary-darkest: var(--color-emerald-900);
+  --color-brand-secondary: var(--color-teal-600);
+  --color-brand-secondary-dark: var(--color-teal-700);
+  --color-brand-secondary-light: var(--color-teal-400);
+  --color-brand-accent: var(--color-amber-500);
+  --color-brand-accent-light: var(--color-amber-400);
+  --color-brand-accent-dark: var(--color-amber-600);
+  --color-brand-accent-darker: var(--color-amber-700);
+
+  /* Via Betel text colors */
+  --color-brand-text-light: oklch(0.985 0 0);
+  --color-brand-text-muted: oklch(0.9 0.01 160);
+  --color-brand-text-dark: oklch(0.15 0.01 160);
+
+  /* Via Betel backgrounds */
+  --color-brand-bg-primary: var(--color-emerald-600);
+  --color-brand-bg-accent: var(--color-amber-500);
+  --color-brand-bg-light: var(--color-emerald-50);
+  --color-brand-bg-accent-light: var(--color-amber-50);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -176,6 +200,7 @@
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
     overflow-x: hidden;
+    max-width: 100vw; /* Added for cross-browser overflow fix */
     width: 100%;
     /* Improved smooth scrolling for parallax */
     scroll-behavior: smooth;
@@ -191,7 +216,8 @@
     -moz-osx-font-smoothing: grayscale;
     min-height: 100%;
     position: relative;
-    overflow-x: hidden;
+    overflow-x: hidden; /* Added to prevent horizontal scroll */
+    max-width: 100vw; /* Added to prevent horizontal scroll */
     width: 100%;
   }
 
@@ -364,8 +390,16 @@
     font-size: var(--text-5xl);
   }
 
+  /* Added mobile-specific overflow fixes */
   body,
   html {
+    max-width: 100vw;
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  /* Ensure all direct children of body respect max-width */
+  body > * {
     max-width: 100vw;
     overflow-x: hidden;
   }

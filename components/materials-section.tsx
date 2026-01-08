@@ -186,7 +186,11 @@ export function MaterialsSection() {
   }
 
   return (
-    <section ref={sectionRef} className="relative min-h-[78vh] overflow-hidden w-full max-w-full" id="materials">
+    <section
+      ref={sectionRef}
+      className="relative min-h-[500px] sm:min-h-[59vh] overflow-hidden w-full max-w-full"
+      id="materials"
+    >
       <motion.div
         ref={backgroundRef}
         style={{ y: yBackground }}
@@ -197,12 +201,12 @@ export function MaterialsSection() {
         <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-emerald-400 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2" />
       </motion.div>
 
-      <div className="flex flex-col md:flex-row min-h-[78vh]">
-        <div className="relative w-full bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-800 py-22 sm:py-30 flex items-center">
-          <div className="relative z-10 px-4 sm:px-6 lg:px-8 w-full">
-            <div className="max-w-7xl mx-auto">
-              <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
-                <motion.div style={{ y: yText, opacity }} className="text-white">
+      <div className="flex flex-col md:flex-row min-h-[500px] sm:min-h-[59vh] w-full max-w-full">
+        <div className="relative w-full max-w-full bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-800 py-12 sm:py-16 md:py-20 lg:py-22 flex items-center">
+          <div className="relative z-10 px-3 sm:px-4 md:px-6 lg:px-8 w-full max-w-full">
+            <div className="max-w-7xl mx-auto w-full">
+              <div className="grid md:grid-cols-2 gap-5 sm:gap-6 lg:gap-8 items-center w-full">
+                <motion.div style={{ y: yText, opacity }} className="text-white min-w-0">
                   <Reveal>
                     <div>
                       <AnimatePresence mode="wait">
@@ -212,12 +216,13 @@ export function MaterialsSection() {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -20 }}
                           transition={{ duration: 0.3, ease: "easeInOut" }}
-                          className="font-bold mb-3 text-2xl sm:text-3xl md:text-4xl"
+                          className="font-bold mb-2 text-lg sm:text-xl md:text-2xl text-balance"
+                          style={{ fontSize: "clamp(1.125rem, 3.5vw, 1.75rem)" }}
                         >
                           <AnimatedText text={activeCategoryData.name} delay={0.2} />
                         </motion.h2>
                       </AnimatePresence>
-                      <p className="text-sm sm:text-base md:text-lg text-white/90 leading-relaxed mb-5">
+                      <p className="text-xs sm:text-sm md:text-base text-white/90 leading-relaxed mb-2.5 sm:mb-3 text-pretty">
                         {activeCategoryData.description}
                       </p>
 
@@ -228,9 +233,9 @@ export function MaterialsSection() {
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.9 }}
                           transition={{ duration: 0.3 }}
-                          className="inline-block mb-5 px-4 py-2 rounded-full bg-amber-500/30 backdrop-blur-md border border-amber-400/40"
+                          className="inline-block mb-3 px-2.5 py-1 rounded-full bg-amber-500/30 backdrop-blur-md border border-amber-400/40"
                         >
-                          <p className="text-white text-xs sm:text-sm font-semibold">
+                          <p className="text-white text-[11px] sm:text-xs font-semibold">
                             {activeInstructorCount} instrutor{activeInstructorCount !== 1 ? "es" : ""} disponíve
                             {activeInstructorCount !== 1 ? "is" : "l"}
                           </p>
@@ -244,23 +249,23 @@ export function MaterialsSection() {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -10 }}
                           transition={{ duration: 0.3 }}
-                          className="space-y-3 mb-6"
+                          className="space-y-2 mb-4"
                         >
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div className="bg-gradient-to-r from-emerald-500/20 to-emerald-400/10 backdrop-blur-sm border border-emerald-400/30 rounded-xl p-3">
-                              <p className="text-xs text-amber-300 mb-1 font-semibold">Veículos</p>
-                              <p className="text-sm text-white font-medium leading-tight">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <div className="bg-gradient-to-r from-emerald-500/20 to-emerald-400/10 backdrop-blur-sm border border-emerald-400/30 rounded-xl p-2">
+                              <p className="text-[11px] text-amber-300 mb-0.5 font-semibold">Veículos</p>
+                              <p className="text-xs text-white font-medium leading-tight">
                                 {activeCategoryData.details.vehicles}
                               </p>
                             </div>
-                            <div className="bg-gradient-to-r from-amber-500/20 to-amber-400/10 backdrop-blur-sm border border-amber-400/30 rounded-xl p-3">
-                              <p className="text-xs text-amber-300 mb-1 font-semibold">Idade Mínima</p>
-                              <p className="text-sm text-white font-medium">{activeCategoryData.details.minAge}</p>
+                            <div className="bg-gradient-to-r from-amber-500/20 to-amber-400/10 backdrop-blur-sm border border-amber-400/30 rounded-xl p-2">
+                              <p className="text-[11px] text-amber-300 mb-0.5 font-semibold">Idade Mínima</p>
+                              <p className="text-xs text-white font-medium">{activeCategoryData.details.minAge}</p>
                             </div>
                           </div>
-                          <div className="bg-gradient-to-r from-emerald-400/20 to-amber-400/10 backdrop-blur-sm border border-emerald-300/30 rounded-xl p-3">
-                            <p className="text-xs text-amber-300 mb-1 font-semibold">Requisitos</p>
-                            <p className="text-sm text-white font-medium leading-tight">
+                          <div className="bg-gradient-to-r from-emerald-400/20 to-amber-400/10 backdrop-blur-sm border border-emerald-300/30 rounded-xl p-2">
+                            <p className="text-[11px] text-amber-300 mb-0.5 font-semibold">Requisitos</p>
+                            <p className="text-xs text-white font-medium leading-tight">
                               {activeCategoryData.details.requirements}
                             </p>
                           </div>
@@ -274,13 +279,13 @@ export function MaterialsSection() {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -10 }}
                           transition={{ duration: 0.3 }}
-                          className="flex flex-row gap-2.5 mt-5 mb-6"
+                          className="flex flex-wrap gap-2 mt-3 sm:mt-4 mb-4 sm:mb-5"
                         >
                           <motion.a
                             href="/aluno"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="px-4 py-2 rounded-full text-sm font-semibold bg-white text-emerald-700 hover:bg-amber-400 hover:text-white transition-all duration-300 shadow-lg"
+                            className="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold bg-white text-emerald-700 hover:bg-amber-400 hover:text-white transition-all duration-300 shadow-lg min-h-[40px] flex items-center justify-center"
                           >
                             Quero Aprender
                           </motion.a>
@@ -288,21 +293,21 @@ export function MaterialsSection() {
                             href="/instrutor"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="px-4 py-2 rounded-full text-sm font-semibold bg-amber-500 text-white hover:bg-amber-600 transition-all duration-300 shadow-lg"
+                            className="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold bg-amber-500 text-white hover:bg-amber-600 transition-all duration-300 shadow-lg min-h-[40px] flex items-center justify-center"
                           >
                             Quero Ensinar
                           </motion.a>
                         </motion.div>
                       </AnimatePresence>
 
-                      <div className="mt-4">
+                      <div className="mt-2 sm:mt-2.5">
                         <Reveal delay={0.1}>
-                          <div className="flex gap-2 pb-2">
+                          <div className="flex flex-wrap gap-1.5 pb-2">
                             {cnhCategories.map((category) => (
                               <motion.button
                                 key={category.id}
                                 className={cn(
-                                  "px-3 sm:px-4 py-1.5 text-xs sm:text-sm rounded-full font-medium transition-all duration-300 backdrop-blur-md",
+                                  "px-2 sm:px-2.5 py-1 sm:py-0.5 text-[11px] sm:text-xs rounded-full font-medium transition-all duration-300 backdrop-blur-md min-h-[32px] sm:min-h-auto flex-shrink-0",
                                   activeCategory === category.id
                                     ? "bg-white text-emerald-700 shadow-lg"
                                     : "bg-white/20 text-white hover:bg-white/30",
@@ -324,7 +329,7 @@ export function MaterialsSection() {
                 <motion.div
                   ref={imageRef}
                   style={{ y: yImage, scale }}
-                  className="relative min-h-[37vh] md:min-h-[46vh] flex items-center justify-center"
+                  className="relative min-h-[250px] sm:min-h-[28vh] md:min-h-[35vh] flex items-center justify-center min-w-0"
                 >
                   <AnimatePresence mode="wait">
                     <motion.div
