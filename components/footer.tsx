@@ -76,7 +76,7 @@ export function Footer() {
     <footer className="bg-neutral-900 border-t border-green-800/20 mt-16 sm:mt-20 md:mt-24">
       <div className="container mx-auto px-4 sm:px-6 py-10 sm:py-12 lg:py-16 max-w-7xl w-full">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 mb-10">
+        <div className="hidden sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 mb-10">
           {/* Coluna 1 - Via Betel */}
           <div className="lg:col-span-3">
             <motion.div
@@ -215,9 +215,33 @@ export function Footer() {
           </div>
         </div>
 
+        {/* Stats */}
+        <motion.div
+          className="hidden sm:grid grid-cols-3 gap-3 sm:gap-6 lg:gap-10 pt-6 sm:pt-10 lg:pt-12 max-w-full mx-auto px-1"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          viewport={{ once: true }}
+        >
+          {[
+            { value: "Em expansão", label: "Na sua região" },
+            { value: "Conectando", label: "Alunos e instrutores" },
+            { value: "Qualidade", label: "Certificada" },
+          ].map((stat, index) => (
+            <div key={index} className="text-center min-w-0">
+              <div className="text-sm sm:text-xl md:text-2xl lg:text-3xl font-bold bg-gradient-to-br from-[var(--color-brand-accent-light)] to-[var(--color-brand-text-light)] bg-clip-text text-transparent">
+                {stat.value}
+              </div>
+              <div className="text-[9px] sm:text-xs lg:text-sm text-[var(--color-brand-text-muted)]/80 mt-0.5 lg:mt-2 leading-tight">
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </motion.div>
+
         {/* Newsletter Section */}
         <motion.div
-          className="border-t border-green-800/20 pt-6 sm:pt-8 pb-4 sm:pb-6"
+          className="hidden sm:block border-t border-green-800/20 pt-6 sm:pt-8 pb-4 sm:pb-6"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -251,7 +275,7 @@ export function Footer() {
 
         {/* Mini CTAs */}
         <motion.div
-          className="grid grid-cols-1 gap-4 mb-8"
+          className="hidden sm:grid grid-cols-1 gap-4 mb-8"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.3 }}
@@ -269,7 +293,7 @@ export function Footer() {
 
         {/* Government Badges */}
         <motion.div
-          className="border-t border-green-800/20 pt-6 sm:pt-8 pb-4 sm:pb-6"
+          className="hidden sm:block border-t border-green-800/20 pt-6 sm:pt-8 pb-4 sm:pb-6"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.5 }}

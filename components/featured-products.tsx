@@ -53,33 +53,33 @@ export function FeaturedProducts() {
   return (
     <motion.section
       ref={sectionRef}
-      className="py-8 sm:py-10 md:py-12 lg:py-16 pb-0 relative overflow-hidden bg-white"
+      className="py-8 sm:py-12 md:py-14 lg:py-16 pb-0 relative overflow-hidden bg-white"
       id="featured-products"
       style={{ opacity, y }}
     >
-      <div className="container mx-auto px-4 sm:px-6 max-w-7xl w-full relative z-10">
+      <div className="container mx-auto px-3 sm:px-6 max-w-7xl w-full relative z-10">
         <Reveal>
           <motion.div
-            className="text-left mb-6 sm:mb-8 md:mb-10"
+            className="text-left mb-3 sm:mb-8 md:mb-10"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.5 }}
           >
             <h2
-              className="text-xl sm:text-2xl lg:text-3xl text-neutral-900 mb-2 sm:mb-3"
-              style={{ fontSize: "clamp(1.25rem, 3vw, 2rem)" }}
+              className="text-base sm:text-2xl lg:text-3xl text-neutral-900 mb-1 sm:mb-3"
+              style={{ fontSize: "clamp(1rem, 3vw, 2rem)" }}
             >
               Por que escolher a <span className="italic font-light">Via Betel</span>
             </h2>
-            <p className="text-sm sm:text-base text-neutral-600 max-w-2xl text-pretty">
+            <p className="text-xs sm:text-base text-neutral-600 max-w-2xl text-pretty leading-tight sm:leading-normal">
               Conectamos instrutores qualificados a alunos dedicados, criando a melhor experiência de aprendizado.
             </p>
           </motion.div>
         </Reveal>
 
         <motion.div
-          className="grid grid-cols-1 gap-4 sm:gap-5 md:gap-6"
+          className="grid grid-cols-1 gap-2 sm:gap-5 md:gap-6"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
@@ -116,14 +116,14 @@ export function FeaturedProducts() {
                 }}
               >
                 <Reveal delay={index * 0.1}>
-                  <div className="group relative h-full rounded-2xl overflow-hidden bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-950 shadow-xl hover:shadow-2xl transition-all duration-500 border border-emerald-700/30">
-                    <div className="flex flex-col md:flex-row h-full min-h-[200px] sm:min-h-[180px]">
-                      <div className="flex flex-col items-center justify-center p-5 sm:p-6 md:p-7 bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-800 md:w-[35%] relative overflow-hidden">
+                  <div className="group relative h-full rounded-xl sm:rounded-2xl overflow-hidden bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-950 shadow-xl hover:shadow-2xl transition-all duration-500 border border-emerald-700/30">
+                    <div className="flex flex-col md:flex-row h-full min-h-[140px] sm:min-h-[180px]">
+                      <div className="flex flex-col items-center justify-center p-3 sm:p-6 md:p-7 bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-800 md:w-[35%] relative overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
-                        <div className="mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300 relative z-10">
+                        <div className="mb-2 sm:mb-4 group-hover:scale-110 transition-transform duration-300 relative z-10">
                           <IconComponent
-                            className="w-12 h-12 sm:w-14 sm:h-14 md:w-12 md:h-12 text-white drop-shadow-lg"
+                            className="w-8 h-8 sm:w-14 sm:h-14 md:w-12 md:h-12 text-white drop-shadow-lg"
                             strokeWidth={1.5}
                           />
                         </div>
@@ -132,20 +132,20 @@ export function FeaturedProducts() {
                           <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="w-full py-3 px-4 sm:px-5 rounded-xl font-bold text-sm sm:text-base bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-lg hover:shadow-amber-500/50 hover:from-amber-600 hover:to-amber-700 transition-all duration-300 min-h-[44px]"
+                            className="w-full py-2 px-3 sm:py-3 sm:px-5 rounded-lg sm:rounded-xl font-bold text-xs sm:text-base bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-lg hover:shadow-amber-500/50 hover:from-amber-600 hover:to-amber-700 transition-all duration-300 min-h-[44px]"
                           >
                             {card.ctaText}
                           </motion.button>
                         </Link>
                       </div>
 
-                      <div className="flex flex-col justify-center p-5 sm:p-6 md:p-7 md:w-[65%] bg-gradient-to-br from-emerald-900/95 via-emerald-800/95 to-emerald-900/95 backdrop-blur-sm relative min-w-0">
+                      <div className="flex flex-col justify-center p-3 sm:p-6 md:p-7 md:w-[65%] bg-gradient-to-br from-emerald-900/95 via-emerald-800/95 to-emerald-900/95 backdrop-blur-sm relative min-w-0">
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-amber-500/5 via-transparent to-transparent opacity-50" />
 
-                        <h3 className="text-base sm:text-lg md:text-xl font-bold text-white mb-2 sm:mb-3 group-hover:text-amber-400 transition-colors duration-300 relative z-10">
+                        <h3 className="text-sm sm:text-lg md:text-xl font-bold text-white mb-1 sm:mb-3 group-hover:text-amber-400 transition-colors duration-300 relative z-10">
                           {card.title}
                         </h3>
-                        <p className="text-sm sm:text-base text-emerald-50/90 leading-relaxed relative z-10 text-pretty">
+                        <p className="text-xs sm:text-base text-emerald-50/90 leading-snug sm:leading-relaxed relative z-10 text-pretty">
                           {card.description}
                         </p>
                       </div>
@@ -162,9 +162,8 @@ export function FeaturedProducts() {
         </motion.div>
       </div>
 
-      <div className="relative h-16 sm:h-20 md:h-24 mt-6 sm:mt-8">
+      <div className="relative h-0 mt-0">
         <div className="absolute inset-0 bg-white" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-emerald-500/5 via-transparent to-transparent" />
       </div>
     </motion.section>
   )

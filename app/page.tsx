@@ -9,27 +9,177 @@ import { ResourcesSection } from "@/components/resources-section"
 import { Footer } from "@/components/footer"
 
 export default function HomePage() {
-  const structuredData = {
+  const organizationData = {
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
-    name: "Via Betel",
+    name: "Via Betel Auto Escola Digital",
+    alternateName: "Via Betel",
     description:
-      "Plataforma que conecta alunos e instrutores de direção qualificados para aulas práticas de todas as categorias",
+      "Plataforma digital que conecta alunos e instrutores de direção qualificados para aulas práticas de todas as categorias (A, B, C, D, E) em Minas Gerais",
     url: "https://viabetel.com",
     logo: "https://viabetel.com/images/viabetel-logo.png",
+    image: "https://viabetel.com/images/viabetel-og-image.jpg",
+    telephone: "+55-32-98809-3506",
+    email: "contato@viabetel.com",
+    address: {
+      "@type": "PostalAddress",
+      addressRegion: "MG",
+      addressCountry: "BR",
+    },
+    areaServed: {
+      "@type": "State",
+      name: "Minas Gerais",
+    },
     contactPoint: {
       "@type": "ContactPoint",
       telephone: "+55-32-98809-3506",
       contactType: "customer service",
       areaServed: "BR",
-      availableLanguage: "Portuguese",
+      availableLanguage: ["Portuguese"],
     },
     sameAs: ["https://instagram.com/viabetel"],
-    offers: {
-      "@type": "Offer",
-      category: "Aulas de Direção",
-      description: "Aulas práticas de direção com instrutores qualificados",
+  }
+
+  const localBusinessData = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": "https://viabetel.com/#business",
+    name: "Via Betel Auto Escola Digital",
+    image: "https://viabetel.com/images/viabetel-logo.png",
+    url: "https://viabetel.com",
+    telephone: "+55-32-98809-3506",
+    priceRange: "$$",
+    address: {
+      "@type": "PostalAddress",
+      addressRegion: "MG",
+      addressCountry: "BR",
     },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: "-19.9167",
+      longitude: "-43.9345",
+    },
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "08:00",
+        closes: "18:00",
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: "Saturday",
+        opens: "08:00",
+        closes: "14:00",
+      },
+    ],
+  }
+
+  const serviceData = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    serviceType: "Aulas de Direção",
+    provider: {
+      "@type": "EducationalOrganization",
+      name: "Via Betel",
+    },
+    areaServed: {
+      "@type": "State",
+      name: "Minas Gerais",
+    },
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Serviços de Instrução de Direção",
+      itemListElement: [
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Aulas de Direção Categoria A - Moto",
+            description: "Aulas práticas de direção para habilitação categoria A com instrutores certificados",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Aulas de Direção Categoria B - Carro",
+            description: "Aulas práticas de direção para habilitação categoria B com veículos modernos",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Aulas de Direção Categoria C - Caminhão",
+            description: "Aulas práticas para habilitação categoria C com instrutores especializados",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Aulas de Direção Categoria D - Ônibus",
+            description: "Aulas práticas para habilitação categoria D com veículos de grande porte",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Aulas de Direção Categoria E - Carreta",
+            description: "Aulas práticas para habilitação categoria E com veículos articulados",
+          },
+        },
+      ],
+    },
+  }
+
+  const faqData = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "Como funciona a Via Betel?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "A Via Betel conecta alunos que desejam tirar CNH com instrutores qualificados. Você escolhe o instrutor, agenda suas aulas e aprende a dirigir com segurança e qualidade.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Quais categorias de CNH estão disponíveis?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Oferecemos aulas para todas as categorias: A (moto), B (carro), C (caminhão), D (ônibus) e E (carreta). Cada categoria possui instrutores especializados.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Os instrutores são certificados?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Sim, todos os instrutores da Via Betel são certificados pelo DETRAN e possuem ampla experiência em educação de trânsito.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Como agendar uma aula?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "É simples! Navegue pelo catálogo de instrutores, escolha o que melhor se encaixa no seu perfil e localização, e entre em contato diretamente para agendar suas aulas.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "A Via Betel atende em quais cidades?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Atualmente atendemos em diversas cidades de Minas Gerais, incluindo Belo Horizonte, Contagem, Betim e região metropolitana.",
+        },
+      },
+    ],
   }
 
   const breadcrumbData = {
@@ -45,10 +195,29 @@ export default function HomePage() {
     ],
   }
 
+  const websiteData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Via Betel Auto Escola Digital",
+    url: "https://viabetel.com",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: "https://viabetel.com/search?q={search_term_string}",
+      },
+      "query-input": "required name=search_term_string",
+    },
+  }
+
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqData) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteData) }} />
       <main className="min-h-screen">
         <Header />
         <HeroSection />

@@ -97,7 +97,7 @@ export function RegionalInstructorsSection() {
 
         <div className="relative -mx-4 sm:mx-0">
           <div
-            className="flex gap-4 overflow-x-auto pb-4 px-4 sm:px-0 snap-x snap-mandatory scrollbar-hide"
+            className="flex gap-2 sm:gap-4 overflow-x-auto pb-4 px-4 sm:px-0 snap-x snap-mandatory scrollbar-hide"
             style={{
               scrollbarWidth: "none",
               msOverflowStyle: "none",
@@ -112,58 +112,60 @@ export function RegionalInstructorsSection() {
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1, duration: 0.5 }}
                 whileHover={{ y: -8, transition: { duration: 0.2 } }}
-                className="group relative bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 flex-shrink-0 w-64 snap-start"
+                className="group relative bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 flex-shrink-0 w-[30%] min-w-[110px] sm:w-64 snap-start"
               >
                 {/* Photo */}
-                <div className="relative h-28 overflow-hidden bg-gradient-to-br from-emerald-100 to-teal-100">
+                <div className="relative h-16 sm:h-28 overflow-hidden bg-gradient-to-br from-emerald-100 to-teal-100">
                   <img
                     src={instructor.photo || "/placeholder.svg"}
                     alt={instructor.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                   {/* Rating Badge */}
-                  <div className="absolute top-2 right-2 bg-white/95 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1 shadow-md">
-                    <Star className="w-3 h-3 fill-amber-400 text-amber-400 flex-shrink-0" />
-                    <span className="text-xs font-bold text-gray-900">{instructor.rating}</span>
+                  <div className="absolute top-1 right-1 sm:top-2 sm:right-2 bg-white/95 backdrop-blur-sm rounded-full px-1 sm:px-2 py-0.5 sm:py-1 flex items-center gap-0.5 sm:gap-1 shadow-md">
+                    <Star className="w-2 h-2 sm:w-3 sm:h-3 fill-amber-400 text-amber-400 flex-shrink-0" />
+                    <span className="text-[9px] sm:text-xs font-bold text-gray-900">{instructor.rating}</span>
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="p-2.5">
-                  <h3 className="font-bold text-gray-900 text-xs mb-1 group-hover:text-emerald-600 transition-colors truncate">
+                <div className="p-1.5 sm:p-2.5">
+                  <h3 className="font-bold text-gray-900 text-[9px] sm:text-xs mb-0.5 sm:mb-1 group-hover:text-emerald-600 transition-colors truncate">
                     {instructor.name}
                   </h3>
 
-                  <div className="flex items-center gap-1 text-[10px] text-gray-600 mb-2">
-                    <MapPin className="w-3 h-3 text-emerald-600 flex-shrink-0" />
+                  <div className="flex items-center gap-0.5 sm:gap-1 text-[8px] sm:text-[10px] text-gray-600 mb-1 sm:mb-2">
+                    <MapPin className="w-2 h-2 sm:w-3 sm:h-3 text-emerald-600 flex-shrink-0" />
                     <span className="truncate">{instructor.city}</span>
                   </div>
 
                   {/* Categories */}
-                  <div className="flex flex-wrap gap-1 mb-2">
+                  <div className="flex flex-wrap gap-0.5 sm:gap-1 mb-1 sm:mb-2">
                     {instructor.categories.map((cat) => (
                       <span
                         key={cat}
                         className={cn(
-                          "px-1.5 py-0.5 rounded text-[10px] font-bold flex-shrink-0",
+                          "px-1 sm:px-1.5 py-0.5 rounded text-[8px] sm:text-[10px] font-bold flex-shrink-0",
                           "bg-gradient-to-r from-emerald-500 to-teal-500 text-white",
                         )}
                       >
-                        Cat. {cat}
+                        {cat}
                       </span>
                     ))}
                   </div>
 
                   {/* Stats */}
-                  <div className="pt-2 border-t border-gray-100">
-                    <div className="flex items-center justify-between text-[10px] gap-2">
-                      <div className="flex items-center gap-1 text-gray-600">
-                        <Clock className="w-3 h-3 text-emerald-600 flex-shrink-0" />
-                        <span>{instructor.experience} anos</span>
+                  <div className="pt-1 sm:pt-2 border-t border-gray-100">
+                    <div className="flex items-center justify-between text-[8px] sm:text-[10px] gap-1 sm:gap-2">
+                      <div className="flex items-center gap-0.5 sm:gap-1 text-gray-600">
+                        <Clock className="w-2 h-2 sm:w-3 sm:h-3 text-emerald-600 flex-shrink-0" />
+                        <span className="hidden sm:inline">{instructor.experience} anos</span>
+                        <span className="sm:hidden">{instructor.experience}a</span>
                       </div>
-                      <div className="flex items-center gap-1 text-gray-600">
-                        <Award className="w-3 h-3 text-amber-600 flex-shrink-0" />
-                        <span>{instructor.students} alunos</span>
+                      <div className="flex items-center gap-0.5 sm:gap-1 text-gray-600">
+                        <Award className="w-2 h-2 sm:w-3 sm:h-3 text-amber-600 flex-shrink-0" />
+                        <span className="hidden sm:inline">{instructor.students} alunos</span>
+                        <span className="sm:hidden">{instructor.students}</span>
                       </div>
                     </div>
                   </div>
@@ -172,9 +174,9 @@ export function RegionalInstructorsSection() {
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full mt-2.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 text-white font-semibold text-[10px] py-2 rounded-lg hover:shadow-lg transition-all min-h-[40px]"
+                    className="w-full mt-1.5 sm:mt-2.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 text-white font-semibold text-[8px] sm:text-[10px] py-1.5 sm:py-2 rounded-lg hover:shadow-lg transition-all min-h-[32px] sm:min-h-[40px]"
                   >
-                    Ver Perfil
+                    Ver
                   </motion.button>
                 </div>
               </motion.div>

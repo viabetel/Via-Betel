@@ -71,7 +71,7 @@ export function Header() {
       }}
     >
       <div className="container mx-auto max-w-7xl w-full">
-        <div className="flex items-center justify-between h-16 px-3 sm:px-4 md:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-12 sm:h-14 md:h-16 px-2 sm:px-4 md:px-6 lg:px-8">
           {/* Logo */}
           <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }} className="flex-shrink-0 min-w-0">
             <Link href="/" aria-label="Via Betel Home">
@@ -80,7 +80,7 @@ export function Header() {
                 alt="Via Betel"
                 width={160}
                 height={50}
-                className="h-8 md:h-10 lg:h-11 w-auto drop-shadow-lg"
+                className="h-7 sm:h-8 md:h-10 lg:h-11 w-auto drop-shadow-lg"
                 priority
               />
             </Link>
@@ -196,7 +196,7 @@ export function Header() {
           </nav>
 
           <motion.div
-            className="flex items-center gap-2 lg:gap-3 flex-shrink-0"
+            className="flex items-center gap-1.5 sm:gap-2 lg:gap-3 flex-shrink-0"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -252,10 +252,10 @@ export function Header() {
               target="_blank"
               rel="noopener noreferrer"
               onClick={handleWhatsAppClick}
-              className="flex items-center justify-center w-11 h-11 rounded-full bg-gradient-to-br from-[var(--color-brand-accent)] to-[var(--color-brand-accent-dark)] hover:from-[var(--color-brand-accent-dark)] hover:to-[var(--color-brand-accent-darker)] shadow-lg shadow-[var(--color-brand-accent)]/30 transition-all hover:scale-110 hover:shadow-xl hover:shadow-[var(--color-brand-accent)]/40"
+              className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full bg-gradient-to-br from-[var(--color-brand-accent)] to-[var(--color-brand-accent-dark)] hover:from-[var(--color-brand-accent-dark)] hover:to-[var(--color-brand-accent-darker)] shadow-lg shadow-[var(--color-brand-accent)]/30 transition-all hover:scale-110 hover:shadow-xl hover:shadow-[var(--color-brand-accent)]/40"
               aria-label="WhatsApp"
             >
-              <MessageCircle className="w-5 h-5 lg:w-6 lg:h-6 text-[var(--color-brand-text-light)]" />
+              <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-[var(--color-brand-text-light)]" />
             </a>
           </motion.div>
         </div>
