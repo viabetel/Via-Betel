@@ -83,7 +83,7 @@ export function Header() {
               <Button
                 variant="ghost"
                 onClick={() => toggleDropdown("para-voce")}
-                className="text-white hover:text-amber-400 hover:bg-white/5 font-medium text-sm lg:text-base px-3 lg:px-4 py-2 rounded-lg flex items-center gap-1 transition-all"
+                className="text-white hover:text-amber-400 hover:bg-amber-500/10 font-medium text-sm lg:text-base px-3 lg:px-4 py-2 rounded-lg flex items-center gap-1 transition-all"
               >
                 Para você
                 <ChevronDown
@@ -97,13 +97,13 @@ export function Header() {
                 <div className="absolute top-full left-0 mt-2 bg-white rounded-lg shadow-xl py-2 min-w-[200px] z-50 border border-neutral-200">
                   <Link
                     href="/aluno"
-                    className="block px-4 py-2.5 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 text-sm transition-colors"
+                    className="block px-4 py-2.5 text-gray-700 hover:bg-gradient-to-r hover:from-amber-50 hover:to-emerald-50 hover:text-emerald-700 text-sm transition-colors"
                   >
                     Para Alunos
                   </Link>
                   <Link
                     href="/instrutor"
-                    className="block px-4 py-2.5 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 text-sm transition-colors"
+                    className="block px-4 py-2.5 text-gray-700 hover:bg-gradient-to-r hover:from-amber-50 hover:to-emerald-50 hover:text-emerald-700 text-sm transition-colors"
                   >
                     Para Instrutores
                   </Link>
@@ -116,7 +116,7 @@ export function Header() {
               <Button
                 variant="ghost"
                 onClick={() => toggleDropdown("servicos")}
-                className="text-white hover:text-amber-400 hover:bg-white/5 font-medium text-sm lg:text-base px-3 lg:px-4 py-2 rounded-lg flex items-center gap-1 transition-all"
+                className="text-white hover:text-amber-400 hover:bg-amber-500/10 font-medium text-sm lg:text-base px-3 lg:px-4 py-2 rounded-lg flex items-center gap-1 transition-all"
               >
                 Serviços
                 <ChevronDown
@@ -130,19 +130,19 @@ export function Header() {
                 <div className="absolute top-full left-0 mt-2 bg-white rounded-lg shadow-xl py-2 min-w-[200px] z-50 border border-neutral-200">
                   <Link
                     href="#aulas-praticas"
-                    className="block px-4 py-2.5 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 text-sm transition-colors"
+                    className="block px-4 py-2.5 text-gray-700 hover:bg-gradient-to-r hover:from-amber-50 hover:to-emerald-50 hover:text-emerald-700 text-sm transition-colors"
                   >
                     Aulas Práticas
                   </Link>
                   <Link
                     href="#simulado"
-                    className="block px-4 py-2.5 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 text-sm transition-colors"
+                    className="block px-4 py-2.5 text-gray-700 hover:bg-gradient-to-r hover:from-amber-50 hover:to-emerald-50 hover:text-emerald-700 text-sm transition-colors"
                   >
                     Simulados
                   </Link>
                   <Link
                     href="#renovacao"
-                    className="block px-4 py-2.5 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 text-sm transition-colors"
+                    className="block px-4 py-2.5 text-gray-700 hover:bg-gradient-to-r hover:from-amber-50 hover:to-emerald-50 hover:text-emerald-700 text-sm transition-colors"
                   >
                     Renovação CNH
                   </Link>
@@ -155,7 +155,7 @@ export function Header() {
               <Button
                 variant="ghost"
                 onClick={() => toggleDropdown("produtos")}
-                className="text-white hover:text-amber-400 hover:bg-white/5 font-medium text-sm lg:text-base px-3 lg:px-4 py-2 rounded-lg flex items-center gap-1 transition-all"
+                className="text-white hover:text-amber-400 hover:bg-amber-500/10 font-medium text-sm lg:text-base px-3 lg:px-4 py-2 rounded-lg flex items-center gap-1 transition-all"
               >
                 Produtos
                 <ChevronDown
@@ -169,14 +169,14 @@ export function Header() {
                 <div className="absolute top-full left-0 mt-2 bg-white rounded-lg shadow-xl py-2 min-w-[200px] z-50 border border-neutral-200">
                   <a
                     href="#featured-products"
-                    className="block px-4 py-2.5 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 text-sm transition-colors"
+                    className="block px-4 py-2.5 text-gray-700 hover:bg-gradient-to-r hover:from-amber-50 hover:to-emerald-50 hover:text-emerald-700 text-sm transition-colors"
                     onClick={() => setOpenDropdown(null)}
                   >
                     Nossos Planos
                   </a>
                   <a
                     href="#categorias"
-                    className="block px-4 py-2.5 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 text-sm transition-colors"
+                    className="block px-4 py-2.5 text-gray-700 hover:bg-gradient-to-r hover:from-amber-50 hover:to-emerald-50 hover:text-emerald-700 text-sm transition-colors"
                     onClick={() => setOpenDropdown(null)}
                   >
                     Categorias CNH
@@ -197,7 +197,7 @@ export function Header() {
                 <Button
                   variant="ghost"
                   onClick={() => toggleDropdown("minha-conta")}
-                  className="text-white hover:text-amber-400 hover:bg-white/5 font-medium text-sm lg:text-base px-3 lg:px-4 py-2 rounded-lg flex items-center gap-1"
+                  className="text-white hover:text-amber-400 hover:bg-amber-500/10 font-medium text-sm lg:text-base px-3 lg:px-4 py-2 rounded-lg flex items-center gap-1"
                 >
                   Minha conta
                   <ChevronDown
@@ -211,25 +211,25 @@ export function Header() {
                   <div className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-xl py-2 min-w-[200px] z-50 border border-neutral-200">
                     <Link
                       href="#perfil"
-                      className="block px-4 py-2.5 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 text-sm transition-colors"
+                      className="block px-4 py-2.5 text-gray-700 hover:bg-gradient-to-r hover:from-amber-50 hover:to-emerald-50 hover:text-emerald-700 text-sm transition-colors"
                     >
                       Meu Perfil
                     </Link>
                     <Link
                       href="#aulas"
-                      className="block px-4 py-2.5 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 text-sm transition-colors"
+                      className="block px-4 py-2.5 text-gray-700 hover:bg-gradient-to-r hover:from-amber-50 hover:to-emerald-50 hover:text-emerald-700 text-sm transition-colors"
                     >
                       Minhas Aulas
                     </Link>
                     <Link
                       href="#configuracoes"
-                      className="block px-4 py-2.5 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 text-sm border-t border-neutral-200 transition-colors"
+                      className="block px-4 py-2.5 text-gray-700 hover:bg-gradient-to-r hover:from-amber-50 hover:to-emerald-50 hover:text-emerald-700 text-sm border-t border-neutral-200 transition-colors"
                     >
                       Configurações
                     </Link>
                     <Link
                       href="#sair"
-                      className="block px-4 py-2.5 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 text-sm border-t border-neutral-200 transition-colors"
+                      className="block px-4 py-2.5 text-gray-700 hover:bg-gradient-to-r hover:from-amber-50 hover:to-emerald-50 hover:text-emerald-700 text-sm border-t border-neutral-200 transition-colors"
                     >
                       Sair
                     </Link>
@@ -243,7 +243,7 @@ export function Header() {
               target="_blank"
               rel="noopener noreferrer"
               onClick={handleWhatsAppClick}
-              className="hidden md:flex items-center justify-center w-10 h-10 lg:w-11 lg:h-11 rounded-full bg-white/10 hover:bg-white/20 transition-all hover:scale-105"
+              className="hidden md:flex items-center justify-center w-10 h-10 lg:w-11 lg:h-11 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 shadow-lg shadow-amber-500/30 transition-all hover:scale-110 hover:shadow-xl hover:shadow-amber-500/40"
               aria-label="WhatsApp"
             >
               <MessageCircle className="w-5 h-5 lg:w-6 lg:h-6 text-white" />

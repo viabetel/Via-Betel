@@ -35,6 +35,33 @@ export function Footer() {
     { name: "TikTok", icon: MessageCircle, href: "https://tiktok.com/@viabetel" },
   ]
 
+  const governmentBadges = [
+    {
+      name: "DENATRAN",
+      href: "https://www.gov.br/infraestrutura/pt-br/assuntos/transito/denatran",
+      description: "Departamento Nacional de Trânsito",
+      logo: "/images/emblema-denatran.jpg",
+    },
+    {
+      name: "DETRAN-MG",
+      href: "https://www.detran.mg.gov.br/",
+      description: "Departamento de Trânsito de Minas Gerais",
+      logo: "/images/emblema-detran-mg.jpg",
+    },
+    {
+      name: "SENATRAN",
+      href: "https://www.gov.br/infraestrutura/pt-br/assuntos/transito/senatran",
+      description: "Secretaria Nacional de Trânsito",
+      logo: "/images/emblema-senatran.jpg",
+    },
+    {
+      name: "CONTRAN",
+      href: "https://www.gov.br/infraestrutura/pt-br/assuntos/transito/conteudo-contran",
+      description: "Conselho Nacional de Trânsito",
+      logo: "/images/emblema-contran.jpg",
+    },
+  ]
+
   const handleNewsletterSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     console.log("Newsletter signup:", email)
@@ -236,6 +263,60 @@ export function Footer() {
             <p className="text-sm text-amber-100 mb-1">É aluno?</p>
             <p className="font-semibold group-hover:scale-105 inline-block transition-transform">Buscar aulas</p>
           </Link>
+        </motion.div>
+
+        <motion.div
+          className="border-t border-green-800/20 pt-8 pb-6"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          viewport={{ once: true }}
+        >
+          <div className="text-center mb-6">
+            <h4 className="text-sm font-semibold text-amber-400 mb-2">Regulamentado e certificado por</h4>
+            <p className="text-xs text-neutral-500">Plataforma em conformidade com órgãos reguladores</p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            {governmentBadges.map((badge, index) => (
+              <motion.a
+                key={badge.name}
+                href={badge.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-white/5 hover:bg-white/10 border border-green-800/20 hover:border-amber-500/50 rounded-lg p-4 transition-all duration-300"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                whileHover={{ scale: 1.03 }}
+              >
+                <div className="flex flex-col items-center justify-center h-full space-y-2">
+                  <div className="relative w-16 h-16 flex items-center justify-center">
+                    <Image
+                      src={badge.logo || "/placeholder.svg"}
+                      alt={`Logo ${badge.name}`}
+                      width={64}
+                      height={64}
+                      className="object-contain opacity-90 group-hover:opacity-100 transition-opacity"
+                    />
+                  </div>
+                  <div className="text-center">
+                    <p className="font-bold text-neutral-200 text-sm group-hover:text-amber-400 transition-colors">
+                      {badge.name}
+                    </p>
+                    <p className="text-[10px] text-neutral-500 mt-1 leading-tight">{badge.description}</p>
+                  </div>
+                </div>
+              </motion.a>
+            ))}
+          </div>
+
+          <div className="text-center mt-6">
+            <p className="text-xs text-neutral-500">
+              Via Betel opera em conformidade com a legislação brasileira de trânsito e normas do CONTRAN
+            </p>
+          </div>
         </motion.div>
 
         {/* Bottom Copyright Bar */}

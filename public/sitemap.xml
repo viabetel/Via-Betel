@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://viabetel.com/</loc>
+    <lastmod>2024-01-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="pt-br" href="https://viabetel.com/"/>
+  </url>
+  <url>
+    <loc>https://viabetel.com/aluno</loc>
+    <lastmod>2024-01-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="pt-br" href="https://viabetel.com/aluno"/>
+  </url>
+  <url>
+    <loc>https://viabetel.com/instrutor</loc>
+    <lastmod>2024-01-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="pt-br" href="https://viabetel.com/instrutor"/>
+  </url>
+  <url>
+    <loc>https://viabetel.com/login</loc>
+    <lastmod>2024-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="pt-br" href="https://viabetel.com/login"/>
+  </url>
+</urlset>

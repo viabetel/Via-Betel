@@ -116,13 +116,30 @@ const cnhCategories = [
 
 export function MaterialsSection() {
   const [activeCategory, setActiveCategory] = useState("categoria-b")
+  const sectionRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLDivElement>(null)
+  const backgroundRef = useRef<HTMLDivElement>(null)
 
-  const { scrollYProgress } = useScroll({
+  const { scrollYProgress: sectionScrollProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  })
+
+  const { scrollYProgress: imageScrollProgress } = useScroll({
     target: imageRef,
     offset: ["start end", "end start"],
   })
-  const y = useTransform(scrollYProgress, [0, 1], [-50, 50])
+
+  const { scrollYProgress: bgScrollProgress } = useScroll({
+    target: backgroundRef,
+    offset: ["start end", "end start"],
+  })
+
+  const yImage = useTransform(imageScrollProgress, [0, 1], [-150, 150])
+  const yBackground = useTransform(bgScrollProgress, [0, 1], [-80, 80])
+  const yText = useTransform(sectionScrollProgress, [0, 1], [-50, 50])
+  const scale = useTransform(sectionScrollProgress, [0, 0.5, 1], [0.8, 1, 0.95])
+  const opacity = useTransform(sectionScrollProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0.3])
 
   const instructorCountByCategory = useMemo(() => {
     const counts: Record<string, number> = {
@@ -169,18 +186,23 @@ export function MaterialsSection() {
   }
 
   return (
-    <section className="relative min-h-[78vh] overflow-hidden w-full max-w-full" id="materials">
+    <section ref={sectionRef} className="relative min-h-[78vh] overflow-hidden w-full max-w-full" id="materials">
+      <motion.div
+        ref={backgroundRef}
+        style={{ y: yBackground }}
+        className="absolute inset-0 opacity-5 pointer-events-none"
+      >
+        <div className="absolute top-10 left-10 w-72 h-72 bg-white rounded-full blur-3xl" />
+        <div className="absolute bottom-10 right-10 w-96 h-96 bg-amber-400 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-emerald-400 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2" />
+      </motion.div>
+
       <div className="flex flex-col md:flex-row min-h-[78vh]">
         <div className="relative w-full bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-800 py-22 sm:py-30 flex items-center">
-          <div className="absolute inset-0 opacity-5">
-            <div className="absolute top-10 left-10 w-72 h-72 bg-white rounded-full blur-3xl" />
-            <div className="absolute bottom-10 right-10 w-96 h-96 bg-amber-400 rounded-full blur-3xl" />
-          </div>
-
           <div className="relative z-10 px-4 sm:px-6 lg:px-8 w-full">
             <div className="max-w-7xl mx-auto">
               <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
-                <div className="text-white">
+                <motion.div style={{ y: yText, opacity }} className="text-white">
                   <Reveal>
                     <div>
                       <AnimatePresence mode="wait">
@@ -263,7 +285,7 @@ export function MaterialsSection() {
                             Quero Aprender
                           </motion.a>
                           <motion.a
-                            href="/cadastro?tipo=instrutor"
+                            href="/instrutor"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             className="px-4 py-2 rounded-full text-sm font-semibold bg-amber-500 text-white hover:bg-amber-600 transition-all duration-300 shadow-lg"
@@ -297,20 +319,23 @@ export function MaterialsSection() {
                       </div>
                     </div>
                   </Reveal>
-                </div>
+                </motion.div>
 
-                <div ref={imageRef} className="relative min-h-[37vh] md:min-h-[46vh] flex items-center justify-center">
+                <motion.div
+                  ref={imageRef}
+                  style={{ y: yImage, scale }}
+                  className="relative min-h-[37vh] md:min-h-[46vh] flex items-center justify-center"
+                >
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={activeCategory}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
+                      initial={{ opacity: 0, scale: 0.8, rotateY: -30 }}
+                      animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+                      exit={{ opacity: 0, scale: 0.8, rotateY: 30 }}
                       transition={{
-                        duration: 0.4,
-                        ease: "easeInOut",
+                        duration: 0.6,
+                        ease: "easeOut",
                       }}
-                      style={{ y }}
                       className="relative w-full max-w-xl aspect-square"
                     >
                       <div className="absolute inset-0 flex items-center justify-center">
@@ -318,7 +343,7 @@ export function MaterialsSection() {
                       </div>
                     </motion.div>
                   </AnimatePresence>
-                </div>
+                </motion.div>
               </div>
             </div>
           </div>

@@ -1,0 +1,20 @@
+# Via Betel - robots.txt
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# Sitemaps
+Sitemap: https://viabetel.com/sitemap.xml
+
+# Google
+User-agent: Googlebot
+Allow: /
+Disallow: /api/
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Disallow: /api/
+
+# Crawl-delay for all bots
+Crawl-delay: 1

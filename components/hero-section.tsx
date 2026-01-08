@@ -12,24 +12,24 @@ export function HeroSection() {
   }
 
   return (
-    <section className="relative min-h-[600px] lg:min-h-[700px] flex items-center justify-center bg-gradient-to-br from-emerald-900 via-emerald-700 to-emerald-900 text-white overflow-hidden">
+    <section className="relative min-h-[480px] lg:min-h-[560px] flex items-center justify-center bg-gradient-to-br from-emerald-900 via-emerald-700 to-teal-800 text-white overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
 
-      {/* Animated Gradient Orbs */}
-      <div className="absolute top-20 left-20 w-72 h-72 lg:w-96 lg:h-96 bg-emerald-500/30 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-20 right-20 w-96 h-96 lg:w-[500px] lg:h-[500px] bg-teal-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
+      <div className="absolute top-20 left-20 w-72 h-72 lg:w-80 lg:h-80 bg-amber-500/40 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-20 right-20 w-80 h-80 lg:w-96 lg:h-96 bg-emerald-500/30 rounded-full blur-3xl animate-pulse delay-1000" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-amber-400/20 rounded-full blur-3xl animate-pulse delay-500" />
 
-      <div className="container relative z-10 px-4 py-20 md:py-32 lg:py-40 max-w-7xl">
-        <div className="mx-auto max-w-4xl lg:max-w-5xl text-center space-y-8 lg:space-y-10">
+      <div className="container relative z-10 px-4 py-16 md:py-24 lg:py-32 max-w-7xl">
+        <div className="mx-auto max-w-4xl lg:max-w-5xl text-center space-y-6 lg:space-y-8">
           {/* Badge */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 lg:px-5 py-2 lg:py-2.5"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500/20 to-emerald-500/20 backdrop-blur-sm border border-amber-400/30 rounded-full px-4 lg:px-5 py-2 lg:py-2.5 shadow-lg shadow-amber-500/20"
           >
-            <span className="text-sm lg:text-base font-medium">Plataforma líder em CNH</span>
+            <span className="text-sm lg:text-base font-medium text-amber-100">Plataforma líder em CNH</span>
           </motion.div>
 
           {/* Main Heading */}
@@ -37,10 +37,12 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl"
+            className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl"
           >
             Encontre seu instrutor{" "}
-            <span className="bg-gradient-to-r from-emerald-200 to-teal-200 bg-clip-text text-transparent">ideal</span>
+            <span className="bg-gradient-to-r from-amber-300 via-amber-200 to-amber-100 bg-clip-text text-transparent drop-shadow-lg">
+              ideal
+            </span>
           </motion.h1>
 
           {/* Description */}
@@ -48,7 +50,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mx-auto max-w-2xl lg:max-w-3xl text-lg text-emerald-100 md:text-xl lg:text-2xl leading-relaxed"
+            className="mx-auto max-w-2xl lg:max-w-3xl text-base text-emerald-100 md:text-lg lg:text-xl leading-relaxed"
           >
             Conectamos você aos melhores instrutores certificados do Brasil. Aprenda a dirigir com confiança e
             segurança.
@@ -64,7 +66,7 @@ export function HeroSection() {
             <Button
               size="lg"
               onClick={handleWhatsAppClick}
-              className="w-full sm:w-auto bg-white text-emerald-900 hover:bg-emerald-50 font-semibold px-8 lg:px-10 py-6 lg:py-7 text-lg lg:text-xl shadow-xl hover:shadow-2xl transition-all hover:scale-105 min-h-[44px]"
+              className="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold px-8 lg:px-10 py-5 lg:py-6 text-base lg:text-lg shadow-xl shadow-amber-500/30 hover:shadow-2xl hover:shadow-amber-500/40 transition-all hover:scale-105 min-h-[44px] border border-amber-400/50"
             >
               Chamar no WhatsApp
             </Button>
@@ -72,7 +74,7 @@ export function HeroSection() {
               size="lg"
               variant="outline"
               asChild
-              className="w-full sm:w-auto border-2 border-white bg-transparent text-white hover:bg-white/10 font-semibold px-8 lg:px-10 py-6 lg:py-7 text-lg lg:text-xl transition-all hover:scale-105 min-h-[44px]"
+              className="w-full sm:w-auto border-2 border-amber-400 bg-transparent text-amber-100 hover:bg-amber-500/20 hover:border-amber-300 font-semibold px-8 lg:px-10 py-5 lg:py-6 text-base lg:text-lg transition-all hover:scale-105 min-h-[44px]"
             >
               <a href="/aluno">Quero orçamento rápido</a>
             </Button>
@@ -83,7 +85,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="grid grid-cols-3 gap-8 lg:gap-12 pt-12 lg:pt-16 max-w-2xl lg:max-w-3xl mx-auto"
+            className="grid grid-cols-3 gap-6 lg:gap-10 pt-10 lg:pt-12 max-w-2xl lg:max-w-3xl mx-auto"
           >
             {[
               { value: "Em expansão", label: "Na sua região" },
@@ -91,8 +93,10 @@ export function HeroSection() {
               { value: "Qualidade", label: "Certificada" },
             ].map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">{stat.value}</div>
-                <div className="text-sm lg:text-base text-emerald-200 mt-1 lg:mt-2">{stat.label}</div>
+                <div className="text-xl md:text-2xl lg:text-3xl font-bold bg-gradient-to-br from-amber-200 to-white bg-clip-text text-transparent">
+                  {stat.value}
+                </div>
+                <div className="text-xs lg:text-sm text-amber-100/80 mt-1 lg:mt-2">{stat.label}</div>
               </div>
             ))}
           </motion.div>

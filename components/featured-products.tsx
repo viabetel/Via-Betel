@@ -13,7 +13,7 @@ const benefitCards = [
       "Conecte-se com alunos em todo o país e expanda sua agenda de forma inteligente. Receba pagamentos garantidos, gerencie horários facilmente e conte com suporte completo para focar no que importa: ensinar com excelência e construir sua reputação profissional.",
     icon: GraduationCap,
     ctaText: "RECEBER ALUNOS",
-    ctaLink: "/cadastro?tipo=instrutor",
+    ctaLink: "/instrutor", // Corrigido de /cadastro?tipo=instrutor para /instrutor
   },
   {
     id: "student-benefits",
@@ -22,7 +22,7 @@ const benefitCards = [
       "Encontre o instrutor perfeito para você com horários flexíveis que se adaptam à sua rotina. Tenha acompanhamento personalizado em cada etapa, acesso a material didático completo e conte com metodologias comprovadas para sua aprovação garantida no menor tempo possível.",
     icon: Users,
     ctaText: "COMEÇAR AGORA",
-    ctaLink: "/cadastro?tipo=aluno",
+    ctaLink: "/aluno", // Corrigido de /cadastro?tipo=aluno para /aluno
   },
   {
     id: "support",
@@ -162,13 +162,6 @@ export function FeaturedProducts() {
       <div className="relative h-32 mt-10">
         <div className="absolute inset-0 bg-white" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-emerald-500/5 via-transparent to-transparent" />
-        <motion.div
-          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent"
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1, ease: "easeInOut" }}
-        />
       </div>
     </motion.section>
   )
