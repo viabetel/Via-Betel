@@ -42,6 +42,25 @@ export default function AlunoClientPage() {
     e.preventDefault()
     setIsSubmitting(true)
 
+    try {
+      const response = await fetch("/api/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          tipo: "aluno",
+          dados: formData,
+        }),
+      })
+
+      if (!response.ok) {
+        console.error("[v0] Erro ao enviar email:", await response.text())
+      }
+    } catch (error) {
+      console.error("[v0] Erro na requisição de email:", error)
+    }
+
     await new Promise((resolve) => setTimeout(resolve, 500))
 
     setIsSuccess(true)
