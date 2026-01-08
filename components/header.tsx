@@ -102,7 +102,7 @@ export function Header() {
                     Para Alunos
                   </Link>
                   <Link
-                    href="/cadastro?tipo=instrutor"
+                    href="/instrutor"
                     className="block px-4 py-2.5 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 text-sm transition-colors"
                   >
                     Para Instrutores
@@ -192,15 +192,6 @@ export function Header() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <Link href="/login" className="hidden md:block">
-              <Button
-                variant="ghost"
-                className="font-medium text-sm lg:text-base px-4 lg:px-5 py-2 text-white hover:bg-white/10 rounded-lg transition-all"
-              >
-                Entrar
-              </Button>
-            </Link>
-
             {isLoggedIn && (
               <div className="relative hidden md:block">
                 <Button

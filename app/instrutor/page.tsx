@@ -12,20 +12,22 @@ type FormData = {
   whatsapp: string
   cidade: string
   uf: string
-  categoria: string
-  objetivo: string
-  horario: string
+  categorias: string[]
+  experiencia: string
+  disponibilidade: string
+  veiculo: string
 }
 
-export default function AlunoPage() {
+export default function InstrutorPage() {
   const [formData, setFormData] = useState<FormData>({
     nome: "",
     whatsapp: "",
     cidade: "",
     uf: "",
-    categoria: "",
-    objetivo: "",
-    horario: "",
+    categorias: [],
+    experiencia: "",
+    disponibilidade: "",
+    veiculo: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
@@ -39,18 +41,34 @@ export default function AlunoPage() {
     return value
   }
 
+  const handleCategoriaToggle = (categoria: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      categorias: prev.categorias.includes(categoria)
+        ? prev.categorias.filter((c) => c !== categoria)
+        : [...prev.categorias, categoria],
+    }))
+  }
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
     setError("")
+
+    if (formData.categorias.length === 0) {
+      setError("Selecione pelo menos uma categoria")
+      setIsSubmitting(false)
+      return
+    }
 
     try {
       const response = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          tipo: "aluno",
+          tipo: "instrutor",
           ...formData,
+          categorias: formData.categorias.join(", "),
         }),
       })
 
@@ -59,14 +77,15 @@ export default function AlunoPage() {
       setIsSuccess(true)
 
       const whatsappMessage = encodeURIComponent(
-        `Olá! Vim do Instagram da Via Betel. Quero aulas de direção. Pode me orientar sobre valores e disponibilidade?
+        `Olá! Sou instrutor e vim do Instagram da Via Betel. Quero me cadastrar na plataforma.
 
 Meus dados:
 Nome: ${formData.nome}
 Cidade: ${formData.cidade}/${formData.uf}
-Categoria: ${formData.categoria}
-Objetivo: ${formData.objetivo}
-Melhor horário: ${formData.horario}
+Categorias que ensino: ${formData.categorias.join(", ")}
+Experiência: ${formData.experiencia}
+Disponibilidade: ${formData.disponibilidade}
+Veículo próprio: ${formData.veiculo}
 WhatsApp: ${formData.whatsapp}`,
       )
 
@@ -88,7 +107,7 @@ WhatsApp: ${formData.whatsapp}`,
           animate={{ scale: 1, opacity: 1 }}
           className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8 text-center"
         >
-          <CheckCircle2 className="w-16 h-16 text-green-600 mx-auto mb-4" />
+          <CheckCircle2 className="w-16 h-16 text-emerald-600 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Recebido com sucesso!</h2>
           <p className="text-gray-600 mb-6">Abrindo WhatsApp para conversarmos...</p>
           <Link href="/">
@@ -120,7 +139,7 @@ WhatsApp: ${formData.whatsapp}`,
               height={54}
               className="h-10 w-auto mx-auto mb-4"
             />
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Vamos começar sua jornada!</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Seja um instrutor da Via Betel!</h1>
             <p className="text-gray-600">Preencha os dados abaixo para falarmos no WhatsApp</p>
           </div>
 
@@ -185,59 +204,80 @@ WhatsApp: ${formData.whatsapp}`,
             </div>
 
             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Categorias que ensina <span className="text-red-500">*</span>
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                {["A", "B", "C", "D", "E"].map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => handleCategoriaToggle(cat)}
+                    className={`px-4 py-3 rounded-lg border-2 transition-all ${
+                      formData.categorias.includes(cat)
+                        ? "bg-emerald-600 border-emerald-600 text-white"
+                        : "bg-white border-gray-300 text-gray-700 hover:border-emerald-400"
+                    }`}
+                  >
+                    Categoria {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Categoria desejada <span className="text-red-500">*</span>
+                Anos de experiência <span className="text-red-500">*</span>
               </label>
               <select
                 required
-                value={formData.categoria}
-                onChange={(e) => setFormData({ ...formData, categoria: e.target.value })}
+                value={formData.experiencia}
+                onChange={(e) => setFormData({ ...formData, experiencia: e.target.value })}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition"
               >
                 <option value="">Selecione</option>
-                <option value="A">Categoria A (Moto)</option>
-                <option value="B">Categoria B (Carro)</option>
-                <option value="AB">Categoria AB (Carro e Moto)</option>
-                <option value="C">Categoria C (Caminhão)</option>
-                <option value="D">Categoria D (Ônibus)</option>
-                <option value="E">Categoria E (Carreta)</option>
+                <option value="menos-1-ano">Menos de 1 ano</option>
+                <option value="1-3-anos">1 a 3 anos</option>
+                <option value="3-5-anos">3 a 5 anos</option>
+                <option value="5-10-anos">5 a 10 anos</option>
+                <option value="mais-10-anos">Mais de 10 anos</option>
               </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Seu objetivo <span className="text-red-500">*</span>
+                Disponibilidade <span className="text-red-500">*</span>
               </label>
               <select
                 required
-                value={formData.objetivo}
-                onChange={(e) => setFormData({ ...formData, objetivo: e.target.value })}
+                value={formData.disponibilidade}
+                onChange={(e) => setFormData({ ...formData, disponibilidade: e.target.value })}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition"
               >
                 <option value="">Selecione</option>
-                <option value="primeira-habilitacao">Primeira habilitação</option>
-                <option value="reabilitacao">Reabilitação</option>
-                <option value="medo-dirigir">Medo de dirigir</option>
-                <option value="aperfeicoamento">Aperfeiçoamento</option>
-                <option value="outros">Outros</option>
+                <option value="manha">Apenas manhã</option>
+                <option value="tarde">Apenas tarde</option>
+                <option value="noite">Apenas noite</option>
+                <option value="integral">Período integral</option>
+                <option value="fins-de-semana">Fins de semana</option>
+                <option value="totalmente-flexivel">Totalmente flexível</option>
               </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Melhor horário <span className="text-red-500">*</span>
+                Possui veículo próprio? <span className="text-red-500">*</span>
               </label>
               <select
                 required
-                value={formData.horario}
-                onChange={(e) => setFormData({ ...formData, horario: e.target.value })}
+                value={formData.veiculo}
+                onChange={(e) => setFormData({ ...formData, veiculo: e.target.value })}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition"
               >
                 <option value="">Selecione</option>
-                <option value="manha">Manhã (8h - 12h)</option>
-                <option value="tarde">Tarde (13h - 18h)</option>
-                <option value="noite">Noite (18h - 21h)</option>
-                <option value="flexivel">Horário flexível</option>
+                <option value="sim-adaptado">Sim, com adaptações para aula</option>
+                <option value="sim-nao-adaptado">Sim, mas sem adaptações</option>
+                <option value="nao">Não possuo</option>
               </select>
             </div>
 

@@ -18,10 +18,6 @@ export function Footer() {
       { name: "Como funciona", href: "#how-it-works" },
       { name: "Categorias CNH", href: "#categorias" },
     ],
-    "Para Instrutores": [
-      { name: "Anunciar na Via Betel", href: "/cadastro?tipo=instrutor" },
-      { name: "Central do instrutor", href: "/login" },
-    ],
     Recursos: [
       { name: "Blog / Dicas", href: "#recursos" },
       { name: "Materiais de estudo", href: "#recursos" },
@@ -226,20 +222,13 @@ export function Footer() {
 
         {/* Mini CTAs */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8"
+          className="grid grid-cols-1 gap-4 mb-8"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.3 }}
           viewport={{ once: true }}
         >
-          {/* CTAs with functional links */}
-          <Link
-            href="/cadastro?tipo=instrutor"
-            className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white py-4 px-6 rounded-lg transition-all duration-200 text-center group"
-          >
-            <p className="text-sm text-green-100 mb-1">É instrutor?</p>
-            <p className="font-semibold group-hover:scale-105 inline-block transition-transform">Quero anunciar</p>
-          </Link>
+          {/* Aluno CTA */}
           <Link
             href="/aluno"
             className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-4 px-6 rounded-lg transition-all duration-200 text-center group"

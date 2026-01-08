@@ -5,7 +5,9 @@ import { motion } from "framer-motion"
 
 export function HeroSection() {
   const handleWhatsAppClick = () => {
-    const message = encodeURIComponent("Olá! Vim do Instagram da Via Betel. Quero aulas de direção.")
+    const message = encodeURIComponent(
+      "Olá! Vim do Instagram da Via Betel. Quero aulas de direção. Pode me orientar sobre valores e disponibilidade?",
+    )
     window.open(`https://wa.me/5532988093506?text=${message}`, "_blank")
   }
 

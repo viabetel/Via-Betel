@@ -8,15 +8,19 @@ datasource db {
 }
 
 model Lead {
-  id        String   @id @default(cuid())
-  tipo      String   // "aluno" ou "instrutor"
-  nome      String
-  whatsapp  String
-  cidade    String
-  categoria String?
-  objetivo  String?
-  horario   String?
-  createdAt DateTime @default(now())
+  id               String   @id @default(cuid())
+  tipo             String   // "aluno" ou "instrutor"
+  nome             String
+  whatsapp         String
+  cidade           String
+  categoria        String?  // categoria desejada pelo aluno
+  objetivo         String?
+  horario          String?
+  categorias       String?  // categorias que o instrutor ensina (separadas por vírgula)
+  experiencia      String?
+  disponibilidade  String?
+  veiculo          String?
+  createdAt        DateTime @default(now())
   
   @@map("leads")
 }
