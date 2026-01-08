@@ -1,6 +1,8 @@
 "use client"
 import { motion } from "framer-motion"
 import type React from "react"
+import Link from "next/link"
+import { analytics } from "@/lib/analytics"
 
 import { Instagram, Youtube, Phone, Mail, Clock, MapPin, Shield, MessageCircle } from "lucide-react"
 import Image from "next/image"
@@ -12,34 +14,21 @@ export function Footer() {
 
   const footerLinks = {
     "Para Alunos": [
-      { name: "Encontrar instrutor", href: "#" },
-      { name: "Planos e preços", href: "#" },
-      { name: "Simulador de custo", href: "#" },
-      { name: "Como funciona", href: "#" },
-      { name: "FAQ do aluno", href: "#" },
-      { name: "Segurança e avaliações", href: "#" },
+      { name: "Buscar aulas", href: "/aluno" },
+      { name: "Como funciona", href: "#how-it-works" },
+      { name: "Categorias CNH", href: "#categorias" },
     ],
     "Para Instrutores": [
-      { name: "Anunciar na Via Betel", href: "#" },
-      { name: "Planos do instrutor", href: "#" },
-      { name: "Produtos para instrutor", href: "#" },
-      { name: "Central do instrutor", href: "#" },
-      { name: "Política de anúncios", href: "#" },
-      { name: "Dúvidas do instrutor", href: "#" },
+      { name: "Anunciar na Via Betel", href: "/cadastro?tipo=instrutor" },
+      { name: "Central do instrutor", href: "/login" },
     ],
     Recursos: [
-      { name: "Cidades atendidas", href: "#" },
-      { name: "Blog / Dicas", href: "#" },
-      { name: "Materiais de estudo", href: "#" },
-      { name: "Termos e políticas", href: "#" },
-      { name: "Status do sistema", href: "#" },
+      { name: "Blog / Dicas", href: "#recursos" },
+      { name: "Materiais de estudo", href: "#recursos" },
     ],
     "Legal e Contato": [
-      { name: "Termos de uso", href: "#" },
-      { name: "Política de privacidade", href: "#" },
-      { name: "Cookies", href: "#" },
-      { name: "LGPD", href: "#" },
-      { name: "Reportar abuso", href: "#" },
+      { name: "Termos de uso", href: "#termos" },
+      { name: "Política de privacidade", href: "#privacidade" },
       { name: "Trabalhe conosco", href: "#" },
     ],
   }
@@ -54,6 +43,10 @@ export function Footer() {
     e.preventDefault()
     console.log("Newsletter signup:", email)
     setEmail("")
+  }
+
+  const handleWhatsAppClick = () => {
+    analytics.clickWhatsApp("footer")
   }
 
   return (
@@ -90,6 +83,7 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center space-x-2 text-neutral-400 hover:text-green-400 transition-colors text-sm group"
+                  onClick={handleWhatsAppClick}
                 >
                   <Phone
                     size={16}
@@ -187,6 +181,7 @@ export function Footer() {
                 className="block w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 text-center text-sm"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
+                onClick={handleWhatsAppClick}
               >
                 <div className="flex items-center justify-center space-x-2">
                   <Phone size={16} />
@@ -237,20 +232,21 @@ export function Footer() {
           transition={{ duration: 0.6, delay: 0.3 }}
           viewport={{ once: true }}
         >
-          <a
-            href="#"
+          {/* CTAs with functional links */}
+          <Link
+            href="/cadastro?tipo=instrutor"
             className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white py-4 px-6 rounded-lg transition-all duration-200 text-center group"
           >
             <p className="text-sm text-green-100 mb-1">É instrutor?</p>
             <p className="font-semibold group-hover:scale-105 inline-block transition-transform">Quero anunciar</p>
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            href="/aluno"
             className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-4 px-6 rounded-lg transition-all duration-200 text-center group"
           >
             <p className="text-sm text-amber-100 mb-1">É aluno?</p>
             <p className="font-semibold group-hover:scale-105 inline-block transition-transform">Buscar aulas</p>
-          </a>
+          </Link>
         </motion.div>
 
         {/* Bottom Copyright Bar */}
@@ -265,17 +261,17 @@ export function Footer() {
             <p>&copy; {currentYear} Via Betel. Todos os direitos reservados.</p>
           </div>
           <div className="flex flex-wrap justify-center gap-4 text-sm text-neutral-500">
-            <a href="#" className="hover:text-green-400 transition-colors">
+            <Link href="#privacidade" className="hover:text-green-400 transition-colors">
               Privacidade
-            </a>
+            </Link>
             <span>•</span>
-            <a href="#" className="hover:text-green-400 transition-colors">
+            <Link href="#termos" className="hover:text-green-400 transition-colors">
               Termos
-            </a>
+            </Link>
             <span>•</span>
-            <a href="#" className="hover:text-green-400 transition-colors">
+            <Link href="#cookies" className="hover:text-green-400 transition-colors">
               Cookies
-            </a>
+            </Link>
           </div>
         </motion.div>
       </div>

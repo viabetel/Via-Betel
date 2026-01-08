@@ -7,6 +7,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { MessageCircle, ChevronDown } from "lucide-react"
+import { analytics } from "@/lib/analytics"
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -48,6 +49,10 @@ export function Header() {
     setOpenDropdown(openDropdown === name ? null : name)
   }
 
+  const handleWhatsAppClick = () => {
+    analytics.clickWhatsApp("header")
+  }
+
   return (
     <motion.header
       className={cn("fixed top-0 left-0 right-0 z-50 w-full max-w-full", "transition-all duration-700 ease-in-out")}
@@ -60,7 +65,7 @@ export function Header() {
         <div className="flex items-center justify-between h-16 px-4 md:px-6 lg:px-8">
           {/* Logo */}
           <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }} className="flex-shrink-0">
-            <a href="#" aria-label="Via Betel Home">
+            <Link href="/" aria-label="Via Betel Home">
               <Image
                 src="/images/viabetel-logo.png"
                 alt="Via Betel"
@@ -69,7 +74,7 @@ export function Header() {
                 className="h-9 md:h-10 lg:h-11 w-auto drop-shadow-lg"
                 priority
               />
-            </a>
+            </Link>
           </motion.div>
 
           <nav ref={dropdownRef} className="hidden md:flex items-center gap-2 lg:gap-3">
@@ -91,13 +96,13 @@ export function Header() {
               {openDropdown === "para-voce" && (
                 <div className="absolute top-full left-0 mt-2 bg-white rounded-lg shadow-xl py-2 min-w-[200px] z-50 border border-neutral-200">
                   <Link
-                    href="#alunos"
+                    href="/aluno"
                     className="block px-4 py-2.5 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 text-sm transition-colors"
                   >
                     Para Alunos
                   </Link>
                   <Link
-                    href="#instrutores"
+                    href="/cadastro?tipo=instrutor"
                     className="block px-4 py-2.5 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 text-sm transition-colors"
                   >
                     Para Instrutores
@@ -162,18 +167,20 @@ export function Header() {
               </Button>
               {openDropdown === "produtos" && (
                 <div className="absolute top-full left-0 mt-2 bg-white rounded-lg shadow-xl py-2 min-w-[200px] z-50 border border-neutral-200">
-                  <Link
-                    href="#planos"
+                  <a
+                    href="#featured-products"
                     className="block px-4 py-2.5 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 text-sm transition-colors"
+                    onClick={() => setOpenDropdown(null)}
                   >
-                    Planos
-                  </Link>
-                  <Link
+                    Nossos Planos
+                  </a>
+                  <a
                     href="#categorias"
                     className="block px-4 py-2.5 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 text-sm transition-colors"
+                    onClick={() => setOpenDropdown(null)}
                   >
-                    Categorias
-                  </Link>
+                    Categorias CNH
+                  </a>
                 </div>
               )}
             </div>
@@ -225,7 +232,7 @@ export function Header() {
                     </Link>
                     <Link
                       href="#configuracoes"
-                      className="block px-4 py-2.5 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 text-sm transition-colors"
+                      className="block px-4 py-2.5 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 text-sm border-t border-neutral-200 transition-colors"
                     >
                       Configurações
                     </Link>
@@ -244,6 +251,7 @@ export function Header() {
               href="https://wa.me/5532988093506"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={handleWhatsAppClick}
               className="hidden md:flex items-center justify-center w-10 h-10 lg:w-11 lg:h-11 rounded-full bg-white/10 hover:bg-white/20 transition-all hover:scale-105"
               aria-label="WhatsApp"
             >

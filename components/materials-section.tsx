@@ -254,49 +254,49 @@ export function MaterialsSection() {
                           transition={{ duration: 0.3 }}
                           className="flex flex-row gap-2.5 mt-5 mb-6"
                         >
-                          <motion.button
+                          <motion.a
+                            href="/aluno"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             className="px-4 py-2 rounded-full text-sm font-semibold bg-white text-emerald-700 hover:bg-amber-400 hover:text-white transition-all duration-300 shadow-lg"
-                            onClick={() => console.log("Quero aprender")}
                           >
                             Quero Aprender
-                          </motion.button>
-                          <motion.button
+                          </motion.a>
+                          <motion.a
+                            href="/cadastro?tipo=instrutor"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             className="px-4 py-2 rounded-full text-sm font-semibold bg-amber-500 text-white hover:bg-amber-600 transition-all duration-300 shadow-lg"
-                            onClick={() => console.log("Quero ensinar")}
                           >
                             Quero Ensinar
-                          </motion.button>
+                          </motion.a>
                         </motion.div>
                       </AnimatePresence>
+
+                      <div className="mt-4">
+                        <Reveal delay={0.1}>
+                          <div className="flex gap-2 pb-2">
+                            {cnhCategories.map((category) => (
+                              <motion.button
+                                key={category.id}
+                                className={cn(
+                                  "px-3 sm:px-4 py-1.5 text-xs sm:text-sm rounded-full font-medium transition-all duration-300 backdrop-blur-md",
+                                  activeCategory === category.id
+                                    ? "bg-white text-emerald-700 shadow-lg"
+                                    : "bg-white/20 text-white hover:bg-white/30",
+                                )}
+                                onClick={() => setActiveCategory(category.id)}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                              >
+                                {category.name}
+                              </motion.button>
+                            ))}
+                          </div>
+                        </Reveal>
+                      </div>
                     </div>
                   </Reveal>
-
-                  <div className="mt-4">
-                    <Reveal delay={0.1}>
-                      <div className="flex gap-2 pb-2">
-                        {cnhCategories.map((category) => (
-                          <motion.button
-                            key={category.id}
-                            className={cn(
-                              "px-3 sm:px-4 py-1.5 text-xs sm:text-sm rounded-full font-medium transition-all duration-300 backdrop-blur-md",
-                              activeCategory === category.id
-                                ? "bg-white text-emerald-700 shadow-lg"
-                                : "bg-white/20 text-white hover:bg-white/30",
-                            )}
-                            onClick={() => setActiveCategory(category.id)}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                          >
-                            {category.name}
-                          </motion.button>
-                        ))}
-                      </div>
-                    </Reveal>
-                  </div>
                 </div>
 
                 <div ref={imageRef} className="relative min-h-[37vh] md:min-h-[46vh] flex items-center justify-center">

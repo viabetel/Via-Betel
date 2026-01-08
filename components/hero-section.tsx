@@ -4,6 +4,11 @@ import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 
 export function HeroSection() {
+  const handleWhatsAppClick = () => {
+    const message = encodeURIComponent("Olá! Vim do Instagram da Via Betel. Quero aulas de direção.")
+    window.open(`https://wa.me/5532988093506?text=${message}`, "_blank")
+  }
+
   return (
     <section className="relative min-h-[600px] lg:min-h-[700px] flex items-center justify-center bg-gradient-to-br from-emerald-900 via-emerald-700 to-emerald-900 text-white overflow-hidden">
       {/* Background Pattern */}
@@ -56,16 +61,18 @@ export function HeroSection() {
           >
             <Button
               size="lg"
-              className="bg-white text-emerald-900 hover:bg-emerald-50 font-semibold px-8 lg:px-10 py-6 lg:py-7 text-lg lg:text-xl shadow-xl hover:shadow-2xl transition-all hover:scale-105"
+              onClick={handleWhatsAppClick}
+              className="w-full sm:w-auto bg-white text-emerald-900 hover:bg-emerald-50 font-semibold px-8 lg:px-10 py-6 lg:py-7 text-lg lg:text-xl shadow-xl hover:shadow-2xl transition-all hover:scale-105 min-h-[44px]"
             >
-              Encontrar Instrutor
+              Chamar no WhatsApp
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="border-2 border-white bg-transparent text-white hover:bg-white/10 font-semibold px-8 lg:px-10 py-6 lg:py-7 text-lg lg:text-xl transition-all hover:scale-105"
+              asChild
+              className="w-full sm:w-auto border-2 border-white bg-transparent text-white hover:bg-white/10 font-semibold px-8 lg:px-10 py-6 lg:py-7 text-lg lg:text-xl transition-all hover:scale-105 min-h-[44px]"
             >
-              Como Funciona
+              <a href="/aluno">Quero orçamento rápido</a>
             </Button>
           </motion.div>
 
@@ -77,12 +84,12 @@ export function HeroSection() {
             className="grid grid-cols-3 gap-8 lg:gap-12 pt-12 lg:pt-16 max-w-2xl lg:max-w-3xl mx-auto"
           >
             {[
-              { value: "1000+", label: "Instrutores" },
-              { value: "50k+", label: "Alunos" },
-              { value: "98%", label: "Aprovação" },
+              { value: "Em expansão", label: "Na sua região" },
+              { value: "Conectando", label: "Alunos e instrutores" },
+              { value: "Qualidade", label: "Certificada" },
             ].map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-white">{stat.value}</div>
+                <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">{stat.value}</div>
                 <div className="text-sm lg:text-base text-emerald-200 mt-1 lg:mt-2">{stat.label}</div>
               </div>
             ))}
