@@ -98,9 +98,20 @@
   --color-emerald-500: #10b981;
   --color-emerald-600: #059669;
   --color-emerald-700: #047857;
+  /* Added missing emerald-800 and emerald-900 for header */
+  --color-emerald-800: #065f46;
+  --color-emerald-900: #064e3b;
+  --color-emerald-50: #ecfdf5;
   --color-teal-400: #2dd4bf;
   --color-teal-500: #14b8a6;
   --color-teal-600: #0d9488;
+  --color-teal-700: #0f766e;
+  /* Added amber colors for accent */
+  --color-amber-400: #fbbf24;
+  --color-amber-500: #f59e0b;
+  --color-amber-600: #d97706;
+  --color-amber-700: #b45309;
+  --color-amber-50: #fffbeb;
 
   --space-1: 8px;
   --space-2: 16px;

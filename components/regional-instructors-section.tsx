@@ -95,82 +95,93 @@ export function RegionalInstructorsSection() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-5 max-w-7xl mx-auto">
-          {instructors.map((instructor, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1, duration: 0.5 }}
-              whileHover={{ y: -8, transition: { duration: 0.2 } }}
-              className="group relative bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 min-w-0"
-            >
-              {/* Photo */}
-              <div className="relative h-36 sm:h-32 md:h-28 overflow-hidden bg-gradient-to-br from-emerald-100 to-teal-100">
-                <img
-                  src={instructor.photo || "/placeholder.svg"}
-                  alt={instructor.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                {/* Rating Badge */}
-                <div className="absolute top-2 right-2 bg-white/95 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1 shadow-md">
-                  <Star className="w-3 h-3 fill-amber-400 text-amber-400 flex-shrink-0" />
-                  <span className="text-xs font-bold text-gray-900">{instructor.rating}</span>
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="p-3 sm:p-2.5 min-w-0">
-                <h3 className="font-bold text-gray-900 text-sm sm:text-xs mb-1 group-hover:text-emerald-600 transition-colors truncate">
-                  {instructor.name}
-                </h3>
-
-                <div className="flex items-center gap-1 text-xs sm:text-[10px] text-gray-600 mb-2 min-w-0">
-                  <MapPin className="w-3 h-3 text-emerald-600 flex-shrink-0" />
-                  <span className="truncate">{instructor.city}</span>
-                </div>
-
-                {/* Categories */}
-                <div className="flex flex-wrap gap-1 mb-2">
-                  {instructor.categories.map((cat) => (
-                    <span
-                      key={cat}
-                      className={cn(
-                        "px-1.5 py-0.5 rounded text-[10px] font-bold flex-shrink-0",
-                        "bg-gradient-to-r from-emerald-500 to-teal-500 text-white",
-                      )}
-                    >
-                      Cat. {cat}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Stats */}
-                <div className="pt-2 border-t border-gray-100">
-                  <div className="flex items-center justify-between text-[10px] gap-2 min-w-0">
-                    <div className="flex items-center gap-1 text-gray-600 min-w-0">
-                      <Clock className="w-3 h-3 text-emerald-600 flex-shrink-0" />
-                      <span className="truncate">{instructor.experience} anos</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-gray-600 min-w-0">
-                      <Award className="w-3 h-3 text-amber-600 flex-shrink-0" />
-                      <span className="truncate">{instructor.students} alunos</span>
-                    </div>
+        <div className="relative -mx-4 sm:mx-0">
+          <div
+            className="flex gap-4 overflow-x-auto pb-4 px-4 sm:px-0 snap-x snap-mandatory scrollbar-hide"
+            style={{
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+              WebkitOverflowScrolling: "touch",
+            }}
+          >
+            {instructors.map((instructor, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1, duration: 0.5 }}
+                whileHover={{ y: -8, transition: { duration: 0.2 } }}
+                className="group relative bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 flex-shrink-0 w-64 snap-start"
+              >
+                {/* Photo */}
+                <div className="relative h-28 overflow-hidden bg-gradient-to-br from-emerald-100 to-teal-100">
+                  <img
+                    src={instructor.photo || "/placeholder.svg"}
+                    alt={instructor.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  {/* Rating Badge */}
+                  <div className="absolute top-2 right-2 bg-white/95 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1 shadow-md">
+                    <Star className="w-3 h-3 fill-amber-400 text-amber-400 flex-shrink-0" />
+                    <span className="text-xs font-bold text-gray-900">{instructor.rating}</span>
                   </div>
                 </div>
 
-                {/* CTA Button */}
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full mt-3 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 text-white font-semibold text-xs py-2 rounded-lg hover:shadow-lg transition-all min-h-[40px]"
-                >
-                  Ver Perfil
-                </motion.button>
-              </div>
-            </motion.div>
-          ))}
+                {/* Content */}
+                <div className="p-2.5">
+                  <h3 className="font-bold text-gray-900 text-xs mb-1 group-hover:text-emerald-600 transition-colors truncate">
+                    {instructor.name}
+                  </h3>
+
+                  <div className="flex items-center gap-1 text-[10px] text-gray-600 mb-2">
+                    <MapPin className="w-3 h-3 text-emerald-600 flex-shrink-0" />
+                    <span className="truncate">{instructor.city}</span>
+                  </div>
+
+                  {/* Categories */}
+                  <div className="flex flex-wrap gap-1 mb-2">
+                    {instructor.categories.map((cat) => (
+                      <span
+                        key={cat}
+                        className={cn(
+                          "px-1.5 py-0.5 rounded text-[10px] font-bold flex-shrink-0",
+                          "bg-gradient-to-r from-emerald-500 to-teal-500 text-white",
+                        )}
+                      >
+                        Cat. {cat}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Stats */}
+                  <div className="pt-2 border-t border-gray-100">
+                    <div className="flex items-center justify-between text-[10px] gap-2">
+                      <div className="flex items-center gap-1 text-gray-600">
+                        <Clock className="w-3 h-3 text-emerald-600 flex-shrink-0" />
+                        <span>{instructor.experience} anos</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-gray-600">
+                        <Award className="w-3 h-3 text-amber-600 flex-shrink-0" />
+                        <span>{instructor.students} alunos</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* CTA Button */}
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full mt-2.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 text-white font-semibold text-[10px] py-2 rounded-lg hover:shadow-lg transition-all min-h-[40px]"
+                  >
+                    Ver Perfil
+                  </motion.button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-emerald-300 to-transparent opacity-50 pointer-events-none" />
         </div>
 
         {/* View More Button */}

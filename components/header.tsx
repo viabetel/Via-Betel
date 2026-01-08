@@ -17,10 +17,10 @@ export function Header() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 700)
+      setIsScrolled(window.scrollY > 300)
     }
 
-    window.addEventListener("scroll", handleScroll)
+    window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
@@ -59,9 +59,15 @@ export function Header() {
         "fixed top-0 left-0 right-0 z-50 w-full overflow-hidden max-w-full",
         "transition-all duration-700 ease-in-out",
       )}
+      initial={{ opacity: 0, y: -100 }}
+      animate={{
+        opacity: isScrolled ? 1 : 0,
+        y: isScrolled ? 0 : -100,
+      }}
       style={{
-        backgroundColor: isScrolled ? "var(--color-brand-primary-darker)" : "transparent",
-        boxShadow: isScrolled ? "0 4px 12px rgba(0, 0, 0, 0.3)" : "none",
+        backgroundColor: "rgb(6, 95, 70)",
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+        pointerEvents: isScrolled ? "auto" : "none",
       }}
     >
       <div className="container mx-auto max-w-7xl w-full">

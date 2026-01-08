@@ -226,7 +226,7 @@ export function HowItWorksSection() {
         <AnimatePresence mode="wait">
           <motion.div
             key={selectedProfile}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5 lg:gap-2 mb-5 sm:mb-6 lg:mb-7 w-full max-w-full"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 mb-5 sm:mb-6 lg:mb-7 w-full max-w-full"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -250,14 +250,14 @@ export function HowItWorksSection() {
                   whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
                 >
                   <motion.div
-                    className={`bg-white rounded-lg p-2 sm:p-2.5 shadow-xl transition-all duration-300 h-full ${
+                    className={`bg-white rounded-lg p-2 sm:p-2 shadow-xl transition-all duration-300 h-full ${
                       isActive ? "ring-4 ring-amber-400 shadow-2xl" : "ring-1 ring-gray-200"
                     }`}
                     animate={isActive ? { scale: [1, 1.02, 1] } : {}}
                     transition={{ duration: 0.5 }}
                   >
                     <motion.div
-                      className={`absolute -top-1 -right-1 w-5 h-5 sm:w-4 sm:h-4 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-lg transition-all duration-300 ${
+                      className={`absolute -top-1 -right-1 w-4 h-4 sm:w-4 sm:h-4 rounded-full flex items-center justify-center text-[9px] font-bold text-white shadow-lg transition-all duration-300 ${
                         step.color === "emerald" ? "bg-emerald-600" : "bg-amber-500"
                       }`}
                       animate={isActive ? { rotate: [0, 360] } : {}}
@@ -267,14 +267,14 @@ export function HowItWorksSection() {
                     </motion.div>
 
                     <motion.div
-                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center mb-1.5 sm:mb-2 transition-all duration-300 ${
+                      className={`w-6 h-6 sm:w-7 sm:h-7 rounded-lg flex items-center justify-center mb-1.5 sm:mb-1.5 transition-all duration-300 ${
                         isActive ? (step.color === "emerald" ? "bg-emerald-100" : "bg-amber-100") : "bg-gray-100"
                       }`}
                       animate={isActive ? { scale: [1, 1.1, 1] } : {}}
                       transition={{ duration: 0.5, repeat: isActive ? Number.POSITIVE_INFINITY : 0, repeatDelay: 2 }}
                     >
                       <Icon
-                        className={`w-4 h-4 sm:w-3.5 sm:h-3.5 transition-all duration-300 ${
+                        className={`w-3 h-3 sm:w-3 sm:h-3 transition-all duration-300 ${
                           isActive
                             ? step.color === "emerald"
                               ? "text-emerald-600"
@@ -285,7 +285,7 @@ export function HowItWorksSection() {
                     </motion.div>
 
                     <h3
-                      className={`text-[11px] sm:text-xs font-bold mb-0.5 sm:mb-1 transition-all duration-300 leading-tight text-balance ${
+                      className={`text-[10px] sm:text-[11px] font-bold mb-0.5 sm:mb-0.5 transition-all duration-300 leading-tight text-balance ${
                         isActive ? "text-gray-900" : "text-gray-700"
                       }`}
                     >
@@ -293,7 +293,7 @@ export function HowItWorksSection() {
                     </h3>
 
                     <p
-                      className={`text-[9px] sm:text-[10px] leading-relaxed transition-all duration-300 text-pretty ${isActive ? "text-gray-600" : "text-gray-500"}`}
+                      className={`text-[8px] sm:text-[9px] leading-relaxed transition-all duration-300 text-pretty ${isActive ? "text-gray-600" : "text-gray-500"}`}
                     >
                       {step.description}
                     </p>
@@ -301,13 +301,13 @@ export function HowItWorksSection() {
                     <AnimatePresence>
                       {isActive && (
                         <motion.div
-                          className="mt-1 sm:mt-1.5 flex items-center gap-1 text-emerald-600 font-medium text-[9px]"
+                          className="mt-1 sm:mt-1 flex items-center gap-0.5 text-emerald-600 font-medium text-[8px]"
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -10 }}
                           transition={{ duration: 0.3 }}
                         >
-                          <Check className="w-2.5 h-2.5" />
+                          <Check className="w-2 h-2" />
                           Passo atual
                         </motion.div>
                       )}
@@ -316,7 +316,7 @@ export function HowItWorksSection() {
 
                   {/* Arrow connector */}
                   {index < steps.length - 1 && (
-                    <div className="hidden lg:block absolute top-1/2 -right-2 transform -translate-y-1/2 z-20">
+                    <div className="hidden lg:block absolute top-1/2 -right-2.5 transform -translate-y-1/2 z-20">
                       <motion.div
                         className="w-3 h-3 rotate-45 bg-white border-r-2 border-t-2 border-amber-400"
                         animate={{ x: [0, 5, 0] }}
