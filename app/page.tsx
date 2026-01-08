@@ -2,7 +2,6 @@
 import { Header } from "@/components/header"
 import { HeroSection } from "@/components/hero-section"
 import { FeaturedProducts } from "@/components/featured-products"
-import { CollectionStrip } from "@/components/collection-strip"
 import { HowItWorksSection } from "@/components/how-it-works-section"
 import { MaterialsSection } from "@/components/materials-section"
 import { ResourcesSection } from "@/components/resources-section"
@@ -15,7 +14,6 @@ export default function HomePage() {
       <HeroSection />
       <FeaturedProducts />
       <HowItWorksSection />
-      <CollectionStrip />
       <MaterialsSection />
       <ResourcesSection />
       <Footer />

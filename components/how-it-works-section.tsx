@@ -1,7 +1,20 @@
 "use client"
 
 import { useState } from "react"
-import { Check, Calendar, Car, Award, Users, GraduationCap, Building2, BookOpen, FileCheck, Wallet } from "lucide-react"
+import {
+  Check,
+  Calendar,
+  Car,
+  Award,
+  Users,
+  GraduationCap,
+  Building2,
+  BookOpen,
+  FileCheck,
+  Wallet,
+  ShieldCheck,
+  Clock,
+} from "lucide-react"
 
 export function HowItWorksSection() {
   const [activeStep, setActiveStep] = useState(0)
@@ -13,28 +26,28 @@ export function HowItWorksSection() {
         icon: Users,
         title: "Escolha seu Instrutor",
         description:
-          "Navegue por nosso catálogo de instrutores certificados e escolha aquele que melhor se encaixa no seu perfil e região.",
+          "Navegue por nosso catálogo de instrutores certificados e escolha aquele que melhor se encaixa no seu perfil, localização e necessidades específicas.",
         color: "emerald" as const,
       },
       {
         icon: Calendar,
         title: "Agende suas Aulas",
         description:
-          "Escolha os horários mais convenientes para você. Oferecemos flexibilidade total com turmas personalizadas.",
+          "Escolha os horários mais convenientes para você. Oferecemos flexibilidade total com turmas personalizadas que se adaptam à sua rotina.",
         color: "amber" as const,
       },
       {
         icon: Car,
         title: "Aprenda na Prática",
         description:
-          "Tenha aulas práticas de qualidade com veículos modernos e instrutores experientes. Aprenda de forma eficiente e segura.",
+          "Tenha aulas práticas de qualidade com veículos modernos e instrutores experientes. Aprenda de forma eficiente, segura e com metodologia comprovada.",
         color: "emerald" as const,
       },
       {
         icon: Award,
         title: "Conquiste sua CNH",
         description:
-          "Com nossa formação completa e certificada, você estará totalmente preparado para conquistar sua habilitação.",
+          "Com nossa formação completa e certificada, você estará totalmente preparado para conquistar sua habilitação com confiança e segurança.",
         color: "amber" as const,
       },
     ],
@@ -42,26 +55,29 @@ export function HowItWorksSection() {
       {
         icon: FileCheck,
         title: "Cadastre-se na Plataforma",
-        description: "Crie seu perfil completo com suas certificações, experiência e disponibilidade de horários.",
+        description:
+          "Crie seu perfil profissional completo com suas certificações, experiência, especialidades e disponibilidade de horários para receber alunos.",
         color: "emerald" as const,
       },
       {
         icon: Users,
         title: "Receba Solicitações",
         description:
-          "Alunos interessados entrarão em contato com você. Gerencie suas turmas de forma fácil e organizada.",
+          "Alunos interessados entrarão em contato com você através da plataforma. Gerencie suas turmas de forma fácil, organizada e com total controle.",
         color: "amber" as const,
       },
       {
         icon: BookOpen,
         title: "Ministre Aulas",
-        description: "Ensine com excelência usando nossa metodologia comprovada e materiais de apoio disponibilizados.",
+        description:
+          "Ensine com excelência usando nossa metodologia comprovada, materiais de apoio exclusivos e ferramentas que facilitam o processo de ensino.",
         color: "emerald" as const,
       },
       {
         icon: Wallet,
         title: "Receba seus Pagamentos",
-        description: "Sistema transparente de pagamentos com relatórios detalhados de suas aulas e ganhos mensais.",
+        description:
+          "Sistema transparente e seguro de pagamentos com relatórios detalhados de suas aulas ministradas e ganhos mensais, tudo em um só lugar.",
         color: "amber" as const,
       },
     ],
@@ -69,26 +85,29 @@ export function HowItWorksSection() {
       {
         icon: Building2,
         title: "Cadastre sua Auto Escola",
-        description: "Registre sua instituição na plataforma com todos os documentos e certificações necessárias.",
+        description:
+          "Registre sua instituição na plataforma com todos os documentos necessários, certificações e informações sobre sua estrutura e diferenciais.",
         color: "emerald" as const,
       },
       {
         icon: Users,
         title: "Adicione seus Instrutores",
-        description: "Cadastre toda sua equipe de instrutores e gerencie suas disponibilidades em um só lugar.",
+        description:
+          "Cadastre toda sua equipe de instrutores qualificados e gerencie suas disponibilidades, especializações e desempenho em um só lugar.",
         color: "amber" as const,
       },
       {
         icon: Calendar,
         title: "Gerencie Turmas",
         description:
-          "Organize horários, aulas e acompanhe o progresso de todos os alunos através de um painel completo.",
+          "Organize horários, aulas práticas e teóricas, e acompanhe o progresso de todos os alunos através de um painel de controle completo e intuitivo.",
         color: "emerald" as const,
       },
       {
         icon: Award,
         title: "Expanda seu Negócio",
-        description: "Alcance mais alunos através da plataforma e aumente a visibilidade da sua auto escola na região.",
+        description:
+          "Alcance mais alunos através da plataforma digital, aumente a visibilidade da sua auto escola na região e impulsione seus resultados.",
         color: "amber" as const,
       },
     ],
@@ -104,28 +123,29 @@ export function HowItWorksSection() {
         <div className="absolute bottom-10 right-10 w-96 h-96 bg-amber-400 rounded-full blur-3xl" />
       </div>
 
-      <div className="container mx-auto px-4 relative z-10 w-full py-12">
-        <div className="text-center mb-4">
-          <h2 className="text-xl md:text-2xl font-bold text-white mb-2">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full py-16 lg:py-20">
+        <div className="text-center mb-10 lg:mb-12">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3 lg:mb-4">
             Como funciona a <span className="text-amber-400">Via Betel</span>
           </h2>
-          <p className="text-xs text-emerald-50 max-w-2xl mx-auto mb-3">
-            Um processo simples e eficiente para você conquistar sua habilitação com excelência
+          <p className="text-base sm:text-lg text-emerald-50 max-w-3xl mx-auto mb-6 lg:mb-8 leading-relaxed">
+            Um processo simples, eficiente e totalmente digital para você conquistar sua habilitação com excelência e
+            segurança
           </p>
 
-          <div className="flex justify-center gap-2 mb-4">
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
             <button
               onClick={() => {
                 setSelectedProfile("aluno")
                 setActiveStep(0)
               }}
-              className={`px-4 py-2 rounded-lg text-xs font-medium transition-all duration-300 ${
+              className={`px-5 py-3 rounded-xl text-sm sm:text-base font-medium transition-all duration-300 ${
                 selectedProfile === "aluno"
-                  ? "bg-white text-emerald-700 shadow-lg"
+                  ? "bg-white text-emerald-700 shadow-lg scale-105"
                   : "bg-white/10 text-white hover:bg-white/20"
               }`}
             >
-              <GraduationCap className="w-3 h-3 inline-block mr-1" />
+              <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5 inline-block mr-2" />
               Sou Aluno
             </button>
             <button
@@ -133,13 +153,13 @@ export function HowItWorksSection() {
                 setSelectedProfile("instrutor")
                 setActiveStep(0)
               }}
-              className={`px-4 py-2 rounded-lg text-xs font-medium transition-all duration-300 ${
+              className={`px-5 py-3 rounded-xl text-sm sm:text-base font-medium transition-all duration-300 ${
                 selectedProfile === "instrutor"
-                  ? "bg-white text-emerald-700 shadow-lg"
+                  ? "bg-white text-emerald-700 shadow-lg scale-105"
                   : "bg-white/10 text-white hover:bg-white/20"
               }`}
             >
-              <Users className="w-3 h-3 inline-block mr-1" />
+              <Users className="w-4 h-4 sm:w-5 sm:h-5 inline-block mr-2" />
               Sou Instrutor
             </button>
             <button
@@ -147,19 +167,19 @@ export function HowItWorksSection() {
                 setSelectedProfile("autoescola")
                 setActiveStep(0)
               }}
-              className={`px-4 py-2 rounded-lg text-xs font-medium transition-all duration-300 ${
+              className={`px-5 py-3 rounded-xl text-sm sm:text-base font-medium transition-all duration-300 ${
                 selectedProfile === "autoescola"
-                  ? "bg-white text-emerald-700 shadow-lg"
+                  ? "bg-white text-emerald-700 shadow-lg scale-105"
                   : "bg-white/10 text-white hover:bg-white/20"
               }`}
             >
-              <Building2 className="w-3 h-3 inline-block mr-1" />
+              <Building2 className="w-4 h-4 sm:w-5 sm:h-5 inline-block mr-2" />
               Sou Auto Escola
             </button>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-4 gap-3 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 lg:gap-3 mb-10 lg:mb-12">
           {steps.map((step, index) => {
             const Icon = step.icon
             const isActive = activeStep === index
@@ -167,19 +187,19 @@ export function HowItWorksSection() {
             return (
               <div
                 key={index}
-                className={`relative cursor-pointer transition-all duration-300 ${
+                className={`relative cursor-pointer transition-all duration-300 min-w-0 ${
                   isActive ? "scale-105" : "scale-100 hover:scale-102"
                 }`}
                 onMouseEnter={() => setActiveStep(index)}
                 onClick={() => setActiveStep(index)}
               >
                 <div
-                  className={`bg-white rounded-xl p-3 shadow-xl transition-all duration-300 ${
+                  className={`bg-white rounded-lg p-3 shadow-xl transition-all duration-300 h-full ${
                     isActive ? "ring-4 ring-amber-400 shadow-2xl" : "ring-1 ring-gray-200"
                   }`}
                 >
                   <div
-                    className={`absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg transition-all duration-300 ${
+                    className={`absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg transition-all duration-300 ${
                       step.color === "emerald" ? "bg-emerald-600" : "bg-amber-500"
                     }`}
                   >
@@ -187,31 +207,33 @@ export function HowItWorksSection() {
                   </div>
 
                   <div
-                    className={`w-9 h-9 rounded-lg flex items-center justify-center mb-2 transition-all duration-300 ${
+                    className={`w-10 h-10 rounded-lg flex items-center justify-center mb-2.5 transition-all duration-300 ${
                       isActive ? (step.color === "emerald" ? "bg-emerald-100" : "bg-amber-100") : "bg-gray-100"
                     }`}
                   >
                     <Icon
-                      className={`w-4 h-4 transition-all duration-300 ${
+                      className={`w-5 h-5 transition-all duration-300 ${
                         isActive ? (step.color === "emerald" ? "text-emerald-600" : "text-amber-600") : "text-gray-600"
                       }`}
                     />
                   </div>
 
                   <h3
-                    className={`text-xs font-bold mb-1 transition-all duration-300 ${
+                    className={`text-xs sm:text-sm font-bold mb-1 transition-all duration-300 leading-tight ${
                       isActive ? "text-gray-900" : "text-gray-700"
                     }`}
                   >
                     {step.title}
                   </h3>
 
-                  <p className={`text-xs transition-all duration-300 ${isActive ? "text-gray-600" : "text-gray-500"}`}>
+                  <p
+                    className={`text-[10px] sm:text-xs leading-relaxed transition-all duration-300 ${isActive ? "text-gray-600" : "text-gray-500"}`}
+                  >
                     {step.description}
                   </p>
 
                   {isActive && (
-                    <div className="mt-1 flex items-center gap-1 text-emerald-600 font-medium text-xs">
+                    <div className="mt-1.5 flex items-center gap-1 text-emerald-600 font-medium text-[10px]">
                       <Check className="w-3 h-3" />
                       Passo atual
                     </div>
@@ -220,8 +242,8 @@ export function HowItWorksSection() {
 
                 {/* Arrow connector (not on last item) */}
                 {index < steps.length - 1 && (
-                  <div className="hidden md:block absolute top-1/2 -right-2 transform -translate-y-1/2 z-20">
-                    <div className="w-4 h-4 rotate-45 bg-white border-r-2 border-t-2 border-amber-400" />
+                  <div className="hidden lg:block absolute top-1/2 -right-2 transform -translate-y-1/2 z-20">
+                    <div className="w-3 h-3 rotate-45 bg-white border-r-2 border-t-2 border-amber-400" />
                   </div>
                 )}
               </div>
@@ -229,103 +251,96 @@ export function HowItWorksSection() {
           })}
         </div>
 
-        <div className="grid md:grid-cols-3 gap-3 mt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto">
           {selectedProfile === "aluno" && (
             <>
-              <div className="text-center">
-                <div className="w-9 h-9 mx-auto mb-1 bg-white/10 backdrop-blur rounded-xl flex items-center justify-center">
-                  <Users className="w-4 h-4 text-white" />
+              <div className="text-center bg-white/10 backdrop-blur-md rounded-2xl p-6 transition-all duration-300 hover:bg-white/15">
+                <div className="w-16 h-16 mx-auto mb-3 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                  <Users className="w-8 h-8 text-white" />
                 </div>
-                <div className="text-lg font-bold text-white mb-1">50+</div>
-                <div className="text-emerald-100 text-xs">Instrutores Certificados</div>
+                <div className="text-3xl lg:text-4xl font-bold text-white mb-2">50+</div>
+                <div className="text-emerald-50 text-sm lg:text-base font-medium">Instrutores Certificados</div>
+                <p className="text-emerald-100/80 text-xs mt-2">Profissionais qualificados e experientes</p>
               </div>
 
-              <div className="text-center">
-                <div className="w-9 h-9 mx-auto mb-1 bg-white/10 backdrop-blur rounded-xl flex items-center justify-center">
-                  <Award className="w-4 h-4 text-amber-400" />
+              <div className="text-center bg-white/10 backdrop-blur-md rounded-2xl p-6 transition-all duration-300 hover:bg-white/15">
+                <div className="w-16 h-16 mx-auto mb-3 bg-amber-400/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                  <Award className="w-8 h-8 text-amber-400" />
                 </div>
-                <div className="text-lg font-bold text-white mb-1">98%</div>
-                <div className="text-emerald-100 text-xs">Taxa de Aprovação</div>
+                <div className="text-3xl lg:text-4xl font-bold text-white mb-2">98%</div>
+                <div className="text-emerald-50 text-sm lg:text-base font-medium">Taxa de Aprovação</div>
+                <p className="text-emerald-100/80 text-xs mt-2">Metodologia comprovada e eficaz</p>
               </div>
 
-              <div className="text-center">
-                <div className="w-9 h-9 mx-auto mb-1 bg-white/10 backdrop-blur rounded-xl flex items-center justify-center">
-                  <Car className="w-4 h-4 text-white" />
+              <div className="text-center bg-white/10 backdrop-blur-md rounded-2xl p-6 transition-all duration-300 hover:bg-white/15 sm:col-span-2 lg:col-span-1">
+                <div className="w-16 h-16 mx-auto mb-3 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                  <Car className="w-8 h-8 text-white" />
                 </div>
-                <div className="text-lg font-bold text-white mb-1">15.000+</div>
-                <div className="text-emerald-100 text-xs">Alunos Formados</div>
+                <div className="text-3xl lg:text-4xl font-bold text-white mb-2">15.000+</div>
+                <div className="text-emerald-50 text-sm lg:text-base font-medium">Alunos Formados</div>
+                <p className="text-emerald-100/80 text-xs mt-2">Excelência reconhecida pelos resultados</p>
               </div>
             </>
           )}
 
           {selectedProfile === "instrutor" && (
             <>
-              <div className="text-center">
-                <div className="w-9 h-9 mx-auto mb-1 bg-white/10 backdrop-blur rounded-xl flex items-center justify-center">
-                  <FileCheck className="w-4 h-4 text-white" />
+              <div className="text-center bg-white/10 backdrop-blur-md rounded-2xl p-6 transition-all duration-300 hover:bg-white/15">
+                <div className="w-16 h-16 mx-auto mb-3 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                  <ShieldCheck className="w-8 h-8 text-white" />
                 </div>
-                <div className="text-lg font-bold text-white mb-1">Cadastre-se</div>
-                <div className="text-emerald-100 text-xs">Na Plataforma</div>
+                <div className="text-2xl lg:text-3xl font-bold text-white mb-2">Certificação</div>
+                <div className="text-emerald-50 text-sm lg:text-base font-medium">Profissional Validada</div>
+                <p className="text-emerald-100/80 text-xs mt-2">Credibilidade e reconhecimento</p>
               </div>
 
-              <div className="text-center">
-                <div className="w-9 h-9 mx-auto mb-1 bg-white/10 backdrop-blur rounded-xl flex items-center justify-center">
-                  <Users className="w-4 h-4 text-white" />
+              <div className="text-center bg-white/10 backdrop-blur-md rounded-2xl p-6 transition-all duration-300 hover:bg-white/15">
+                <div className="w-16 h-16 mx-auto mb-3 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                  <Clock className="w-8 h-8 text-white" />
                 </div>
-                <div className="text-lg font-bold text-white mb-1">Receba Solicitações</div>
-                <div className="text-emerald-100 text-xs">De Alunos</div>
+                <div className="text-2xl lg:text-3xl font-bold text-white mb-2">Flexibilidade</div>
+                <div className="text-emerald-50 text-sm lg:text-base font-medium">Total de Horários</div>
+                <p className="text-emerald-100/80 text-xs mt-2">Gerencie sua agenda com autonomia</p>
               </div>
 
-              <div className="text-center">
-                <div className="w-9 h-9 mx-auto mb-1 bg-white/10 backdrop-blur rounded-xl flex items-center justify-center">
-                  <BookOpen className="w-4 h-4 text-white" />
+              <div className="text-center bg-white/10 backdrop-blur-md rounded-2xl p-6 transition-all duration-300 hover:bg-white/15 sm:col-span-2 lg:col-span-1">
+                <div className="w-16 h-16 mx-auto mb-3 bg-amber-400/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                  <Wallet className="w-8 h-8 text-amber-400" />
                 </div>
-                <div className="text-lg font-bold text-white mb-1">Ministre Aulas</div>
-                <div className="text-emerald-100 text-xs">Com Excelência</div>
-              </div>
-
-              <div className="text-center">
-                <div className="w-9 h-9 mx-auto mb-1 bg-white/10 backdrop-blur rounded-xl flex items-center justify-center">
-                  <Wallet className="w-4 h-4 text-white" />
-                </div>
-                <div className="text-lg font-bold text-white mb-1">Receba Pagamentos</div>
-                <div className="text-emerald-100 text-xs">Transparente</div>
+                <div className="text-2xl lg:text-3xl font-bold text-white mb-2">Pagamentos</div>
+                <div className="text-emerald-50 text-sm lg:text-base font-medium">Transparentes e Seguros</div>
+                <p className="text-emerald-100/80 text-xs mt-2">Receba seus ganhos em dia</p>
               </div>
             </>
           )}
 
           {selectedProfile === "autoescola" && (
             <>
-              <div className="text-center">
-                <div className="w-9 h-9 mx-auto mb-1 bg-white/10 backdrop-blur rounded-xl flex items-center justify-center">
-                  <Building2 className="w-4 h-4 text-white" />
+              <div className="text-center bg-white/10 backdrop-blur-md rounded-2xl p-6 transition-all duration-300 hover:bg-white/15">
+                <div className="w-16 h-16 mx-auto mb-3 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                  <Building2 className="w-8 h-8 text-white" />
                 </div>
-                <div className="text-lg font-bold text-white mb-1">Cadastre-se</div>
-                <div className="text-emerald-100 text-xs">Como Auto Escola</div>
+                <div className="text-2xl lg:text-3xl font-bold text-white mb-2">Gestão</div>
+                <div className="text-emerald-50 text-sm lg:text-base font-medium">Completa e Integrada</div>
+                <p className="text-emerald-100/80 text-xs mt-2">Controle total da sua instituição</p>
               </div>
 
-              <div className="text-center">
-                <div className="w-9 h-9 mx-auto mb-1 bg-white/10 backdrop-blur rounded-xl flex items-center justify-center">
-                  <Users className="w-4 h-4 text-white" />
+              <div className="text-center bg-white/10 backdrop-blur-md rounded-2xl p-6 transition-all duration-300 hover:bg-white/15">
+                <div className="w-16 h-16 mx-auto mb-3 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                  <Users className="w-8 h-8 text-white" />
                 </div>
-                <div className="text-lg font-bold text-white mb-1">Adicione Instrutores</div>
-                <div className="text-emerald-100 text-xs">Sua Equipe</div>
+                <div className="text-2xl lg:text-3xl font-bold text-white mb-2">Equipe</div>
+                <div className="text-emerald-50 text-sm lg:text-base font-medium">Organizada e Eficiente</div>
+                <p className="text-emerald-100/80 text-xs mt-2">Gerencie todos os instrutores</p>
               </div>
 
-              <div className="text-center">
-                <div className="w-9 h-9 mx-auto mb-1 bg-white/10 backdrop-blur rounded-xl flex items-center justify-center">
-                  <Calendar className="w-4 h-4 text-white" />
+              <div className="text-center bg-white/10 backdrop-blur-md rounded-2xl p-6 transition-all duration-300 hover:bg-white/15 sm:col-span-2 lg:col-span-1">
+                <div className="w-16 h-16 mx-auto mb-3 bg-amber-400/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                  <Award className="w-8 h-8 text-amber-400" />
                 </div>
-                <div className="text-lg font-bold text-white mb-1">Gerencie Turmas</div>
-                <div className="text-emerald-100 text-xs">Com Facilidade</div>
-              </div>
-
-              <div className="text-center">
-                <div className="w-9 h-9 mx-auto mb-1 bg-white/10 backdrop-blur rounded-xl flex items-center justify-center">
-                  <Award className="w-4 h-4 text-amber-400" />
-                </div>
-                <div className="text-lg font-bold text-white mb-1">Expanda Negócio</div>
-                <div className="text-emerald-100 text-xs">Alcance Mais Alunos</div>
+                <div className="text-2xl lg:text-3xl font-bold text-white mb-2">Crescimento</div>
+                <div className="text-emerald-50 text-sm lg:text-base font-medium">Digital Acelerado</div>
+                <p className="text-emerald-100/80 text-xs mt-2">Alcance mais alunos na região</p>
               </div>
             </>
           )}

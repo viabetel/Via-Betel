@@ -1,201 +1,227 @@
 "use client"
-
-import { cn } from "@/lib/utils"
-
-import { motion, useScroll, useTransform } from "framer-motion"
-import { Star, Quote, TrendingUp, Users, Award } from "lucide-react"
+import { motion, useScroll } from "framer-motion"
+import { Star, MapPin, Award, ChevronLeft, ChevronRight } from "lucide-react"
 import { Reveal } from "./reveal"
-import { useRef } from "react"
+import { useRef, useState } from "react"
+import Image from "next/image"
 
-const testimonials = [
+const instructors = [
   {
     id: 1,
-    name: "Carlos Mendes",
-    role: "Novo Motorista Categoria B",
-    image: "/placeholder.svg?height=80&width=80",
-    rating: 5,
-    text: "A Via Betel mudou minha vida! Consegui minha habilitação em tempo recorde com instrutores muito pacientes e profissionais. O método de ensino é excelente e me senti preparado para o exame desde o início.",
+    name: "João Oliveira",
+    role: "Instrutor Categorias B/C/D",
+    image: "/male-instructor-driving-car-professional.jpg",
+    rating: 5.0,
+    location: "Tijuca, Rio de Janeiro/RJ",
+    pricePerHour: 130,
+    approvedStudents: 890,
+    experience: "22 anos de experiência",
   },
   {
     id: 2,
-    name: "Mariana Silva",
-    role: "Motorista Profissional Categoria D",
-    image: "/placeholder.svg?height=80&width=80",
-    rating: 5,
-    text: "Sempre quis ser motorista de ônibus e a Via Betel tornou esse sonho realidade. Os instrutores têm vasta experiência e me ensinaram não só para passar no exame, mas para ser uma profissional de verdade. Hoje trabalho em uma grande empresa de transporte!",
+    name: "Lucas Almeida",
+    role: "Instrutor Categoria D",
+    image: "/male-instructor-driving-bus-professional.jpg",
+    rating: 5.0,
+    location: "Boa Viagem, Recife/PE",
+    pricePerHour: 140,
+    approvedStudents: 750,
+    experience: "20 anos de experiência",
   },
   {
     id: 3,
-    name: "João Pedro Santos",
-    role: "Instrutor Parceiro",
-    image: "/placeholder.svg?height=80&width=80",
-    rating: 5,
-    text: "Como instrutor, a plataforma da Via Betel facilitou muito minha vida. Consigo gerenciar meus alunos, horários e receber pagamentos de forma simples e segura. A equipe de suporte está sempre disponível quando preciso. Recomendo!",
-  },
-]
-
-const stats = [
-  {
-    icon: Users,
-    value: "15.000+",
-    label: "Alunos Aprovados",
-    color: "text-emerald-600",
-    bgColor: "bg-emerald-50",
+    name: "Bruno Ribeiro",
+    role: "Instrutor Categorias B/C",
+    image: "/male-instructor-in-truck-professional.jpg",
+    rating: 5.0,
+    location: "Cambuí, Campinas/SP",
+    pricePerHour: 150,
+    approvedStudents: 1020,
+    experience: "25 anos de experiência",
   },
   {
-    icon: Award,
-    value: "95%",
-    label: "Taxa de Aprovação",
-    color: "text-blue-600",
-    bgColor: "bg-blue-50",
-  },
-  {
-    icon: TrendingUp,
-    value: "4.9/5",
-    label: "Avaliação Média",
-    color: "text-amber-600",
-    bgColor: "bg-amber-50",
+    id: 4,
+    name: "Mariana Santos",
+    role: "Instrutora Categoria A/B",
+    image: "/female-instructor-motorcycle-professional.jpg",
+    rating: 5.0,
+    location: "Copacabana, Rio de Janeiro/RJ",
+    pricePerHour: 120,
+    approvedStudents: 680,
+    experience: "18 anos de experiência",
   },
 ]
 
 export function TestimonialsSection() {
   const sectionRef = useRef<HTMLDivElement>(null)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(true)
+
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
   })
 
-  const y = useTransform(scrollYProgress, [0, 1], [100, -100])
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0])
+  const checkScrollButtons = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current
+      setCanScrollLeft(scrollLeft > 0)
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10)
+    }
+  }
+
+  const scroll = (direction: "left" | "right") => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = 126
+      scrollContainerRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      })
+      setTimeout(checkScrollButtons, 300)
+    }
+  }
 
   return (
-    <section ref={sectionRef} className="relative py-16 md:py-24 overflow-hidden bg-white">
+    <section ref={sectionRef} className="relative py-6 md:py-8 overflow-hidden bg-gradient-to-b from-slate-50 to-white">
       <div className="absolute inset-0">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-emerald-100 to-emerald-50 rounded-full blur-3xl opacity-50" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-amber-100 to-amber-50 rounded-full blur-3xl opacity-50" />
+        <div className="absolute top-0 right-0 w-38 h-38 bg-gradient-to-br from-emerald-100 to-emerald-50 rounded-full blur-3xl opacity-50" />
+        <div className="absolute bottom-0 left-0 w-38 h-38 bg-gradient-to-tr from-amber-100 to-amber-50 rounded-full blur-3xl opacity-50" />
       </div>
 
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
         <Reveal>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="relative group"
-              >
-                <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-slate-100">
-                  <div className={cn("inline-flex p-3 rounded-xl mb-4", stat.bgColor)}>
-                    <stat.icon className={cn("w-6 h-6", stat.color)} />
-                  </div>
-                  <h3 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-2">{stat.value}</h3>
-                  <p className="text-sm text-neutral-600">{stat.label}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </Reveal>
-
-        <Reveal>
-          <div className="text-center mb-12">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="inline-block mb-6"
-            >
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-amber-500 rounded-full blur-xl opacity-30" />
-                <div className="relative flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-lg">
-                  <Quote className="w-5 h-5" />
-                  <span className="text-sm font-semibold">Histórias de Sucesso</span>
-                </div>
-              </div>
-            </motion.div>
-
+          <div className="text-center mb-6">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-900 mb-6"
+              transition={{ duration: 0.6 }}
+              className="text-xl md:text-2xl lg:text-3xl font-bold text-neutral-900 mb-2"
             >
-              Transformando Vidas,{" "}
+              Conheça Nossos{" "}
               <span className="bg-gradient-to-r from-emerald-600 to-amber-600 bg-clip-text text-transparent">
-                Uma Carteira por Vez
+                Instrutores
               </span>
             </motion.h2>
-
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-lg md:text-xl text-neutral-600 max-w-3xl mx-auto leading-relaxed"
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-xs md:text-sm text-neutral-600 max-w-2xl mx-auto"
             >
-              Conheça as histórias reais de quem conquistou independência e novas oportunidades profissionais
+              Profissionais qualificados e experientes prontos para ajudá-lo a conquistar sua habilitação
             </motion.p>
           </div>
         </Reveal>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <Reveal key={testimonial.id} delay={index * 0.1}>
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.15 }}
-                whileHover={{ y: -12, transition: { duration: 0.3 } }}
-                className="group relative h-full"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 to-amber-500 rounded-3xl blur-lg opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
+        <div className="relative">
+          {/* Scroll Left Button */}
+          {canScrollLeft && (
+            <button
+              onClick={() => scroll("left")}
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-white shadow-lg rounded-full p-1.5 hover:bg-emerald-50 transition-colors"
+              aria-label="Scroll left"
+            >
+              <ChevronLeft className="w-4 h-4 text-emerald-600" />
+            </button>
+          )}
 
-                <div className="relative h-full bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-100 flex flex-col">
-                  <div className="flex items-center justify-between mb-6">
-                    <Quote className="w-12 h-12 text-emerald-600 opacity-20" />
-                    <div className="flex gap-1">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                      ))}
+          {/* Scroll Right Button */}
+          {canScrollRight && (
+            <button
+              onClick={() => scroll("right")}
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white shadow-lg rounded-full p-1.5 hover:bg-emerald-50 transition-colors"
+              aria-label="Scroll right"
+            >
+              <ChevronRight className="w-4 h-4 text-emerald-600" />
+            </button>
+          )}
+
+          {/* Instructors Scroll Container */}
+          <div
+            ref={scrollContainerRef}
+            onScroll={checkScrollButtons}
+            className="flex gap-3 overflow-x-auto pb-3 scrollbar-hide snap-x snap-mandatory"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            {instructors.map((instructor, index) => (
+              <Reveal key={instructor.id} delay={index * 0.1}>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  whileHover={{ y: -8, transition: { duration: 0.3 } }}
+                  className="group relative flex-shrink-0 w-[200px] snap-center"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 to-amber-500 rounded-2xl blur-lg opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
+
+                  <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-200">
+                    {/* Image with Rating Badge */}
+                    <div className="relative h-28 overflow-hidden bg-gradient-to-br from-emerald-100 to-slate-100">
+                      <Image
+                        src={instructor.image || "/placeholder.svg"}
+                        alt={instructor.name}
+                        fill
+                        className="object-cover"
+                      />
+                      <div className="absolute top-1.5 right-1.5 bg-white rounded-full px-2 py-0.5 shadow-md flex items-center gap-1">
+                        <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                        <span className="text-[10px] font-bold text-neutral-900">{instructor.rating}</span>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-3">
+                      <h3 className="text-xs font-bold text-neutral-900 mb-0.5">{instructor.name}</h3>
+                      <p className="text-[10px] text-neutral-600 mb-2">{instructor.role}</p>
+
+                      <div className="flex items-center gap-1 text-emerald-600 mb-2">
+                        <MapPin className="w-3 h-3" />
+                        <span className="text-[9px]">{instructor.location}</span>
+                      </div>
+
+                      {/* Price and Students */}
+                      <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-200">
+                        <div>
+                          <p className="text-xs font-bold text-emerald-600">R$ {instructor.pricePerHour}</p>
+                          <p className="text-[8px] text-neutral-500">por hora</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-xs font-bold text-neutral-900">{instructor.approvedStudents}</p>
+                          <p className="text-[8px] text-neutral-500">aprovados</p>
+                        </div>
+                      </div>
+
+                      {/* Experience */}
+                      <div className="flex items-center gap-1 text-emerald-600">
+                        <Award className="w-3 h-3" />
+                        <span className="text-[9px] font-medium">{instructor.experience}</span>
+                      </div>
                     </div>
                   </div>
-
-                  <p className="text-neutral-700 leading-relaxed mb-8 text-base flex-grow">{testimonial.text}</p>
-
-                  <div className="flex items-center gap-4 pt-6 border-t border-slate-100">
-                    <div className="relative w-14 h-14 rounded-full overflow-hidden bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-lg">
-                      <span className="text-white font-bold text-xl">{testimonial.name.charAt(0)}</span>
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-neutral-900 text-base">{testimonial.name}</h4>
-                      <p className="text-sm text-neutral-500">{testimonial.role}</p>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </Reveal>
-          ))}
+                </motion.div>
+              </Reveal>
+            ))}
+          </div>
         </div>
 
         <Reveal>
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="mt-16 text-center"
+            className="mt-6 text-center"
           >
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 rounded-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+              className="px-6 py-2 rounded-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white text-xs font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
             >
-              Comece Sua Jornada Agora
+              Ver Todos os Instrutores
             </motion.button>
           </motion.div>
         </Reveal>

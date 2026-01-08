@@ -88,7 +88,7 @@ const cnhCategories = [
     id: "categoria-c",
     name: "Categoria C",
     description: "Para veículos de carga - caminhões e tratores",
-    icon: TruckImageIcon, // Caminhão PNG na categoria C
+    icon: TruckImageIcon,
     tint: "bg-green-50",
     gradient: "from-green-500 to-green-600",
     details: {
@@ -169,10 +169,9 @@ export function MaterialsSection() {
   }
 
   return (
-    <section className="relative min-h-[70vh] overflow-hidden w-full max-w-full" id="materials">
-      <div className="flex flex-col md:flex-row min-h-[70vh]">
-        {/* Left side - Green background with content */}
-        <div className="relative w-full bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-800 py-16 sm:py-22 flex items-center">
+    <section className="relative min-h-[78vh] overflow-hidden w-full max-w-full" id="materials">
+      <div className="flex flex-col md:flex-row min-h-[78vh]">
+        <div className="relative w-full bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-800 py-22 sm:py-30 flex items-center">
           <div className="absolute inset-0 opacity-5">
             <div className="absolute top-10 left-10 w-72 h-72 bg-white rounded-full blur-3xl" />
             <div className="absolute bottom-10 right-10 w-96 h-96 bg-amber-400 rounded-full blur-3xl" />
@@ -181,7 +180,6 @@ export function MaterialsSection() {
           <div className="relative z-10 px-4 sm:px-6 lg:px-8 w-full">
             <div className="max-w-7xl mx-auto">
               <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
-                {/* Conteúdo textual */}
                 <div className="text-white">
                   <Reveal>
                     <div>
@@ -192,12 +190,12 @@ export function MaterialsSection() {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -20 }}
                           transition={{ duration: 0.3, ease: "easeInOut" }}
-                          className="font-bold mb-2 text-xl sm:text-2xl md:text-3xl"
+                          className="font-bold mb-3 text-2xl sm:text-3xl md:text-4xl"
                         >
                           <AnimatedText text={activeCategoryData.name} delay={0.2} />
                         </motion.h2>
                       </AnimatePresence>
-                      <p className="text-[10px] sm:text-xs md:text-sm text-white/90 leading-relaxed mb-3">
+                      <p className="text-sm sm:text-base md:text-lg text-white/90 leading-relaxed mb-5">
                         {activeCategoryData.description}
                       </p>
 
@@ -208,12 +206,42 @@ export function MaterialsSection() {
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.9 }}
                           transition={{ duration: 0.3 }}
-                          className="inline-block mb-3 px-3 py-1.5 rounded-full bg-amber-500/30 backdrop-blur-md border border-amber-400/40"
+                          className="inline-block mb-5 px-4 py-2 rounded-full bg-amber-500/30 backdrop-blur-md border border-amber-400/40"
                         >
-                          <p className="text-white text-[10px] sm:text-xs font-semibold">
+                          <p className="text-white text-xs sm:text-sm font-semibold">
                             {activeInstructorCount} instrutor{activeInstructorCount !== 1 ? "es" : ""} disponíve
                             {activeInstructorCount !== 1 ? "is" : "l"}
                           </p>
+                        </motion.div>
+                      </AnimatePresence>
+
+                      <AnimatePresence mode="wait">
+                        <motion.div
+                          key={`${activeCategory}-details`}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          transition={{ duration: 0.3 }}
+                          className="space-y-3 mb-6"
+                        >
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div className="bg-gradient-to-r from-emerald-500/20 to-emerald-400/10 backdrop-blur-sm border border-emerald-400/30 rounded-xl p-3">
+                              <p className="text-xs text-amber-300 mb-1 font-semibold">Veículos</p>
+                              <p className="text-sm text-white font-medium leading-tight">
+                                {activeCategoryData.details.vehicles}
+                              </p>
+                            </div>
+                            <div className="bg-gradient-to-r from-amber-500/20 to-amber-400/10 backdrop-blur-sm border border-amber-400/30 rounded-xl p-3">
+                              <p className="text-xs text-amber-300 mb-1 font-semibold">Idade Mínima</p>
+                              <p className="text-sm text-white font-medium">{activeCategoryData.details.minAge}</p>
+                            </div>
+                          </div>
+                          <div className="bg-gradient-to-r from-emerald-400/20 to-amber-400/10 backdrop-blur-sm border border-emerald-300/30 rounded-xl p-3">
+                            <p className="text-xs text-amber-300 mb-1 font-semibold">Requisitos</p>
+                            <p className="text-sm text-white font-medium leading-tight">
+                              {activeCategoryData.details.requirements}
+                            </p>
+                          </div>
                         </motion.div>
                       </AnimatePresence>
 
@@ -224,38 +252,12 @@ export function MaterialsSection() {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -10 }}
                           transition={{ duration: 0.3 }}
-                          className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mb-3"
-                        >
-                          <div className="backdrop-blur-md bg-white/10 p-2 rounded-lg border border-white/20">
-                            <p className="text-[10px] text-amber-300 mb-0.5 font-medium">Veículos</p>
-                            <p className="text-white text-[10px] sm:text-xs">{activeCategoryData.details.vehicles}</p>
-                          </div>
-                          <div className="backdrop-blur-md bg-white/10 p-2 rounded-lg border border-white/20">
-                            <p className="text-[10px] text-amber-300 mb-0.5 font-medium">Idade Mínima</p>
-                            <p className="text-white text-[10px] sm:text-xs">{activeCategoryData.details.minAge}</p>
-                          </div>
-                          <div className="backdrop-blur-md bg-white/10 p-2 rounded-lg border border-white/20 sm:col-span-2">
-                            <p className="text-[10px] text-amber-300 mb-0.5 font-medium">Requisitos</p>
-                            <p className="text-white text-[10px] sm:text-xs">
-                              {activeCategoryData.details.requirements}
-                            </p>
-                          </div>
-                        </motion.div>
-                      </AnimatePresence>
-
-                      <AnimatePresence mode="wait">
-                        <motion.div
-                          key={`${activeCategory}-buttons`}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          transition={{ duration: 0.3, delay: 0.1 }}
-                          className="flex flex-col sm:flex-row gap-2 mt-3"
+                          className="flex flex-row gap-2.5 mt-5 mb-6"
                         >
                           <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="px-4 py-2 rounded-full text-xs font-semibold bg-white text-emerald-700 hover:bg-amber-400 hover:text-white transition-all duration-300 shadow-lg"
+                            className="px-4 py-2 rounded-full text-sm font-semibold bg-white text-emerald-700 hover:bg-amber-400 hover:text-white transition-all duration-300 shadow-lg"
                             onClick={() => console.log("Quero aprender")}
                           >
                             Quero Aprender
@@ -263,7 +265,7 @@ export function MaterialsSection() {
                           <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="px-4 py-2 rounded-full text-xs font-semibold bg-amber-500 text-white hover:bg-amber-600 transition-all duration-300 shadow-lg"
+                            className="px-4 py-2 rounded-full text-sm font-semibold bg-amber-500 text-white hover:bg-amber-600 transition-all duration-300 shadow-lg"
                             onClick={() => console.log("Quero ensinar")}
                           >
                             Quero Ensinar
@@ -273,14 +275,14 @@ export function MaterialsSection() {
                     </div>
                   </Reveal>
 
-                  <div className="mt-6 sm:mt-8">
+                  <div className="mt-4">
                     <Reveal delay={0.1}>
-                      <div className="flex flex-wrap gap-1.5">
+                      <div className="flex gap-2 pb-2">
                         {cnhCategories.map((category) => (
                           <motion.button
                             key={category.id}
                             className={cn(
-                              "px-2.5 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs rounded-full font-medium transition-all duration-300 backdrop-blur-md",
+                              "px-3 sm:px-4 py-1.5 text-xs sm:text-sm rounded-full font-medium transition-all duration-300 backdrop-blur-md",
                               activeCategory === category.id
                                 ? "bg-white text-emerald-700 shadow-lg"
                                 : "bg-white/20 text-white hover:bg-white/30",
@@ -297,7 +299,7 @@ export function MaterialsSection() {
                   </div>
                 </div>
 
-                <div ref={imageRef} className="relative min-h-[40vh] md:min-h-[50vh] flex items-center justify-center">
+                <div ref={imageRef} className="relative min-h-[37vh] md:min-h-[46vh] flex items-center justify-center">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={activeCategory}
@@ -311,7 +313,6 @@ export function MaterialsSection() {
                       style={{ y }}
                       className="relative w-full max-w-xl aspect-square"
                     >
-                      {/* Ícone do veículo */}
                       <div className="absolute inset-0 flex items-center justify-center">
                         {activeCategoryData.icon && <activeCategoryData.icon />}
                       </div>

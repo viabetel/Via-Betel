@@ -14,6 +14,13 @@ export const metadata: Metadata = {
   description:
     "Sua jornada para a habilitação começa aqui. Encontre instrutores qualificados ou conecte-se com alunos.",
   generator: "v0.app",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    apple: "/apple-touch-icon.jpg",
+  },
   alternates: {
     canonical: "https://viabetel.com/",
   },
@@ -40,6 +47,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={inter.variable}>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+      </head>
       <body className="font-sans bg-neutral-50 text-neutral-900 overflow-x-hidden antialiased">{children}</body>
     </html>
   )

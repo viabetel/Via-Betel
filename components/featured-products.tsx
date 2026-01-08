@@ -57,7 +57,7 @@ export function FeaturedProducts() {
       id="featured-products"
       style={{ opacity, y }}
     >
-      <div className="container mx-auto px-4 max-w-6xl relative z-10">
+      <div className="container mx-auto px-4 max-w-7xl relative z-10">
         <Reveal>
           <motion.div
             className="text-left mb-5 md:mb-6"
@@ -76,7 +76,7 @@ export function FeaturedProducts() {
         </Reveal>
 
         <motion.div
-          className="grid grid-cols-1 gap-4 md:gap-5 max-w-3xl mx-auto"
+          className="grid grid-cols-1 gap-4 md:gap-5"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
@@ -113,33 +113,44 @@ export function FeaturedProducts() {
                 }}
               >
                 <Reveal delay={index * 0.1}>
-                  <div className="group relative h-full rounded-2xl overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-black shadow-xl hover:shadow-2xl transition-all duration-500">
-                    <div className="flex flex-col md:flex-row h-full min-h-[192px]">
-                      <div className="flex flex-col items-center justify-center p-5 md:p-6 bg-gradient-to-br from-green-600 to-green-800 md:w-2/5">
-                        <div className="mb-4 group-hover:scale-110 transition-transform duration-300">
-                          <IconComponent className="w-10 h-10 md:w-12 md:h-12 text-white" strokeWidth={1.5} />
+                  <div className="group relative h-full rounded-2xl overflow-hidden bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-950 shadow-xl hover:shadow-2xl transition-all duration-500 border border-emerald-700/30">
+                    <div className="flex flex-col md:flex-row h-full min-h-[200px]">
+                      <div className="flex flex-col items-center justify-center p-6 md:p-8 bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-800 md:w-[35%] relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+
+                        <div className="mb-4 group-hover:scale-110 transition-transform duration-300 relative z-10">
+                          <IconComponent
+                            className="w-12 h-12 md:w-14 md:h-14 text-white drop-shadow-lg"
+                            strokeWidth={1.5}
+                          />
                         </div>
 
-                        <Link href={card.ctaLink} className="w-full">
+                        <Link href={card.ctaLink} className="w-full relative z-10">
                           <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="w-full py-2.5 px-5 rounded-lg font-bold text-xs md:text-sm bg-amber-500 text-white shadow-lg hover:shadow-xl hover:bg-amber-600 transition-all duration-300"
+                            className="w-full py-3 px-6 rounded-xl font-bold text-sm md:text-base bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-lg hover:shadow-amber-500/50 hover:from-amber-600 hover:to-amber-700 transition-all duration-300"
                           >
                             {card.ctaText}
                           </motion.button>
                         </Link>
                       </div>
 
-                      <div className="flex flex-col justify-center p-5 md:p-6 md:w-3/5 bg-gradient-to-br from-slate-800 to-slate-900">
-                        <h3 className="text-base md:text-lg font-bold text-white mb-2 group-hover:text-amber-400 transition-colors duration-300">
+                      <div className="flex flex-col justify-center p-6 md:p-8 md:w-[65%] bg-gradient-to-br from-emerald-900/95 via-emerald-800/95 to-emerald-900/95 backdrop-blur-sm relative">
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-amber-500/5 via-transparent to-transparent opacity-50" />
+
+                        <h3 className="text-lg md:text-xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors duration-300 relative z-10">
                           {card.title}
                         </h3>
-                        <p className="text-xs md:text-sm text-slate-300 leading-relaxed">{card.description}</p>
+                        <p className="text-sm md:text-base text-emerald-50/90 leading-relaxed relative z-10">
+                          {card.description}
+                        </p>
                       </div>
                     </div>
 
-                    <div className="absolute inset-0 bg-gradient-to-br from-green-500/0 via-amber-500/0 to-green-500/0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/0 via-amber-500/0 to-emerald-400/0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none" />
+
+                    <div className="absolute inset-0 border-2 border-amber-500/0 group-hover:border-amber-500/30 rounded-2xl transition-all duration-500 pointer-events-none" />
                   </div>
                 </Reveal>
               </motion.div>

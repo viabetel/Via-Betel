@@ -51,7 +51,7 @@ export function ResourcesSection() {
   const active = resources.find((r) => r.id === activeResource) || resources[0]
 
   return (
-    <section className="relative py-20 md:py-32 overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-50">
+    <section className="relative py-12 md:py-20 overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-50">
       {/* Background decorative elements */}
       <div className="absolute inset-0 opacity-30">
         <div className="absolute top-20 left-10 w-96 h-96 bg-emerald-300 rounded-full blur-3xl" />
@@ -65,37 +65,37 @@ export function ResourcesSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12 md:mb-16"
+          className="text-center mb-8 md:mb-10"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 bg-emerald-100 border border-emerald-200 rounded-full px-4 py-2 mb-4"
+            className="inline-flex items-center gap-2 bg-emerald-100 border border-emerald-200 rounded-full px-3 py-1.5 mb-3"
           >
-            <BookOpen className="w-4 h-4 text-emerald-600" />
-            <span className="text-sm text-emerald-700 font-semibold">Recursos Via Betel</span>
+            <BookOpen className="w-3.5 h-3.5 text-emerald-600" />
+            <span className="text-xs text-emerald-700 font-semibold">Recursos Via Betel</span>
           </motion.div>
 
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 text-balance">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 text-balance">
             Conteúdos que{" "}
             <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
               Transformam
             </span>
           </h2>
-          <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto text-pretty">
+          <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto text-pretty">
             Acesse materiais exclusivos, eventos e conteúdos que vão além da sala de aula
           </p>
         </motion.div>
 
         {/* Resource Cards - Tab Style */}
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           {/* Tab Navigation */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex flex-wrap justify-center gap-3 mb-8"
+            className="flex flex-wrap justify-center gap-2 mb-6"
           >
             {resources.map((resource) => {
               const Icon = resource.icon
@@ -108,21 +108,21 @@ export function ResourcesSection() {
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   className={cn(
-                    "group relative px-6 py-3 rounded-2xl font-semibold text-sm transition-all duration-300",
+                    "group relative px-4 py-2 rounded-xl font-semibold text-xs transition-all duration-300",
                     isActive
                       ? `bg-gradient-to-r ${resource.gradient} text-white shadow-xl`
                       : "bg-white text-gray-700 hover:bg-gray-50 shadow-md border border-gray-200",
                   )}
                 >
-                  <div className="flex items-center gap-2">
-                    <Icon className={cn("w-5 h-5 transition-transform", isActive && "scale-110")} />
+                  <div className="flex items-center gap-1.5">
+                    <Icon className={cn("w-4 h-4 transition-transform", isActive && "scale-110")} />
                     <span>{resource.title}</span>
                   </div>
 
                   {isActive && (
                     <motion.div
                       layoutId="activeTab"
-                      className="absolute inset-0 bg-gradient-to-r from-white/20 to-white/0 rounded-2xl"
+                      className="absolute inset-0 bg-gradient-to-r from-white/20 to-white/0 rounded-xl"
                       transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                     />
                   )}
@@ -140,7 +140,7 @@ export function ResourcesSection() {
               exit={{ opacity: 0, y: -30, scale: 0.95 }}
               transition={{ duration: 0.4, ease: "easeInOut" }}
               className={cn(
-                "relative rounded-3xl p-8 md:p-12 shadow-2xl overflow-hidden",
+                "relative rounded-2xl p-6 md:p-8 shadow-2xl overflow-hidden",
                 `bg-gradient-to-br ${active.bgGradient}`,
               )}
             >
@@ -152,11 +152,11 @@ export function ResourcesSection() {
                 )}
               />
 
-              <div className="relative z-10 grid md:grid-cols-2 gap-8 items-center">
+              <div className="relative z-10 grid md:grid-cols-2 gap-6 items-center">
                 {/* Left: Icon and Content */}
                 <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
                   <motion.div
-                    className={cn("inline-flex p-4 rounded-2xl mb-6 bg-gradient-to-br", active.gradient, "shadow-xl")}
+                    className={cn("inline-flex p-3 rounded-xl mb-4 bg-gradient-to-br", active.gradient, "shadow-xl")}
                     animate={{
                       rotate: [0, 5, 0, -5, 0],
                     }}
@@ -166,28 +166,28 @@ export function ResourcesSection() {
                       ease: "easeInOut",
                     }}
                   >
-                    <active.icon className="w-12 h-12 text-white" strokeWidth={2} />
+                    <active.icon className="w-8 h-8 text-white" strokeWidth={2} />
                   </motion.div>
 
-                  <div className="mb-2">
-                    <span className="text-sm font-semibold text-gray-600 uppercase tracking-wider">
+                  <div className="mb-1.5">
+                    <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       {active.subtitle}
                     </span>
                   </div>
 
-                  <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{active.title}</h3>
+                  <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">{active.title}</h3>
 
-                  <p className="text-lg text-gray-700 mb-6 leading-relaxed">{active.description}</p>
+                  <p className="text-base text-gray-700 mb-4 leading-relaxed">{active.description}</p>
 
                   {/* Highlights */}
-                  <div className="flex flex-wrap gap-2 mb-6">
+                  <div className="flex flex-wrap gap-1.5 mb-4">
                     {active.highlights.map((highlight, idx) => (
                       <motion.div
                         key={idx}
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.3 + idx * 0.1 }}
-                        className="flex items-center gap-2 bg-white/60 backdrop-blur-sm border border-gray-200 rounded-full px-3 py-1.5 text-sm text-gray-700 font-medium"
+                        className="flex items-center gap-1.5 bg-white/60 backdrop-blur-sm border border-gray-200 rounded-full px-2.5 py-1 text-xs text-gray-700 font-medium"
                       >
                         <div className={cn("w-1.5 h-1.5 rounded-full bg-gradient-to-r", active.gradient)} />
                         {highlight}
@@ -200,13 +200,13 @@ export function ResourcesSection() {
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
                     className={cn(
-                      "group flex items-center gap-2 px-8 py-4 rounded-xl font-bold text-white shadow-2xl transition-all",
+                      "group flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white shadow-2xl transition-all text-sm",
                       `bg-gradient-to-r ${active.gradient} hover:shadow-3xl`,
                     )}
                   >
-                    <active.buttonIcon className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                    <active.buttonIcon className="w-4 h-4 group-hover:scale-110 transition-transform" />
                     {active.buttonText}
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform ml-1" />
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform ml-1" />
                   </motion.button>
                 </motion.div>
 
@@ -217,7 +217,7 @@ export function ResourcesSection() {
                   transition={{ delay: 0.3 }}
                   className="hidden md:flex items-center justify-center"
                 >
-                  <div className="relative w-80 h-80">
+                  <div className="relative w-60 h-60">
                     {/* Animated circles */}
                     <motion.div
                       className={cn("absolute inset-0 rounded-full bg-gradient-to-br", active.gradient, "opacity-20")}
@@ -267,7 +267,7 @@ export function ResourcesSection() {
                           ease: "easeInOut",
                         }}
                       >
-                        <active.icon className="w-32 h-32 text-gray-700 drop-shadow-2xl" strokeWidth={1.5} />
+                        <active.icon className="w-24 h-24 text-gray-700 drop-shadow-2xl" strokeWidth={1.5} />
                       </motion.div>
                     </div>
                   </div>
@@ -282,25 +282,25 @@ export function ResourcesSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.4 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12"
+            className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8"
           >
-            <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 text-center">
-              <div className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent mb-2">
+            <div className="bg-white rounded-xl p-4 shadow-lg border border-gray-200 text-center">
+              <div className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent mb-1">
                 25+
               </div>
-              <div className="text-gray-600 font-medium">Estudos Publicados</div>
+              <div className="text-gray-600 font-medium text-sm">Estudos Publicados</div>
             </div>
-            <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 text-center">
-              <div className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent mb-2">
+            <div className="bg-white rounded-xl p-4 shadow-lg border border-gray-200 text-center">
+              <div className="text-2xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent mb-1">
                 150+
               </div>
-              <div className="text-gray-600 font-medium">Eventos Realizados</div>
+              <div className="text-gray-600 font-medium text-sm">Eventos Realizados</div>
             </div>
-            <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 text-center">
-              <div className="text-3xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent mb-2">
+            <div className="bg-white rounded-xl p-4 shadow-lg border border-gray-200 text-center">
+              <div className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent mb-1">
                 80+
               </div>
-              <div className="text-gray-600 font-medium">Episódios de Podcast</div>
+              <div className="text-gray-600 font-medium text-sm">Episódios de Podcast</div>
             </div>
           </motion.div>
         </div>
