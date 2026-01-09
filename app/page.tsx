@@ -12,24 +12,31 @@ export default function HomePage() {
   const organizationData = {
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
-    name: "Via Betel Auto Escola Digital",
+    name: "Via Betel - Instrutores de Condução",
     alternateName: "Via Betel",
     description:
-      "Plataforma digital que conecta alunos e instrutores de direção qualificados para aulas práticas de todas as categorias (A, B, C, D, E) em Minas Gerais",
+      "Plataforma que conecta alunos e instrutores de direção qualificados em Juiz de Fora e Minas Gerais. Aulas práticas, reforço CNH, treino para prova prática em todas as categorias (A, B, C, D, E)",
     url: "https://viabetel.com",
     logo: "https://viabetel.com/images/viabetel-logo.png",
     image: "https://viabetel.com/images/viabetel-og-image.jpg",
     telephone: "+55-32-98809-3506",
-    email: "contato@viabetel.com",
+    email: "contatoviabetel@gmail.com",
     address: {
       "@type": "PostalAddress",
+      addressLocality: "Juiz de Fora",
       addressRegion: "MG",
       addressCountry: "BR",
     },
-    areaServed: {
-      "@type": "State",
-      name: "Minas Gerais",
-    },
+    areaServed: [
+      {
+        "@type": "City",
+        name: "Juiz de Fora",
+      },
+      {
+        "@type": "State",
+        name: "Minas Gerais",
+      },
+    ],
     contactPoint: {
       "@type": "ContactPoint",
       telephone: "+55-32-98809-3506",
@@ -44,20 +51,21 @@ export default function HomePage() {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "@id": "https://viabetel.com/#business",
-    name: "Via Betel Auto Escola Digital",
+    name: "Via Betel - Instrutores de Condução",
     image: "https://viabetel.com/images/viabetel-logo.png",
     url: "https://viabetel.com",
     telephone: "+55-32-98809-3506",
     priceRange: "$$",
     address: {
       "@type": "PostalAddress",
+      addressLocality: "Juiz de Fora",
       addressRegion: "MG",
       addressCountry: "BR",
     },
     geo: {
       "@type": "GeoCoordinates",
-      latitude: "-19.9167",
-      longitude: "-43.9345",
+      latitude: "-21.7642",
+      longitude: "-43.3503",
     },
     openingHoursSpecification: [
       {
@@ -198,7 +206,7 @@ export default function HomePage() {
   const websiteData = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Via Betel Auto Escola Digital",
+    name: "Via Betel - Instrutores de Condução",
     url: "https://viabetel.com",
     potentialAction: {
       "@type": "SearchAction",

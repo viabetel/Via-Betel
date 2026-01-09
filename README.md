@@ -1,4 +1,4 @@
-# Via Betel - Plataforma de Conexão entre Alunos e Instrutores de Direção
+# Via Betel - Instrutores de Condução
 
 *Automatically synced with your [v0.app](https://v0.app) deployments*
 
@@ -51,6 +51,7 @@ Escolha uma opção:
 No Vercel Dashboard, adicione:
 ```env
 DATABASE_URL=postgresql://...
+DIRECT_URL=postgresql://...
 ```
 
 Opcional (Analytics):
@@ -73,21 +74,82 @@ npx prisma db push
 ## Desenvolvimento Local
 
 ```bash
-# Instalar dependências
+# 1. Instalar dependências
 npm install
 
-# Configurar banco de dados local
-cp .env.example .env
-# Edite .env com sua DATABASE_URL
+# 2. Gerar Prisma Client
+npx prisma generate
 
-# Executar migrations
+# 3. Criar tabelas no Supabase (usa DIRECT_URL)
 npx prisma db push
 
-# Iniciar servidor de desenvolvimento
+# 4. Iniciar servidor de desenvolvimento
 npm run dev
 ```
 
 Acesse: http://localhost:3000
+
+## Supabase Setup (sem PC)
+
+Se você não tem acesso ao terminal local ou prefere criar as tabelas diretamente no Vercel:
+
+### 1. Configure o Token de Bootstrap
+
+No Vercel Dashboard, adicione a variável de ambiente:
+```env
+BOOTSTRAP_TOKEN=seu-token-secreto-aqui
+```
+
+Escolha um valor aleatório e seguro (ex: `bootstrap_2024_abc123xyz`)
+
+### 2. Execute o Bootstrap
+
+Após o deploy, faça uma chamada POST para criar a tabela:
+
+```bash
+curl -X POST https://seu-dominio.vercel.app/api/admin/bootstrap \
+  -H "x-bootstrap-token: seu-token-secreto-aqui"
+```
+
+Resposta esperada:
+```json
+{
+  "ok": true,
+  "created": true,
+  "message": "Tabela leads criada com sucesso"
+}
+```
+
+### 3. Valide a Conexão
+
+Verifique se tudo está funcionando:
+
+```bash
+curl https://seu-dominio.vercel.app/api/health/db
+```
+
+Resposta esperada:
+```json
+{
+  "ok": true,
+  "count": 0,
+  "message": "Conexão com banco de dados OK"
+}
+```
+
+### 4. Visualize no Supabase
+
+1. Acesse [Supabase Dashboard](https://supabase.com/dashboard)
+2. Selecione seu projeto
+3. Vá em **Table Editor**
+4. Verá a tabela `leads` criada e pronta para uso
+
+### Notas de Segurança
+
+- O `BOOTSTRAP_TOKEN` é necessário apenas uma vez para criar a tabela
+- Após criar a tabela, você pode remover este endpoint se quiser
+- NUNCA compartilhe o token publicamente
+- Use tokens diferentes para cada ambiente (dev/staging/prod)
 
 ## Comandos Úteis
 
@@ -144,6 +206,40 @@ npx prisma studio
 - Selecione o projeto
 - Vá em "Logs"
 
+### Verificar Conexão
+
+Acesse o endpoint de health check:
+
+```bash
+# Local
+curl http://localhost:3000/api/health/db
+
+# Produção
+curl https://seu-dominio.vercel.app/api/health/db
+```
+
+Resposta esperada quando tudo está OK:
+```json
+{
+  "ok": true,
+  "message": "Conexão com banco de dados OK",
+  "timestamp": "2024-01-09T..."
+}
+```
+
+### Visualizar Dados no Supabase
+
+**Opção 1: Prisma Studio (Local)**
+```bash
+npx prisma studio
+```
+
+**Opção 2: Supabase Table Editor**
+1. Acesse [Supabase Dashboard](https://supabase.com/dashboard)
+2. Selecione seu projeto
+3. Vá em **Table Editor**
+4. Verá a tabela `leads` criada pelo Prisma
+
 ## Troubleshooting
 
 **Erro: Prisma Client não encontrado**
@@ -151,13 +247,27 @@ npx prisma studio
 npx prisma generate
 ```
 
-**Erro: Cannot connect to database**
+**Erro: "Tabelas não criadas"**
+```bash
+npx prisma db push
+```
+
+**Erro: "Cannot reach database server"**
+- Verifique se as URLs estão corretas
+- Confirme que o projeto Supabase está ativo
+- Verifique se a senha está correta nas connection strings
+
+**Erro: "Cannot connect to database"**
 - Verifique a `DATABASE_URL`
 - Confirme whitelist de IPs (Neon/Supabase)
 
-**Build falha no Vercel**
-- Verifique se `prisma generate` está no `postinstall`
-- Veja os logs detalhados no Vercel
+**Erro no Vercel Deploy**
+- Confirme que `DATABASE_URL` e `DIRECT_URL` estão configuradas nas Environment Variables
+- O script `postinstall` com `prisma generate` já está configurado
+
+**Erro: "too many connections"**
+- Certifique-se de usar `DATABASE_URL` com `?pgbouncer=true` (Transaction pooler)
+- Isso é essencial para ambientes serverless como Vercel
 
 ## Deployment
 
