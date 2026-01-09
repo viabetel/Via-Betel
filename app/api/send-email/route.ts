@@ -136,7 +136,7 @@ export async function POST(request: Request) {
 
     const emailConfig = {
       from: "Via Betel <onboarding@resend.dev>",
-      to: process.env.EMAIL_TO || "contato@viabetel.com.br",
+      to: "contatoviabetel@gmail.com",
       subject: tipo === "aluno" ? `🎓 Novo Aluno: ${dados.nome}` : `👨‍🏫 Novo Instrutor: ${dados.nome}`,
       html: htmlContent,
       text:

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
 import Link from "next/link"
@@ -56,7 +56,7 @@ export function Header() {
   return (
     <motion.header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 w-full overflow-hidden max-w-full",
+        "fixed top-0 left-0 right-0 z-50 w-full overflow-visible max-w-full",
         "transition-all duration-700 ease-in-out",
       )}
       initial={{ opacity: 0, y: -100 }}
@@ -86,112 +86,206 @@ export function Header() {
             </Link>
           </motion.div>
 
-          <nav ref={dropdownRef} className="hidden md:flex items-center gap-2 lg:gap-3 min-w-0">
-            {/* Para você dropdown */}
-            <div className="relative">
+          <nav ref={dropdownRef} className="flex items-center gap-2 lg:gap-3 min-w-0">
+            {/* Mobile menu button */}
+            <div className="md:hidden relative">
               <Button
                 variant="ghost"
-                onClick={() => toggleDropdown("para-voce")}
-                className="text-[var(--color-brand-text-light)] hover:text-[var(--color-brand-accent)] hover:bg-[var(--color-brand-accent)]/10 font-medium text-sm lg:text-base px-3 lg:px-4 py-2 rounded-lg flex items-center gap-1 transition-all"
+                onClick={() => setOpenDropdown(openDropdown === "mobile-menu" ? null : "mobile-menu")}
+                className="text-[var(--color-brand-text-light)] hover:text-[var(--color-brand-accent)] hover:bg-[var(--color-brand-accent)]/10 font-medium text-sm px-2 py-2 rounded-lg"
+                aria-label="Menu"
               >
-                Para você
-                <ChevronDown
-                  className={cn(
-                    "w-4 h-4 transition-transform duration-200",
-                    openDropdown === "para-voce" && "rotate-180",
-                  )}
-                />
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
               </Button>
-              {openDropdown === "para-voce" && (
-                <div className="absolute top-full left-0 mt-2 bg-background rounded-lg shadow-xl py-2 min-w-[200px] z-50 border border-border">
-                  <Link
-                    href="/aluno"
-                    className="block px-4 py-2.5 text-foreground hover:bg-gradient-to-r hover:from-[var(--color-brand-bg-accent-light)] hover:to-[var(--color-brand-bg-light)] hover:text-[var(--color-brand-primary-dark)] text-sm transition-colors"
+              <AnimatePresence>
+                {openDropdown === "mobile-menu" && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
+                    className="absolute top-full right-0 mt-2 bg-gradient-to-br from-emerald-50 via-white to-amber-50 rounded-xl shadow-2xl py-2 min-w-[180px] z-[9999] border-2 border-emerald-300/50 backdrop-blur-sm"
                   >
-                    Para Alunos
-                  </Link>
-                  <Link
-                    href="/instrutor"
-                    className="block px-4 py-2.5 text-foreground hover:bg-gradient-to-r hover:from-[var(--color-brand-bg-accent-light)] hover:to-[var(--color-brand-bg-light)] hover:text-[var(--color-brand-primary-dark)] text-sm transition-colors"
-                  >
-                    Para Instrutores
-                  </Link>
-                </div>
-              )}
+                    <Link
+                      href="/aluno"
+                      onClick={() => setOpenDropdown(null)}
+                      className="block px-3 py-2 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-xs transition-all font-medium"
+                    >
+                      Para Alunos
+                    </Link>
+                    <Link
+                      href="/instrutor"
+                      onClick={() => setOpenDropdown(null)}
+                      className="block px-3 py-2 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-xs transition-all font-medium"
+                    >
+                      Para Instrutores
+                    </Link>
+                    <div className="border-t border-emerald-200 my-1"></div>
+                    <a
+                      href="#aulas-praticas"
+                      onClick={() => setOpenDropdown(null)}
+                      className="block px-3 py-2 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-xs transition-all font-medium"
+                    >
+                      Aulas Práticas
+                    </a>
+                    <a
+                      href="#simulado"
+                      onClick={() => setOpenDropdown(null)}
+                      className="block px-3 py-2 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-xs transition-all font-medium"
+                    >
+                      Simulados
+                    </a>
+                    <a
+                      href="#renovacao"
+                      onClick={() => setOpenDropdown(null)}
+                      className="block px-3 py-2 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-xs transition-all font-medium"
+                    >
+                      Renovação CNH
+                    </a>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
-            {/* Serviços dropdown */}
-            <div className="relative">
-              <Button
-                variant="ghost"
-                onClick={() => toggleDropdown("servicos")}
-                className="text-[var(--color-brand-text-light)] hover:text-[var(--color-brand-accent)] hover:bg-[var(--color-brand-accent)]/10 font-medium text-sm lg:text-base px-3 lg:px-4 py-2 rounded-lg flex items-center gap-1 transition-all"
-              >
-                Serviços
-                <ChevronDown
-                  className={cn(
-                    "w-4 h-4 transition-transform duration-200",
-                    openDropdown === "servicos" && "rotate-180",
+            {/* Desktop navigation - hidden on mobile */}
+            <div className="hidden md:flex items-center gap-2 lg:gap-3">
+              {/* Para você dropdown */}
+              <div className="relative">
+                <Button
+                  variant="ghost"
+                  onClick={() => toggleDropdown("para-voce")}
+                  className="text-[var(--color-brand-text-light)] hover:text-[var(--color-brand-accent)] hover:bg-[var(--color-brand-accent)]/10 font-medium text-sm lg:text-base px-3 lg:px-4 py-2 rounded-lg flex items-center gap-1 transition-all"
+                >
+                  Para você
+                  <ChevronDown
+                    className={cn(
+                      "w-4 h-4 transition-transform duration-200",
+                      openDropdown === "para-voce" && "rotate-180",
+                    )}
+                  />
+                </Button>
+                <AnimatePresence>
+                  {openDropdown === "para-voce" && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      className="absolute top-full left-0 mt-2 bg-gradient-to-br from-emerald-50 via-white to-amber-50 rounded-xl shadow-2xl py-3 min-w-[220px] z-[9999] border-2 border-emerald-300/50 backdrop-blur-sm"
+                    >
+                      <Link
+                        href="/aluno"
+                        onClick={() => setOpenDropdown(null)}
+                        className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2"
+                      >
+                        Para Alunos
+                      </Link>
+                      <Link
+                        href="/instrutor"
+                        onClick={() => setOpenDropdown(null)}
+                        className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2"
+                      >
+                        Para Instrutores
+                      </Link>
+                    </motion.div>
                   )}
-                />
-              </Button>
-              {openDropdown === "servicos" && (
-                <div className="absolute top-full left-0 mt-2 bg-background rounded-lg shadow-xl py-2 min-w-[200px] z-50 border border-border">
-                  <Link
-                    href="#aulas-praticas"
-                    className="block px-4 py-2.5 text-foreground hover:bg-gradient-to-r hover:from-[var(--color-brand-bg-accent-light)] hover:to-[var(--color-brand-bg-light)] hover:text-[var(--color-brand-primary-dark)] text-sm transition-colors"
-                  >
-                    Aulas Práticas
-                  </Link>
-                  <Link
-                    href="#simulado"
-                    className="block px-4 py-2.5 text-foreground hover:bg-gradient-to-r hover:from-[var(--color-brand-bg-accent-light)] hover:to-[var(--color-brand-bg-light)] hover:text-[var(--color-brand-primary-dark)] text-sm transition-colors"
-                  >
-                    Simulados
-                  </Link>
-                  <Link
-                    href="#renovacao"
-                    className="block px-4 py-2.5 text-foreground hover:bg-gradient-to-r hover:from-[var(--color-brand-bg-accent-light)] hover:to-[var(--color-brand-bg-light)] hover:text-[var(--color-brand-primary-dark)] text-sm border-t border-border transition-colors"
-                  >
-                    Renovação CNH
-                  </Link>
-                </div>
-              )}
-            </div>
+                </AnimatePresence>
+              </div>
 
-            {/* Produtos dropdown */}
-            <div className="relative">
-              <Button
-                variant="ghost"
-                onClick={() => toggleDropdown("produtos")}
-                className="text-[var(--color-brand-text-light)] hover:text-[var(--color-brand-accent)] hover:bg-[var(--color-brand-accent)]/10 font-medium text-sm lg:text-base px-3 lg:px-4 py-2 rounded-lg flex items-center gap-1 transition-all"
-              >
-                Produtos
-                <ChevronDown
-                  className={cn(
-                    "w-4 h-4 transition-transform duration-200",
-                    openDropdown === "produtos" && "rotate-180",
+              {/* Serviços dropdown */}
+              <div className="relative">
+                <Button
+                  variant="ghost"
+                  onClick={() => toggleDropdown("servicos")}
+                  className="text-[var(--color-brand-text-light)] hover:text-[var(--color-brand-accent)] hover:bg-[var(--color-brand-accent)]/10 font-medium text-sm lg:text-base px-3 lg:px-4 py-2 rounded-lg flex items-center gap-1 transition-all"
+                >
+                  Serviços
+                  <ChevronDown
+                    className={cn(
+                      "w-4 h-4 transition-transform duration-200",
+                      openDropdown === "servicos" && "rotate-180",
+                    )}
+                  />
+                </Button>
+                <AnimatePresence>
+                  {openDropdown === "servicos" && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      className="absolute top-full left-0 mt-2 bg-gradient-to-br from-emerald-50 via-white to-amber-50 rounded-xl shadow-2xl py-3 min-w-[220px] z-[9999] border-2 border-emerald-300/50 backdrop-blur-sm"
+                    >
+                      <Link
+                        href="#aulas-praticas"
+                        onClick={() => setOpenDropdown(null)}
+                        className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2"
+                      >
+                        Aulas Práticas
+                      </Link>
+                      <Link
+                        href="#simulado"
+                        onClick={() => setOpenDropdown(null)}
+                        className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2"
+                      >
+                        Simulados
+                      </Link>
+                      <Link
+                        href="#renovacao"
+                        onClick={() => setOpenDropdown(null)}
+                        className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2 border-t border-emerald-200 mt-1 pt-2.5"
+                      >
+                        Renovação CNH
+                      </Link>
+                    </motion.div>
                   )}
-                />
-              </Button>
-              {openDropdown === "produtos" && (
-                <div className="absolute top-full left-0 mt-2 bg-background rounded-lg shadow-xl py-2 min-w-[200px] z-50 border border-border">
-                  <a
-                    href="#featured-products"
-                    className="block px-4 py-2.5 text-foreground hover:bg-gradient-to-r hover:from-[var(--color-brand-bg-accent-light)] hover:to-[var(--color-brand-bg-light)] hover:text-[var(--color-brand-primary-dark)] text-sm transition-colors"
-                    onClick={() => setOpenDropdown(null)}
-                  >
-                    Nossos Planos
-                  </a>
-                  <a
-                    href="#categorias"
-                    className="block px-4 py-2.5 text-foreground hover:bg-gradient-to-r hover:from-[var(--color-brand-bg-accent-light)] hover:to-[var(--color-brand-bg-light)] hover:text-[var(--color-brand-primary-dark)] text-sm border-t border-border transition-colors"
-                    onClick={() => setOpenDropdown(null)}
-                  >
-                    Categorias CNH
-                  </a>
-                </div>
-              )}
+                </AnimatePresence>
+              </div>
+
+              {/* Produtos dropdown */}
+              <div className="relative">
+                <Button
+                  variant="ghost"
+                  onClick={() => toggleDropdown("produtos")}
+                  className="text-[var(--color-brand-text-light)] hover:text-[var(--color-brand-accent)] hover:bg-[var(--color-brand-accent)]/10 font-medium text-sm lg:text-base px-3 lg:px-4 py-2 rounded-lg flex items-center gap-1 transition-all"
+                >
+                  Produtos
+                  <ChevronDown
+                    className={cn(
+                      "w-4 h-4 transition-transform duration-200",
+                      openDropdown === "produtos" && "rotate-180",
+                    )}
+                  />
+                </Button>
+                <AnimatePresence>
+                  {openDropdown === "produtos" && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      className="absolute top-full left-0 mt-2 bg-gradient-to-br from-emerald-50 via-white to-amber-50 rounded-xl shadow-2xl py-3 min-w-[220px] z-[9999] border-2 border-emerald-300/50 backdrop-blur-sm"
+                    >
+                      <a
+                        href="#featured-products"
+                        className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2"
+                        onClick={() => setOpenDropdown(null)}
+                      >
+                        Nossos Planos
+                      </a>
+                      <a
+                        href="#categorias"
+                        className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2 border-t border-emerald-200 mt-1 pt-2.5"
+                        onClick={() => setOpenDropdown(null)}
+                      >
+                        Categorias CNH
+                      </a>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           </nav>
 
@@ -216,34 +310,46 @@ export function Header() {
                     )}
                   />
                 </Button>
-                {openDropdown === "minha-conta" && (
-                  <div className="absolute top-full right-0 mt-2 bg-background rounded-lg shadow-xl py-2 min-w-[200px] z-50 border border-border">
-                    <Link
-                      href="#perfil"
-                      className="block px-4 py-2.5 text-foreground hover:bg-gradient-to-r hover:from-[var(--color-brand-bg-accent-light)] hover:to-[var(--color-brand-bg-light)] hover:text-[var(--color-brand-primary-dark)] text-sm transition-colors"
+                <AnimatePresence>
+                  {openDropdown === "minha-conta" && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      className="absolute top-full right-0 mt-2 bg-gradient-to-br from-emerald-50 via-white to-amber-50 rounded-xl shadow-2xl py-3 min-w-[220px] z-[9999] border-2 border-emerald-300/50 backdrop-blur-sm"
                     >
-                      Meu Perfil
-                    </Link>
-                    <Link
-                      href="#aulas"
-                      className="block px-4 py-2.5 text-foreground hover:bg-gradient-to-r hover:from-[var(--color-brand-bg-accent-light)] hover:to-[var(--color-brand-bg-light)] hover:text-[var(--color-brand-primary-dark)] text-sm transition-colors"
-                    >
-                      Minhas Aulas
-                    </Link>
-                    <Link
-                      href="#configuracoes"
-                      className="block px-4 py-2.5 text-foreground hover:bg-gradient-to-r hover:from-[var(--color-brand-bg-accent-light)] hover:to-[var(--color-brand-bg-light)] hover:text-[var(--color-brand-primary-dark)] text-sm border-t border-border transition-colors"
-                    >
-                      Configurações
-                    </Link>
-                    <Link
-                      href="#sair"
-                      className="block px-4 py-2.5 text-foreground hover:bg-gradient-to-r hover:from-[var(--color-brand-bg-accent-light)] hover:to-[var(--color-brand-bg-light)] hover:text-[var(--color-brand-primary-dark)] text-sm border-t border-border transition-colors"
-                    >
-                      Sair
-                    </Link>
-                  </div>
-                )}
+                      <Link
+                        href="#perfil"
+                        onClick={() => setOpenDropdown(null)}
+                        className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2"
+                      >
+                        Meu Perfil
+                      </Link>
+                      <Link
+                        href="#aulas"
+                        onClick={() => setOpenDropdown(null)}
+                        className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2"
+                      >
+                        Minhas Aulas
+                      </Link>
+                      <Link
+                        href="#configuracoes"
+                        onClick={() => setOpenDropdown(null)}
+                        className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2 border-t border-emerald-200 mt-1 pt-2.5"
+                      >
+                        Configurações
+                      </Link>
+                      <Link
+                        href="#sair"
+                        onClick={() => setOpenDropdown(null)}
+                        className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2 border-t border-emerald-200 mt-1 pt-2.5"
+                      >
+                        Sair
+                      </Link>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             )}
 

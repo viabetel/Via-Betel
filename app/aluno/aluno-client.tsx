@@ -1,14 +1,16 @@
 "use client"
 
-import { useState, type FormEvent } from "react"
-import { motion } from "framer-motion"
+import { useState, useRef, useEffect, type FormEvent } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, CheckCircle2, Loader2, GraduationCap, MapPin, Phone } from "lucide-react"
+import { ArrowLeft, CheckCircle2, Loader2, GraduationCap, MapPin, Phone, ChevronDown } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { cn } from "@/lib/utils"
 
 type FormData = {
   nome: string
+  email: string
   whatsapp: string
   cidade: string
   uf: string
@@ -20,6 +22,7 @@ type FormData = {
 export default function AlunoClientPage() {
   const [formData, setFormData] = useState<FormData>({
     nome: "",
+    email: "",
     whatsapp: "",
     cidade: "",
     uf: "",
@@ -29,6 +32,24 @@ export default function AlunoClientPage() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setOpenDropdown(null)
+      }
+    }
+
+    if (openDropdown) {
+      document.addEventListener("mousedown", handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [openDropdown])
 
   const formatWhatsApp = (value: string) => {
     const numbers = value.replace(/\D/g, "")
@@ -70,6 +91,7 @@ export default function AlunoClientPage() {
 
 Meus dados:
 Nome: ${formData.nome}
+E-mail: ${formData.email}
 Cidade: ${formData.cidade}/${formData.uf}
 Categoria: ${formData.categoria}
 Objetivo: ${formData.objetivo}
@@ -136,7 +158,7 @@ WhatsApp: ${formData.whatsapp}`,
             <p className="text-gray-600 text-xs">Preencha os dados abaixo para falarmos no WhatsApp</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-3">
+          <form onSubmit={handleSubmit} className="space-y-3" ref={dropdownRef}>
             <div className="bg-emerald-50 rounded-lg p-3 space-y-2 border border-emerald-200">
               <h3 className="text-base font-bold text-emerald-900 mb-2 flex items-center gap-1.5">
                 <Phone className="w-3.5 h-3.5" />
@@ -154,6 +176,20 @@ WhatsApp: ${formData.whatsapp}`,
                   onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
                   className="w-full px-2.5 py-1.5 text-xs border border-emerald-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-white"
                   placeholder="Digite seu nome"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-emerald-900 mb-1">
+                  E-mail <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full px-2.5 py-1.5 text-xs border border-emerald-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-white"
+                  placeholder="seu@email.com"
                 />
               </div>
 
@@ -210,61 +246,175 @@ WhatsApp: ${formData.whatsapp}`,
                 Suas Preferências
               </h3>
 
-              <div>
+              <div className="relative">
                 <label className="block text-[11px] font-semibold text-amber-900 mb-1">
                   Categoria desejada <span className="text-red-500">*</span>
                 </label>
-                <select
-                  required
-                  value={formData.categoria}
-                  onChange={(e) => setFormData({ ...formData, categoria: e.target.value })}
-                  className="w-full px-2.5 py-1.5 text-xs border border-amber-300 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition bg-white font-medium"
+                <button
+                  type="button"
+                  onClick={() => setOpenDropdown(openDropdown === "categoria" ? null : "categoria")}
+                  className="w-full px-2.5 py-1.5 text-xs border border-amber-300 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition bg-white font-medium text-left flex items-center justify-between"
                 >
-                  <option value="">Selecione</option>
-                  <option value="A">Categoria A (Moto)</option>
-                  <option value="B">Categoria B (Carro)</option>
-                  <option value="AB">Categoria AB (Carro e Moto)</option>
-                  <option value="C">Categoria C (Caminhão)</option>
-                  <option value="D">Categoria D (Ônibus)</option>
-                  <option value="E">Categoria E (Carreta)</option>
-                </select>
+                  <span className={formData.categoria ? "text-gray-900" : "text-gray-400"}>
+                    {formData.categoria ? `Categoria ${formData.categoria}` : "Selecione"}
+                  </span>
+                  <ChevronDown
+                    className={cn(
+                      "w-4 h-4 transition-transform duration-200",
+                      openDropdown === "categoria" && "rotate-180",
+                    )}
+                  />
+                </button>
+                <AnimatePresence>
+                  {openDropdown === "categoria" && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      className="absolute top-full left-0 right-0 mt-1 bg-gradient-to-br from-emerald-50 via-white to-amber-50 rounded-xl shadow-2xl py-2 z-[9999] border-2 border-emerald-300/50 backdrop-blur-sm max-h-60 overflow-y-auto"
+                    >
+                      {[
+                        { value: "A", label: "Categoria A (Moto)" },
+                        { value: "B", label: "Categoria B (Carro)" },
+                        { value: "AB", label: "Categoria AB (Carro e Moto)" },
+                        { value: "C", label: "Categoria C (Caminhão)" },
+                        { value: "D", label: "Categoria D (Ônibus)" },
+                        { value: "E", label: "Categoria E (Carreta)" },
+                      ].map((cat) => (
+                        <button
+                          key={cat.value}
+                          type="button"
+                          onClick={() => {
+                            setFormData({ ...formData, categoria: cat.value })
+                            setOpenDropdown(null)
+                          }}
+                          className="w-full text-left px-3 py-2 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-xs transition-all font-medium"
+                        >
+                          {cat.label}
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
-              <div>
+              <div className="relative">
                 <label className="block text-[11px] font-semibold text-amber-900 mb-1">
                   Seu objetivo <span className="text-red-500">*</span>
                 </label>
-                <select
-                  required
-                  value={formData.objetivo}
-                  onChange={(e) => setFormData({ ...formData, objetivo: e.target.value })}
-                  className="w-full px-2.5 py-1.5 text-xs border border-amber-300 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition bg-white font-medium"
+                <button
+                  type="button"
+                  onClick={() => setOpenDropdown(openDropdown === "objetivo" ? null : "objetivo")}
+                  className="w-full px-2.5 py-1.5 text-xs border border-amber-300 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition bg-white font-medium text-left flex items-center justify-between"
                 >
-                  <option value="">Selecione</option>
-                  <option value="primeira-habilitacao">Primeira habilitação</option>
-                  <option value="reabilitacao">Reabilitação</option>
-                  <option value="medo-dirigir">Medo de dirigir</option>
-                  <option value="aperfeicoamento">Aperfeiçoamento</option>
-                  <option value="outros">Outros</option>
-                </select>
+                  <span className={formData.objetivo ? "text-gray-900" : "text-gray-400"}>
+                    {formData.objetivo
+                      ? {
+                          "primeira-habilitacao": "Primeira habilitação",
+                          reabilitacao: "Reabilitação",
+                          "medo-dirigir": "Medo de dirigir",
+                          aperfeicoamento: "Aperfeiçoamento",
+                          outros: "Outros",
+                        }[formData.objetivo]
+                      : "Selecione"}
+                  </span>
+                  <ChevronDown
+                    className={cn(
+                      "w-4 h-4 transition-transform duration-200",
+                      openDropdown === "objetivo" && "rotate-180",
+                    )}
+                  />
+                </button>
+                <AnimatePresence>
+                  {openDropdown === "objetivo" && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      className="absolute top-full left-0 right-0 mt-1 bg-gradient-to-br from-emerald-50 via-white to-amber-50 rounded-xl shadow-2xl py-2 z-[9999] border-2 border-emerald-300/50 backdrop-blur-sm"
+                    >
+                      {[
+                        { value: "primeira-habilitacao", label: "Primeira habilitação" },
+                        { value: "reabilitacao", label: "Reabilitação" },
+                        { value: "medo-dirigir", label: "Medo de dirigir" },
+                        { value: "aperfeicoamento", label: "Aperfeiçoamento" },
+                        { value: "outros", label: "Outros" },
+                      ].map((obj) => (
+                        <button
+                          key={obj.value}
+                          type="button"
+                          onClick={() => {
+                            setFormData({ ...formData, objetivo: obj.value })
+                            setOpenDropdown(null)
+                          }}
+                          className="w-full text-left px-3 py-2 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-xs transition-all font-medium"
+                        >
+                          {obj.label}
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
-              <div>
+              <div className="relative">
                 <label className="block text-[11px] font-semibold text-amber-900 mb-1">
                   Melhor horário <span className="text-red-500">*</span>
                 </label>
-                <select
-                  required
-                  value={formData.horario}
-                  onChange={(e) => setFormData({ ...formData, horario: e.target.value })}
-                  className="w-full px-2.5 py-1.5 text-xs border border-amber-300 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition bg-white font-medium"
+                <button
+                  type="button"
+                  onClick={() => setOpenDropdown(openDropdown === "horario" ? null : "horario")}
+                  className="w-full px-2.5 py-1.5 text-xs border border-amber-300 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition bg-white font-medium text-left flex items-center justify-between"
                 >
-                  <option value="">Selecione</option>
-                  <option value="manha">Manhã (8h - 12h)</option>
-                  <option value="tarde">Tarde (13h - 18h)</option>
-                  <option value="noite">Noite (18h - 21h)</option>
-                  <option value="flexivel">Horário flexível</option>
-                </select>
+                  <span className={formData.horario ? "text-gray-900" : "text-gray-400"}>
+                    {formData.horario
+                      ? {
+                          manha: "Manhã (8h - 12h)",
+                          tarde: "Tarde (13h - 18h)",
+                          noite: "Noite (18h - 21h)",
+                          flexivel: "Horário flexível",
+                        }[formData.horario]
+                      : "Selecione"}
+                  </span>
+                  <ChevronDown
+                    className={cn(
+                      "w-4 h-4 transition-transform duration-200",
+                      openDropdown === "horario" && "rotate-180",
+                    )}
+                  />
+                </button>
+                <AnimatePresence>
+                  {openDropdown === "horario" && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      className="absolute top-full left-0 right-0 mt-1 bg-gradient-to-br from-emerald-50 via-white to-amber-50 rounded-xl shadow-2xl py-2 z-[9999] border-2 border-emerald-300/50 backdrop-blur-sm"
+                    >
+                      {[
+                        { value: "manha", label: "Manhã (8h - 12h)" },
+                        { value: "tarde", label: "Tarde (13h - 18h)" },
+                        { value: "noite", label: "Noite (18h - 21h)" },
+                        { value: "flexivel", label: "Horário flexível" },
+                      ].map((hor) => (
+                        <button
+                          key={hor.value}
+                          type="button"
+                          onClick={() => {
+                            setFormData({ ...formData, horario: hor.value })
+                            setOpenDropdown(null)
+                          }}
+                          className="w-full text-left px-3 py-2 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-xs transition-all font-medium"
+                        >
+                          {hor.label}
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
 

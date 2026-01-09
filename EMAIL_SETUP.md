@@ -1,81 +1,27 @@
 # Configuração de Envio de Emails - Via Betel
 
-## ⚠️ AÇÃO NECESSÁRIA - Configure no Vercel
+## ⚠️ CONFIGURAÇÃO ATUAL
 
-Você precisa adicionar as variáveis de ambiente no seu projeto Vercel:
+O sistema está configurado para enviar emails para: **contatoviabetel@gmail.com**
 
-1. Acesse: https://vercel.com/seu-usuario/seu-projeto/settings/environment-variables
-2. Adicione as seguintes variáveis:
+A API Key do Resend já está configurada: `re_LruyNf8d_8h82SE6ooi4PzN4AaaNwPwHf`
 
-```
-RESEND_API_KEY=re_LruyNf8d_8h82SE6ooi4PzN4AaaNwPwHf
-EMAIL_TO=seuemail@exemplo.com
-```
+## ✅ Pronto para Uso
 
-3. **IMPORTANTE**: Substitua `seuemail@exemplo.com` pelo email onde você quer receber as notificações
-4. Clique em "Save" e faça um novo deploy
+O sistema já está funcionando! Quando alguém preencher o formulário de aluno ou instrutor:
+1. Um email será enviado automaticamente para **contatoviabetel@gmail.com**
+2. O usuário será redirecionado para WhatsApp (mantém funcionalidade existente)
 
----
+## 📧 Como Funciona
 
-## Como Funciona
+### Modo Sandbox (Configuração Atual)
+O sistema usa o domínio sandbox do Resend (`onboarding@resend.dev`) que funciona imediatamente.
 
-O sistema agora envia emails automáticos sempre que um aluno ou instrutor preenche o formulário. Os dados são enviados tanto para seu email quanto mantém o redirecionamento para WhatsApp.
+**Limitação Importante**: Em modo sandbox, o Resend **só permite enviar emails para o email cadastrado na conta Resend**. Certifique-se de que contatoviabetel@gmail.com está cadastrado como email principal na sua conta Resend, caso contrário os emails não serão entregues.
 
-## Configuração Rápida com Resend (Recomendado)
+### O que você receberá por email
 
-### Passo 1: Crie uma conta no Resend
-- Acesse: https://resend.com
-- Crie uma conta gratuita (100 emails/dia grátis)
-
-### Passo 2: Obtenha sua API Key
-- No dashboard do Resend, vá em "API Keys"
-- Clique em "Create API Key"
-- Copie a chave gerada (começa com `re_`)
-
-### Passo 3: Configure as Variáveis de Ambiente no Vercel
-- Acesse seu projeto no Vercel
-- Vá em **Settings → Environment Variables**
-- Adicione as seguintes variáveis:
-
-```
-RESEND_API_KEY=re_xxxxxxxxxxxxxxxxx
-EMAIL_TO=seuemail@exemplo.com
-```
-
-**Importante**: O `EMAIL_TO` deve ser o email onde você quer receber as notificações de cadastro.
-
-### Passo 4: Faça novo deploy
-- O Vercel vai aplicar as novas variáveis automaticamente
-- Ou force um novo deploy em: Deployments → Redeploy
-
-## Domínio de Email
-
-### Modo Sandbox (Padrão)
-Por padrão, o sistema usa `onboarding@resend.dev` que funciona **imediatamente sem configuração**.
-
-**Limitações do Sandbox:**
-- Só envia emails para o endereço cadastrado na conta Resend
-- Perfeito para desenvolvimento e testes
-
-### Domínio Personalizado (Opcional)
-Para usar `noreply@viabetel.com.br`:
-
-1. No Resend, vá em **Domains**
-2. Clique em **Add Domain**
-3. Digite `viabetel.com.br`
-4. Configure os registros DNS no seu provedor:
-   - **SPF**: TXT record
-   - **DKIM**: TXT record  
-   - **DMARC**: TXT record (opcional)
-5. Aguarde verificação (pode levar até 24h)
-6. Atualize o código em `app/api/send-email/route.ts`:
-   ```typescript
-   from: "Via Betel <noreply@viabetel.com.br>",
-   ```
-
-## O que você receberá por email
-
-### Formulário de Aluno
+#### Formulário de Aluno
 - Nome completo
 - WhatsApp
 - Cidade/UF
@@ -83,7 +29,7 @@ Para usar `noreply@viabetel.com.br`:
 - Objetivo
 - Melhor horário para aulas
 
-### Formulário de Instrutor
+#### Formulário de Instrutor
 - Nome completo
 - WhatsApp
 - Cidade/UF
@@ -92,33 +38,64 @@ Para usar `noreply@viabetel.com.br`:
 - Possui veículo próprio
 - Disponibilidade semanal completa (dias e períodos)
 
-## Verificar se está funcionando
+## 🚀 Como Testar
 
-Após configurar:
+1. Acesse /aluno ou /instrutor no site
+2. Preencha o formulário com dados de teste
+3. Clique em enviar
+4. Verifique o email em **contatoviabetel@gmail.com** (pode cair no spam na primeira vez)
 
-1. **Preencha um formulário de teste**
-2. **Verifique seu email** (pode cair no spam na primeira vez)
-3. **Se não receber**, verifique os logs do Vercel:
-   - Dashboard → seu projeto
-   - Functions → clique na última execução
-   - Veja os logs de erro
+## 🔧 Configuração no Vercel
 
-## Modo de Desenvolvimento Local
+As variáveis de ambiente necessárias no Vercel:
 
-Sem `RESEND_API_KEY` configurada, o sistema registra os emails no console do servidor para você testar localmente sem precisar configurar nada.
+```
+RESEND_API_KEY=re_LruyNf8d_8h82SE6ooi4PzN4AaaNwPwHf
+```
 
-## Troubleshooting
+Não é necessário configurar `EMAIL_TO` pois já está fixo no código como `contatoviabetel@gmail.com`.
 
-**Erro 403 - Domain not verified**
-- Use o domínio sandbox `onboarding@resend.dev` (já configurado por padrão)
-- Ou verifique seu domínio personalizado no Resend
+## 📨 Domínio Personalizado (Opcional - Futuro)
+
+Se quiser usar um email personalizado como `noreply@viabetel.com`:
+
+### Passo 1: Verificar Domínio no Resend
+1. Acesse: https://resend.com/domains
+2. Clique em **Add Domain**
+3. Digite `viabetel.com`
+4. Configure os registros DNS fornecidos pelo Resend:
+   - **SPF**: `v=spf1 include:_spf.resend.com ~all`
+   - **DKIM**: (valor fornecido pelo Resend)
+   - **DMARC** (opcional): `v=DMARC1; p=none`
+
+### Passo 2: Atualizar o Código
+Após domínio verificado, edite `app/api/send-email/route.ts`:
+
+```typescript
+from: "Via Betel <noreply@viabetel.com>",
+```
+
+Com domínio verificado, você poderá enviar para qualquer email.
+
+## 🐛 Troubleshooting
 
 **Emails não chegam**
-- Verifique a caixa de spam
-- Confirme que `EMAIL_TO` está correto no Vercel
-- Verifique os logs do Vercel para erros
+- Verifique se contatoviabetel@gmail.com é o email principal da sua conta Resend
+- Verifique a caixa de spam de contatoviabetel@gmail.com
+- Acesse os logs do Vercel: Dashboard → Functions → última execução
+- Procure por erros com `[v0]` no início
+
+**Erro 403 - Domain not verified**
+- Normal em modo sandbox
+- Certifique-se de que contatoviabetel@gmail.com é o email da conta Resend
+- Para enviar para outros emails, você precisa verificar um domínio personalizado
 
 **Erro 401 - Invalid API Key**
-- Confirme que copiou a API Key completa do Resend
-- Verifique se configurou `RESEND_API_KEY` no Vercel
-- Faça um novo deploy após adicionar variáveis
+- Verifique se a API Key está configurada corretamente no Vercel
+- Faça um novo deploy após configurar variáveis
+
+## 📊 Plano Gratuito do Resend
+
+- 100 emails por dia
+- 3,000 emails por mês
+- Perfeito para começar!
