@@ -35,26 +35,24 @@ Plataforma completa para conectar alunos que desejam obter sua CNH com instrutor
 Escolha uma opção:
 
 **Neon (Recomendado)**
-```bash
-# Acesse https://neon.tech
-# Crie um projeto e copie a DATABASE_URL
-```
+- Acesse https://neon.tech
+- Crie um projeto e copie a DATABASE_URL
 
 **Supabase**
-```bash
-# Acesse https://supabase.com  
-# Crie um projeto e copie a Connection String
-```
+- Acesse https://supabase.com  
+- Crie um projeto e copie a Connection String
 
 ### 2. Configure as Variáveis de Ambiente
 
 No Vercel Dashboard, adicione:
+
 ```env
-DATABASE_URL=postgresql://...
-DIRECT_URL=postgresql://...
+DATABASE_URL=postgresql://user:password@host/database?pgbouncer=true
+DIRECT_URL=postgresql://user:password@host/database
 ```
 
 Opcional (Analytics):
+
 ```env
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
 NEXT_PUBLIC_FB_PIXEL_ID=XXXXXXXXXX
@@ -62,11 +60,15 @@ NEXT_PUBLIC_FB_PIXEL_ID=XXXXXXXXXX
 
 ### 3. Execute as Migrations
 
-```bash
-# Com a DATABASE_URL configurada
-npx prisma db push
+Com a DATABASE_URL configurada, execute:
 
-# Ou usando Vercel CLI
+```bash
+npx prisma db push
+```
+
+Ou usando Vercel CLI:
+
+```bash
 vercel env pull .env
 npx prisma db push
 ```
@@ -96,6 +98,7 @@ Se você não tem acesso ao terminal local ou prefere criar as tabelas diretamen
 ### 1. Configure o Token de Bootstrap
 
 No Vercel Dashboard, adicione a variável de ambiente:
+
 ```env
 BOOTSTRAP_TOKEN=seu-token-secreto-aqui
 ```
@@ -112,6 +115,7 @@ curl -X POST https://seu-dominio.vercel.app/api/admin/bootstrap \
 ```
 
 Resposta esperada:
+
 ```json
 {
   "ok": true,
@@ -129,6 +133,7 @@ curl https://seu-dominio.vercel.app/api/health/db
 ```
 
 Resposta esperada:
+
 ```json
 {
   "ok": true,
@@ -172,9 +177,11 @@ npx prisma generate
 ```
 ├── app/
 │   ├── aluno/          # Landing page de captação
-│   ├── api/leads/      # API para salvar leads
-│   ├── cadastro/       # Página de cadastro
-│   └── login/          # Página de login
+│   ├── api/
+│   │   ├── health/db/  # Health check do banco
+│   │   └── admin/      # Endpoints administrativos
+│   ├── instrutor/      # Cadastro de instrutores
+│   └── page.tsx        # Landing page principal
 ├── components/
 │   ├── hero-section.tsx
 │   ├── materials-section.tsx
@@ -183,7 +190,7 @@ npx prisma generate
 ├── prisma/
 │   └── schema.prisma   # Schema do banco
 └── lib/
-    └── analytics.ts    # Sistema de tracking
+    └── prisma.ts       # Cliente Prisma singleton
 ```
 
 ## Fluxo de Conversão
@@ -197,11 +204,13 @@ npx prisma generate
 ## Monitoramento
 
 ### Ver Leads no Banco
+
 ```bash
 npx prisma studio
 ```
 
 ### Ver Logs no Vercel
+
 - Acesse o Dashboard do Vercel
 - Selecione o projeto
 - Vá em "Logs"
@@ -210,18 +219,22 @@ npx prisma studio
 
 Acesse o endpoint de health check:
 
+Local:
 ```bash
-# Local
 curl http://localhost:3000/api/health/db
+```
 
-# Produção
+Produção:
+```bash
 curl https://seu-dominio.vercel.app/api/health/db
 ```
 
 Resposta esperada quando tudo está OK:
+
 ```json
 {
   "ok": true,
+  "count": 0,
   "message": "Conexão com banco de dados OK",
   "timestamp": "2024-01-09T..."
 }
@@ -230,11 +243,13 @@ Resposta esperada quando tudo está OK:
 ### Visualizar Dados no Supabase
 
 **Opção 1: Prisma Studio (Local)**
+
 ```bash
 npx prisma studio
 ```
 
 **Opção 2: Supabase Table Editor**
+
 1. Acesse [Supabase Dashboard](https://supabase.com/dashboard)
 2. Selecione seu projeto
 3. Vá em **Table Editor**
@@ -243,29 +258,35 @@ npx prisma studio
 ## Troubleshooting
 
 **Erro: Prisma Client não encontrado**
+
 ```bash
 npx prisma generate
 ```
 
 **Erro: "Tabelas não criadas"**
+
 ```bash
 npx prisma db push
 ```
 
 **Erro: "Cannot reach database server"**
+
 - Verifique se as URLs estão corretas
 - Confirme que o projeto Supabase está ativo
 - Verifique se a senha está correta nas connection strings
 
 **Erro: "Cannot connect to database"**
+
 - Verifique a `DATABASE_URL`
 - Confirme whitelist de IPs (Neon/Supabase)
 
 **Erro no Vercel Deploy**
+
 - Confirme que `DATABASE_URL` e `DIRECT_URL` estão configuradas nas Environment Variables
 - O script `postinstall` com `prisma generate` já está configurado
 
 **Erro: "too many connections"**
+
 - Certifique-se de usar `DATABASE_URL` com `?pgbouncer=true` (Transaction pooler)
 - Isso é essencial para ambientes serverless como Vercel
 
@@ -280,13 +301,6 @@ Your project is live at:
 Continue building your app on:
 
 **[https://v0.app/chat/EVI4HheW4RQ](https://v0.app/chat/EVI4HheW4RQ)**
-
-## Documentação Adicional
-
-- [DEPLOYMENT.md](./DEPLOYMENT.md) - Guia completo de deploy
-- [Prisma Docs](https://www.prisma.io/docs)
-- [Next.js Docs](https://nextjs.org/docs)
-- [Vercel Docs](https://vercel.com/docs)
 
 ## Licença
 
