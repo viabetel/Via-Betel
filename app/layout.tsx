@@ -7,7 +7,6 @@ import { MotionDebugBadge } from "@/components/motion-debug-badge"
 import { AuthProvider } from "@/lib/auth-context"
 import { SupabaseSetupAlert } from "@/components/supabase-setup-alert"
 import { TopLoadingBar } from "@/components/top-loading-bar"
-import { RouteLoadingOverlay } from "@/components/ui/route-loading-overlay"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -375,7 +374,6 @@ export default function RootLayout({
           <Suspense fallback={null}>
             <TopLoadingBar />
           </Suspense>
-          <RouteLoadingOverlay />
           <SupabaseSetupAlert />
           {children}
           <Suspense fallback={null}>

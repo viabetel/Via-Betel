@@ -2,11 +2,11 @@
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Heart, GitCompare } from "lucide-react"
+import AppLink from "@/components/app-link" // Import AppLink component
 
 import { useState, useMemo, useEffect, useRef } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import { Search, MapPin, Star, Award, Bookmark } from "lucide-react"
-import Link from "next/link"
 import Image from "next/image"
 import { instructors } from "@/data/instructors-data"
 import { extractCategories, parsePrice, parseRating, generateSlug } from "@/lib/instructor-utils"
@@ -669,9 +669,9 @@ export default function InstrutoresClient({ initialInstructors = instructors }: 
                       <p className="text-sm text-gray-600">A partir de</p>
                       <p className="text-xl font-bold text-emerald-700">{instructor.price}</p>
                     </div>
-                    <Link href={`/instrutores/${generateSlug(instructor.name || "")}`}>
+                    <AppLink href={`/instrutores/${generateSlug(instructor.name || "", instructor.city || "")}`}>
                       <Button>Ver perfil</Button>
-                    </Link>
+                    </AppLink>
                   </div>
                 </div>
               </PremiumCard>

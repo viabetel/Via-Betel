@@ -1,7 +1,7 @@
 "use client"
 import { motion } from "framer-motion"
 import type React from "react"
-import Link from "next/link"
+import { AppLink } from "@/components/app-link"
 
 import { Instagram, Youtube, Mail, Clock, MapPin, Shield, HelpCircle } from "lucide-react"
 import Image from "next/image"
@@ -97,20 +97,20 @@ export function Footer() {
                   <MapPin size={16} className="text-green-400 flex-shrink-0" />
                   <span>Juiz de Fora e região (DDD 32)</span>
                 </div>
-                <a
+                <AppLink
                   href="mailto:contato@viabetel.com"
                   className="flex items-center space-x-2 text-neutral-400 hover:text-green-400 transition-colors text-sm"
                 >
                   <Mail size={16} className="text-green-400 flex-shrink-0" />
                   <span>contato@viabetel.com</span>
-                </a>
-                <Link
+                </AppLink>
+                <AppLink
                   href="/suporte"
                   className="flex items-center space-x-2 text-neutral-400 hover:text-green-400 transition-colors text-sm"
                 >
                   <HelpCircle size={16} className="text-green-400 flex-shrink-0" />
                   <span>Central de Ajuda</span>
-                </Link>
+                </AppLink>
                 <div className="flex items-center space-x-2 text-neutral-400 text-sm">
                   <Clock size={16} className="text-green-400 flex-shrink-0" />
                   <span>Seg-Sex: 8h às 18h</span>
@@ -134,12 +134,12 @@ export function Footer() {
                   <ul className="space-y-2">
                     {links.map((link) => (
                       <li key={link.name}>
-                        <a
+                        <AppLink
                           href={link.href}
                           className="text-neutral-400 hover:text-green-400 transition-colors duration-200 text-sm block"
                         >
                           {link.name}
-                        </a>
+                        </AppLink>
                       </li>
                     ))}
                   </ul>
@@ -187,7 +187,7 @@ export function Footer() {
               </div>
 
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Link
+                <AppLink
                   href="/suporte"
                   className="block w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 text-center text-sm"
                 >
@@ -195,7 +195,7 @@ export function Footer() {
                     <HelpCircle size={16} />
                     <span>Central de Ajuda</span>
                   </div>
-                </Link>
+                </AppLink>
               </motion.div>
             </motion.div>
           </div>
@@ -268,13 +268,13 @@ export function Footer() {
           viewport={{ once: true }}
         >
           {/* Aluno CTA */}
-          <Link
+          <AppLink
             href="/aluno"
             className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-4 px-6 rounded-lg transition-all duration-200 text-center group"
           >
             <p className="text-sm text-amber-100 mb-1">É aluno?</p>
             <p className="font-semibold group-hover:scale-105 inline-block transition-transform">Buscar aulas</p>
-          </Link>
+          </AppLink>
         </motion.div>
 
         {/* Government Badges */}
@@ -336,17 +336,17 @@ export function Footer() {
             <p>&copy; {currentYear} Via Betel. Todos os direitos reservados.</p>
           </div>
           <div className="flex flex-wrap justify-center gap-3 sm:gap-4 text-xs sm:text-sm text-neutral-500">
-            <Link href="#privacidade" className="hover:text-green-400 transition-colors">
+            <AppLink href="#privacidade" className="hover:text-green-400 transition-colors">
               Privacidade
-            </Link>
+            </AppLink>
             <span>•</span>
-            <Link href="#termos" className="hover:text-green-400 transition-colors">
+            <AppLink href="#termos" className="hover:text-green-400 transition-colors">
               Termos
-            </Link>
+            </AppLink>
             <span>•</span>
-            <Link href="#cookies" className="hover:text-green-400 transition-colors">
+            <AppLink href="#cookies" className="hover:text-green-400 transition-colors">
               Cookies
-            </Link>
+            </AppLink>
           </div>
         </motion.div>
       </div>

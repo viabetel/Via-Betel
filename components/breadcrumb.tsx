@@ -1,6 +1,6 @@
 "use client"
 
-import Link from "next/link"
+import { AppLink } from "@/components/app-link"
 import { ChevronRight, Home } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { useMemo } from "react"
@@ -70,22 +70,22 @@ export function Breadcrumb() {
             return (
               <li key={item.href} className="flex items-center gap-2">
                 {index === 0 ? (
-                  <Link
+                  <AppLink
                     href={item.href}
                     className="flex items-center gap-1 text-emerald-600 hover:text-emerald-700 transition-colors"
                   >
                     <Home className="w-4 h-4" />
                     <span className="hidden sm:inline">{item.label}</span>
-                  </Link>
+                  </AppLink>
                 ) : isLast ? (
                   <span className="text-gray-700 font-medium truncate max-w-[200px]">{item.label}</span>
                 ) : (
-                  <Link
+                  <AppLink
                     href={item.href}
                     className="text-emerald-600 hover:text-emerald-700 transition-colors truncate max-w-[200px]"
                   >
                     {item.label}
-                  </Link>
+                  </AppLink>
                 )}
                 {!isLast && <ChevronRight className="w-4 h-4 text-gray-400 flex-shrink-0" />}
               </li>

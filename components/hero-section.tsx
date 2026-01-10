@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import Image from "next/image"
-import Link from "next/link"
+import { AppLink } from "@/components/app-link"
 import { useMotionDebug } from "@/hooks/use-motion-debug"
 import { useRef, useState, useEffect } from "react"
 import { HeaderContent } from "@/components/header-content"
@@ -276,7 +276,7 @@ export function HeroSection() {
               size="lg"
               className="w-full sm:w-auto bg-gradient-to-r from-[var(--color-brand-accent)] to-[var(--color-brand-accent-dark)] hover:from-[var(--color-brand-accent-dark)] hover:to-[var(--color-brand-accent)] text-[var(--color-brand-text-light)] font-semibold shadow-2xl shadow-[var(--color-brand-accent)]/50 border-0 px-6 sm:px-8 py-4 sm:py-5 lg:px-10 lg:py-6 text-sm sm:text-base lg:text-lg rounded-xl hover:scale-105 transition-all duration-300"
             >
-              <Link href="/instrutores">Encontrar Instrutor</Link>
+              <AppLink href="/instrutores">Encontrar Instrutor</AppLink>
             </Button>
             <Button
               asChild
@@ -284,7 +284,7 @@ export function HeroSection() {
               variant="outline"
               className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-[var(--color-brand-text-light)] border-2 border-white/30 hover:border-white/50 backdrop-blur-sm font-semibold px-6 sm:px-8 py-4 sm:py-5 lg:px-10 lg:py-6 text-sm sm:text-base lg:text-lg rounded-xl hover:scale-105 transition-all duration-300"
             >
-              <Link href="#como-funciona">Como Funciona</Link>
+              <AppLink href="#como-funciona">Como Funciona</AppLink>
             </Button>
           </motion.div>
 
