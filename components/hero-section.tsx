@@ -1,18 +1,65 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { motion, useScroll, useTransform } from "framer-motion"
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import Link from "next/link"
 import { useMotionDebug } from "@/hooks/use-motion-debug"
-import { useRef } from "react"
+import { useRef, useState, useEffect } from "react"
 import { HeaderContent } from "@/components/header-content"
+import { Check, Shield, Heart, ChevronLeft, ChevronRight } from "lucide-react"
+
+const CAROUSEL_SLIDES = [
+  {
+    title: "Como funciona",
+    description: "Encontre, compare e contrate instrutores verificados em 3 passos simples",
+    items: [
+      "Busque instrutores por categoria e localização",
+      "Compare preços, avaliações e especialidades",
+      "Converse pelo chat protegido da Via Betel",
+    ],
+    icon: Check,
+  },
+  {
+    title: "Confiança e Segurança",
+    description: "Sua privacidade é nossa prioridade máxima",
+    items: [
+      "Todos instrutores verificados pelo DETRAN",
+      "Contato intermediado - sem exposição de dados",
+      "Suporte interno para resolver qualquer problema",
+    ],
+    icon: Shield,
+  },
+  {
+    title: "Ferramentas Inteligentes",
+    description: "Encontre o instrutor perfeito com recursos premium",
+    items: [
+      "Favoritos e Comparação lado a lado",
+      "Salve buscas e receba notificações",
+      "Filtros avançados: preço, avaliação, especialidade",
+    ],
+    icon: Heart,
+  },
+]
 
 export function HeroSection() {
   const { shouldDisableMotion } = useMotionDebug()
   const { scrollY } = useScroll()
   const heroRef = useRef<HTMLElement>(null)
   const heroEndRef = useRef<HTMLDivElement>(null)
+
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
+
+  useEffect(() => {
+    if (isPaused) return
+
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % CAROUSEL_SLIDES.length)
+    }, 10000)
+
+    return () => clearInterval(interval)
+  }, [isPaused])
 
   const logoY = useTransform(scrollY, [0, 500], [0, -80])
   const logoScale = useTransform(scrollY, [0, 400], [1, 0.85])
@@ -44,6 +91,9 @@ export function HeroSection() {
         initial: { opacity: 0, y: 24 },
         animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
       }
+
+  const slide = CAROUSEL_SLIDES[currentSlide]
+  const Icon = slide.icon
 
   return (
     <motion.section
@@ -144,45 +194,98 @@ export function HeroSection() {
             </span>
           </motion.p>
 
+          <motion.div
+            variants={itemVariants}
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+            className="mx-auto max-w-2xl"
+          >
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentSlide}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+                className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 md:p-8 shadow-2xl"
+              >
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="p-3 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl shadow-lg">
+                    <Icon className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2">{slide.title}</h3>
+                    <p className="text-sm md:text-base text-emerald-100">{slide.description}</p>
+                  </div>
+                </div>
+                <ul className="space-y-3 text-left">
+                  {slide.items.map((item, idx) => (
+                    <li key={idx} className="flex items-start gap-3">
+                      <div className="mt-1 p-1 bg-emerald-400/20 rounded-full">
+                        <Check className="w-4 h-4 text-emerald-300" />
+                      </div>
+                      <span className="text-sm md:text-base text-white/90">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            </AnimatePresence>
+
+            <div className="flex items-center justify-center gap-4 mt-6">
+              <button
+                onClick={() => setCurrentSlide((prev) => (prev - 1 + CAROUSEL_SLIDES.length) % CAROUSEL_SLIDES.length)}
+                className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                aria-label="Slide anterior"
+              >
+                <ChevronLeft className="w-5 h-5 text-white" />
+              </button>
+
+              <div className="flex gap-2">
+                {CAROUSEL_SLIDES.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentSlide(idx)}
+                    className={`h-2 rounded-full transition-all ${
+                      idx === currentSlide ? "w-8 bg-emerald-400" : "w-2 bg-white/30 hover:bg-white/50"
+                    }`}
+                    aria-label={`Ir para slide ${idx + 1}`}
+                  />
+                ))}
+              </div>
+
+              <button
+                onClick={() => setCurrentSlide((prev) => (prev + 1) % CAROUSEL_SLIDES.length)}
+                className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                aria-label="Próximo slide"
+              >
+                <ChevronRight className="w-5 h-5 text-white" />
+              </button>
+            </div>
+          </motion.div>
+
           {/* Buttons */}
           <motion.div
             variants={itemVariants}
             style={{
               y: shouldDisableMotion ? 0 : buttonsY,
             }}
-            className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-5 justify-center items-stretch sm:items-center px-0 max-w-full"
+            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-0"
           >
-            <motion.div
-              whileHover={shouldDisableMotion ? {} : { scale: 1.02, y: -2 }}
-              whileTap={shouldDisableMotion ? {} : { scale: 0.98 }}
+            <Button
+              asChild
+              size="lg"
+              className="w-full sm:w-auto bg-gradient-to-r from-[var(--color-brand-accent)] to-[var(--color-brand-accent-dark)] hover:from-[var(--color-brand-accent-dark)] hover:to-[var(--color-brand-accent)] text-[var(--color-brand-text-light)] font-semibold shadow-2xl shadow-[var(--color-brand-accent)]/50 border-0 px-6 sm:px-8 py-4 sm:py-5 lg:px-10 lg:py-6 text-sm sm:text-base lg:text-lg rounded-xl hover:scale-105 transition-all duration-300"
             >
-              <Button
-                size="lg"
-                asChild
-                className="group relative w-full sm:w-auto bg-gradient-to-r from-[var(--color-brand-accent)] to-[var(--color-brand-accent-dark)] hover:from-[var(--color-brand-accent-dark)] hover:to-[var(--color-brand-accent-darker)] text-[var(--color-brand-text-light)] font-semibold px-4 sm:px-8 lg:px-10 py-3 sm:py-4 lg:py-5 text-[0.8125rem] sm:text-base lg:text-lg shadow-xl shadow-[var(--color-brand-accent)]/30 hover:shadow-2xl hover:shadow-[var(--color-brand-accent)]/50 transition-all duration-300 min-h-[48px] border border-[var(--color-brand-accent-light)]/50 overflow-hidden"
-              >
-                <Link href="/instrutores" className="relative z-10">
-                  <span className="relative">Ver Catálogo de Instrutores</span>
-                  {!shouldDisableMotion && (
-                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out" />
-                  )}
-                </Link>
-              </Button>
-            </motion.div>
-
-            <motion.div
-              whileHover={shouldDisableMotion ? {} : { scale: 1.02 }}
-              whileTap={shouldDisableMotion ? {} : { scale: 0.98 }}
+              <Link href="/instrutores">Encontrar Instrutor</Link>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-[var(--color-brand-text-light)] border-2 border-white/30 hover:border-white/50 backdrop-blur-sm font-semibold px-6 sm:px-8 py-4 sm:py-5 lg:px-10 lg:py-6 text-sm sm:text-base lg:text-lg rounded-xl hover:scale-105 transition-all duration-300"
             >
-              <Button
-                size="lg"
-                asChild
-                variant="outline"
-                className="w-full sm:w-auto border-2 border-[var(--color-brand-accent-light)] bg-transparent text-[var(--color-brand-text-muted)] hover:bg-[var(--color-brand-accent)]/20 hover:border-[var(--color-brand-accent-light)] font-semibold px-4 sm:px-8 lg:px-10 py-3 sm:py-4 lg:py-5 text-[0.8125rem] sm:text-base lg:text-lg transition-all min-h-[48px]"
-              >
-                <Link href="/orcamento">Quero Orçamento Rápido</Link>
-              </Button>
-            </motion.div>
+              <Link href="#como-funciona">Como Funciona</Link>
+            </Button>
           </motion.div>
 
           {/* Stats */}
@@ -191,18 +294,18 @@ export function HeroSection() {
             style={{
               y: shouldDisableMotion ? 0 : statsY,
             }}
-            className="grid grid-cols-3 gap-1.5 sm:gap-6 lg:gap-10 pt-4 sm:pt-10 lg:pt-12 max-w-full mx-auto px-1 sm:px-0"
+            className="grid grid-cols-3 gap-3 sm:gap-4 lg:gap-8 mt-6 sm:mt-8 lg:mt-12 max-w-3xl mx-auto"
           >
             {[
-              { value: "Em expansão", label: "Na sua região" },
-              { value: "Conectando", label: "Alunos e instrutores" },
-              { value: "Qualidade", label: "Certificada" },
+              { value: "500+", label: "Instrutores" },
+              { value: "10k+", label: "Alunos" },
+              { value: "4.9★", label: "Avaliação" },
             ].map((stat, index) => (
-              <div key={index} className="text-center min-w-0 px-0.5">
-                <div className="text-[0.6875rem] sm:text-xl md:text-2xl lg:text-3xl font-bold bg-gradient-to-br from-[var(--color-brand-accent-light)] to-[var(--color-brand-text-light)] bg-clip-text text-transparent leading-tight">
+              <div key={index} className="text-center">
+                <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-[var(--color-brand-accent-light)]">
                   {stat.value}
                 </div>
-                <div className="text-[0.5rem] sm:text-xs lg:text-sm text-[var(--color-brand-text-muted)]/80 mt-0.5 lg:mt-2 leading-tight">
+                <div className="text-xs sm:text-sm lg:text-base text-[var(--color-brand-text-muted)] mt-1">
                   {stat.label}
                 </div>
               </div>
@@ -211,7 +314,7 @@ export function HeroSection() {
         </motion.div>
       </div>
 
-      <div ref={heroEndRef} className="absolute bottom-0 left-0 right-0 h-1 pointer-events-none" aria-hidden="true" />
+      <div ref={heroEndRef} className="absolute bottom-0 left-0 w-full h-1" />
     </motion.section>
   )
 }

@@ -1,19 +1,16 @@
 "use client"
-
-import type React from "react"
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { Heart } from "lucide-react"
+import { Heart, GitCompare } from "lucide-react"
 
 import { useState, useMemo, useEffect, useRef } from "react"
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
-import { Search, SlidersHorizontal, MapPin, Star, Award, X, ChevronDown, CheckCircle2 } from "lucide-react"
+import { motion, useScroll, useTransform } from "framer-motion"
+import { Search, MapPin, Star, Award, Bookmark } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import type { instructors } from "@/data/instructors-data"
+import { instructors } from "@/data/instructors-data"
 import { extractCategories, parsePrice, parseRating, generateSlug } from "@/lib/instructor-utils"
 import { Button } from "@/components/ui/button"
-import { Slider } from "@/components/ui/slider"
 import { HeaderContent } from "@/components/header-content"
 import Breadcrumb from "@/components/breadcrumb"
 import { SectionHeader } from "@/components/ui/section-header"
@@ -25,7 +22,7 @@ import { useMarketplaceSync } from "@/hooks/use-marketplace-sync"
 import { LoginGuardModal } from "@/components/auth/login-guard-modal"
 import { useAuth } from "@/lib/auth-context"
 
-type SortOption = "rating" | "price" | "students" | "experience"
+type SortOption = "relevance" | "rating" | "price-low" | "price-high" | "students" | "experience"
 
 const FAQ_ITEMS = [
   {
@@ -34,19 +31,19 @@ const FAQ_ITEMS = [
       'Navegue pelo catálogo, escolha o instrutor que mais combina com você e clique em "Pedir Orçamento". Preencha o formulário e a Via Betel fará a intermediação, entrando em contato em até 24h.',
   },
   {
-    question: "Por que não aparece WhatsApp do instrutor?",
+    question: "Por que não aparece contato direto do instrutor?",
     answer:
-      "Por privacidade e segurança, mantemos o contato intermediado. Isso garante proteção de dados pessoais e permite que a Via Betel ofereça suporte durante todo o processo.",
+      "Por privacidade e segurança, mantemos o contato intermediado através do chat interno da Via Betel. Isso garante proteção de dados pessoais e permite que oferecemos suporte durante todo o processo.",
   },
   {
     question: "Em quanto tempo a Via Betel responde?",
     answer:
-      "Nossa equipe responde pedidos de orçamento em até 24 horas úteis. Você receberá retorno no WhatsApp ou email cadastrado com as opções disponíveis.",
+      "Nossa equipe responde pedidos de orçamento em até 24 horas úteis. Você receberá retorno no email cadastrado e poderá acompanhar tudo pelo chat interno da plataforma.",
   },
   {
     question: "Como funciona remarcação?",
     answer:
-      "Após confirmar sua primeira aula, você pode remarcar através da Via Betel com até 4 horas de antecedência sem custos. A plataforma facilita todo o processo de agendamento.",
+      "Após confirmar sua primeira aula, você pode remarcar através do chat da Via Betel com até 4 horas de antecedência sem custos. A plataforma facilita todo o processo de agendamento.",
   },
   {
     question: "Como escolher categoria CNH?",
@@ -61,10 +58,10 @@ const FAQ_ITEMS = [
 ]
 
 type Props = {
-  initialInstructors: typeof instructors
+  initialInstructors?: typeof instructors
 }
 
-export default function InstrutoresClient({ initialInstructors }: Props) {
+export default function InstrutoresClient({ initialInstructors = instructors }: Props) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -110,210 +107,277 @@ export default function InstrutoresClient({ initialInstructors }: Props) {
         animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
       }
 
-  const [searchText, setSearchText] = useState(searchParams?.get("q") || "")
-  const [selectedCategory, setSelectedCategory] = useState(searchParams?.get("category") || "Todas")
-  const [sortBy, setSortBy] = useState<"rating" | "price" | "students" | "experience">("rating")
-  const [maxPrice, setMaxPrice] = useState(200)
-  const [minRating, setMinRating] = useState(0)
-  const [onlyJF, setOnlyJF] = useState(false)
-  const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>([])
-  const [showFilters, setShowFilters] = useState(false)
-  const [isDesktop, setIsDesktop] = useState(false)
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null)
-  const [showQuoteModal, setShowQuoteModal] = useState(false)
-  const [selectedInstructorForQuote, setSelectedInstructorForQuote] = useState<{
-    slug: string
-    name: string
-  } | null>(null)
-
-  const [quoteForm, setQuoteForm] = useState({
-    city: "",
-    neighborhood: "",
-    category: "B",
-    availability1: "",
-    availability2: "",
-    availability3: "",
-    objective: "",
-    notes: "",
-    studentName: "",
-    studentWhatsApp: "",
-  })
-  const [isSubmittingQuote, setIsSubmittingQuote] = useState(false)
-  const [quoteSuccess, setQuoteSuccess] = useState(false)
+  const [searchText, setSearchText] = useState(searchParams.get("search") || "")
+  const [selectedCategory, setSelectedCategory] = useState<string[]>(
+    searchParams.get("category")?.split(",").filter(Boolean) || [],
+  )
+  const [sortBy, setSortBy] = useState<SortOption>((searchParams.get("sort") as SortOption) || "relevance")
+  const [maxPrice, setMaxPrice] = useState(Number(searchParams.get("maxPrice")) || 200)
+  const [minRating, setMinRating] = useState(Number(searchParams.get("minRating")) || 0)
+  const [selectedCity, setSelectedCity] = useState(searchParams.get("city") || "")
+  const [selectedState, setSelectedState] = useState(searchParams.get("state") || "")
+  const [selectedNeighborhood, setSelectedNeighborhood] = useState(searchParams.get("neighborhood") || "")
+  const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>(
+    searchParams.get("specialties")?.split(",").filter(Boolean) || [],
+  )
+  const [onlySponsored, setOnlySponsored] = useState(searchParams.get("sponsored") === "true")
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
 
   useEffect(() => {
-    const checkDesktop = () => {
-      if (typeof window !== "undefined") {
-        setIsDesktop(window.innerWidth >= 768)
+    const savedState = localStorage.getItem("marketplace-state")
+    if (savedState) {
+      try {
+        const state = JSON.parse(savedState)
+        if (state.searchText) setSearchText(state.searchText)
+        if (state.selectedCategory) setSelectedCategory(state.selectedCategory)
+        if (state.sortBy) setSortBy(state.sortBy)
+        if (state.maxPrice) setMaxPrice(state.maxPrice)
+        if (state.minRating) setMinRating(state.minRating)
+        if (state.selectedCity) setSelectedCity(state.selectedCity)
+        if (state.selectedState) setSelectedState(state.selectedState)
+        if (state.selectedSpecialties) setSelectedSpecialties(state.selectedSpecialties)
+        if (state.viewMode) setViewMode(state.viewMode)
+      } catch (e) {
+        console.error("[v0] Failed to parse saved marketplace state", e)
       }
-    }
-    checkDesktop()
-
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", checkDesktop)
-      return () => window.removeEventListener("resize", checkDesktop)
     }
   }, [])
 
-  const allSpecialties = useMemo(() => {
-    const specs = new Set<string>()
-    if (initialInstructors && Array.isArray(initialInstructors)) {
-      initialInstructors.forEach((inst) => {
-        if (inst.specialties && Array.isArray(inst.specialties)) {
-          inst.specialties.forEach((s) => specs.add(s))
-        }
-      })
+  useEffect(() => {
+    const state = {
+      searchText,
+      selectedCategory,
+      sortBy,
+      maxPrice,
+      minRating,
+      selectedCity,
+      selectedState,
+      selectedSpecialties,
+      viewMode,
+      scrollY: window.scrollY,
     }
-    return Array.from(specs).sort()
+    localStorage.setItem("marketplace-state", JSON.stringify(state))
+  }, [
+    searchText,
+    selectedCategory,
+    sortBy,
+    maxPrice,
+    minRating,
+    selectedCity,
+    selectedState,
+    selectedSpecialties,
+    viewMode,
+  ])
+
+  const allSpecialties = useMemo(() => {
+    const specialtiesSet = new Set<string>()
+    initialInstructors?.forEach((instructor) => {
+      instructor.specialties?.forEach((s) => specialtiesSet.add(s))
+    })
+    return Array.from(specialtiesSet).sort()
+  }, [initialInstructors])
+
+  const allCities = useMemo(() => {
+    const citiesSet = new Set(initialInstructors?.map((i) => i.city).filter(Boolean))
+    return Array.from(citiesSet).sort()
+  }, [initialInstructors])
+
+  const allStates = useMemo(() => {
+    const statesSet = new Set(initialInstructors?.map((i) => i.state).filter(Boolean))
+    return Array.from(statesSet).sort()
   }, [initialInstructors])
 
   const filteredInstructors = useMemo(() => {
-    if (!initialInstructors || !Array.isArray(initialInstructors)) {
-      return []
+    let result = [...(initialInstructors || [])]
+
+    if (searchText) {
+      const search = searchText.toLowerCase()
+      result = result.filter(
+        (i) =>
+          i.name?.toLowerCase().includes(search) ||
+          i.bio?.toLowerCase().includes(search) ||
+          i.specialties?.some((s) => s.toLowerCase().includes(search)) ||
+          i.location?.toLowerCase().includes(search),
+      )
     }
 
-    const result = initialInstructors.filter((inst) => {
-      // Search filter
-      if (searchText) {
-        const search = searchText.toLowerCase()
-        const matchesSearch =
-          inst.city.toLowerCase().includes(search) ||
-          inst.neighborhood.toLowerCase().includes(search) ||
-          inst.location.toLowerCase().includes(search)
-        if (!matchesSearch) return false
-      }
+    if (selectedCategory.length > 0) {
+      result = result.filter((i) => {
+        const cats = extractCategories(i.role || "")
+        return selectedCategory.some((cat) => cats.includes(cat))
+      })
+    }
 
-      // Category filter
-      if (selectedCategory !== "Todas") {
-        const cats = extractCategories(inst.role)
-        if (!cats.includes(selectedCategory)) return false
-      }
+    if (maxPrice < 200) {
+      result = result.filter((i) => {
+        const price = parsePrice(i.price || "")
+        return price <= maxPrice
+      })
+    }
 
-      // Price filter
-      if (parsePrice(inst.price) > maxPrice) return false
+    if (minRating > 0) {
+      result = result.filter((i) => {
+        const rating = parseRating(i.rating || "0")
+        return rating >= minRating
+      })
+    }
 
-      // Rating filter
-      if (parseRating(inst.rating) < minRating) return false
+    if (selectedCity) {
+      result = result.filter((i) => i.city === selectedCity)
+    }
 
-      // JF filter
-      if (onlyJF && (inst.city !== "Juiz de Fora" || inst.state !== "MG")) return false
+    if (selectedState) {
+      result = result.filter((i) => i.state === selectedState)
+    }
 
-      // Specialties filter
-      if (selectedSpecialties.length > 0) {
-        const hasSpecialty = selectedSpecialties.some((spec) => inst.specialties.includes(spec))
-        if (!hasSpecialty) return false
-      }
+    if (selectedNeighborhood) {
+      result = result.filter((i) => i.neighborhood?.toLowerCase().includes(selectedNeighborhood.toLowerCase()))
+    }
 
-      return true
-    })
+    if (selectedSpecialties.length > 0) {
+      result = result.filter((i) =>
+        selectedSpecialties.some((spec) => i.specialties?.some((s) => s.toLowerCase().includes(spec.toLowerCase()))),
+      )
+    }
 
-    // Sort
-    result.sort((a, b) => {
-      switch (sortBy) {
-        case "rating":
-          return parseRating(b.rating) - parseRating(a.rating)
-        case "price":
-          return parsePrice(a.price) - parsePrice(b.price)
-        case "students":
-          return b.studentsApproved - a.studentsApproved
-        case "experience":
-          return Number.parseInt(b.experience) - Number.parseInt(a.experience)
-        default:
-          return 0
-      }
-    })
+    if (onlySponsored) {
+      result = result.filter((i) => i.isSponsored === true)
+    }
+
+    switch (sortBy) {
+      case "rating":
+        result.sort((a, b) => parseRating(b.rating || "0") - parseRating(a.rating || "0"))
+        break
+      case "price-low":
+        result.sort((a, b) => parsePrice(a.price || "0") - parsePrice(b.price || "0"))
+        break
+      case "price-high":
+        result.sort((a, b) => parsePrice(b.price || "0") - parsePrice(a.price || "0"))
+        break
+      case "students":
+        result.sort((a, b) => (b.studentsApproved || 0) - (a.studentsApproved || 0))
+        break
+      case "experience":
+        result.sort((a, b) => {
+          const expA = Number.parseInt(a.experience || "0")
+          const expB = Number.parseInt(b.experience || "0")
+          return expB - expA
+        })
+        break
+      case "relevance":
+      default:
+        // Relevância: patrocinados primeiro, depois rating
+        result.sort((a, b) => {
+          if (a.isSponsored && !b.isSponsored) return -1
+          if (!a.isSponsored && b.isSponsored) return 1
+          return parseRating(b.rating || "0") - parseRating(a.rating || "0")
+        })
+    }
 
     return result
-  }, [searchText, selectedCategory, sortBy, maxPrice, minRating, onlyJF, selectedSpecialties])
+  }, [
+    initialInstructors,
+    searchText,
+    selectedCategory,
+    maxPrice,
+    minRating,
+    selectedCity,
+    selectedState,
+    selectedNeighborhood,
+    selectedSpecialties,
+    onlySponsored,
+    sortBy,
+  ])
 
-  const toggleSpecialty = (spec: string) => {
-    setSelectedSpecialties((prev) => (prev.includes(spec) ? prev.filter((s) => s !== spec) : [...prev, spec]))
-  }
-
-  const clearFilters = () => {
+  const handleResetFilters = () => {
     setSearchText("")
-    setSelectedCategory("Todas")
+    setSelectedCategory([])
+    setSortBy("relevance")
     setMaxPrice(200)
     setMinRating(0)
-    setOnlyJF(false)
+    setSelectedCity("")
+    setSelectedState("")
+    setSelectedNeighborhood("")
     setSelectedSpecialties([])
+    setOnlySponsored(false)
+    router.push(pathname)
   }
 
-  const hasActiveFilters =
-    searchText ||
-    selectedCategory !== "Todas" ||
-    maxPrice < 200 ||
-    minRating > 0 ||
-    onlyJF ||
-    selectedSpecialties.length > 0
+  const handleShareSearch = () => {
+    const params = new URLSearchParams()
+    if (searchText) params.set("search", searchText)
+    if (selectedCategory.length > 0) params.set("category", selectedCategory.join(","))
+    if (sortBy !== "relevance") params.set("sort", sortBy)
+    if (maxPrice < 200) params.set("maxPrice", maxPrice.toString())
+    if (minRating > 0) params.set("minRating", minRating.toString())
+    if (selectedCity) params.set("city", selectedCity)
+    if (selectedState) params.set("state", selectedState)
+    if (selectedSpecialties.length > 0) params.set("specialties", selectedSpecialties.join(","))
+    if (onlySponsored) params.set("sponsored", "true")
 
-  const openQuoteModal = (instructorSlug: string, instructorName: string) => {
-    setSelectedInstructorForQuote({ slug: instructorSlug, name: instructorName })
-    setShowQuoteModal(true)
-    setQuoteSuccess(false)
+    const url = `${window.location.origin}${pathname}?${params.toString()}`
+    navigator.clipboard.writeText(url).then(() => {
+      alert("Link da busca copiado! Compartilhe com seus amigos.")
+    })
   }
 
-  const handleQuoteSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmittingQuote(true)
-
-    try {
-      const response = await fetch("/api/quote/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...quoteForm,
-          instructorSlug: selectedInstructorForQuote?.slug,
-        }),
-      })
-
-      if (response.ok) {
-        setQuoteSuccess(true)
-        setQuoteForm({
-          city: "",
-          neighborhood: "",
-          category: "B",
-          availability1: "",
-          availability2: "",
-          availability3: "",
-          objective: "",
-          notes: "",
-          studentName: "",
-          studentWhatsApp: "",
-        })
-      }
-    } catch (error) {
-      console.error("[v0] Erro ao enviar orçamento:", error)
-      alert("Erro ao enviar solicitação. Tente novamente.")
-    } finally {
-      setIsSubmittingQuote(false)
+  const handleSaveSearch = () => {
+    if (!user) {
+      setLoginGuardFeature("salvar busca")
+      setShowLoginGuard(true)
+      return
     }
+    // TODO: Salvar no Supabase quando tabela existir
+    const savedSearches = JSON.parse(localStorage.getItem("saved-searches") || "[]")
+    const newSearch = {
+      id: Date.now(),
+      name: `Busca ${new Date().toLocaleDateString()}`,
+      filters: {
+        searchText,
+        selectedCategory,
+        sortBy,
+        maxPrice,
+        minRating,
+        selectedCity,
+        selectedState,
+        selectedSpecialties,
+      },
+      createdAt: new Date().toISOString(),
+    }
+    savedSearches.push(newSearch)
+    localStorage.setItem("saved-searches", JSON.stringify(savedSearches))
+    alert("Busca salva com sucesso!")
   }
 
-  const handleFavorite = async (instructorSlug: string, instructorName: string) => {
+  const handleFavorite = (instructorId: string) => {
     if (!user) {
       setLoginGuardFeature("favoritar")
       setShowLoginGuard(true)
       return
     }
-    await toggleFavorite(instructorSlug, instructorName)
+    toggleFavorite(instructorId)
   }
 
-  const handleCompare = async (instructorSlug: string, instructorName: string) => {
+  const handleCompare = (instructorId: string) => {
     if (!user) {
       setLoginGuardFeature("comparar")
       setShowLoginGuard(true)
       return
     }
-    await toggleCompare(instructorSlug, instructorName)
+    if (compareList.length >= 3 && !compareList.includes(instructorId)) {
+      alert("Você pode comparar no máximo 3 instrutores por vez.")
+      return
+    }
+    toggleCompare(instructorId)
   }
 
   return (
     <>
       <motion.section
         ref={heroRef}
-        className="relative min-h-[75vh] sm:min-h-[90vh] lg:min-h-[560px] flex items-center justify-center bg-gradient-to-br from-[var(--color-brand-primary-darkest)] via-[var(--color-brand-primary-dark)] to-[var(--color-brand-secondary-dark)] text-[var(--color-brand-text-light)] overflow-hidden"
+        className="relative min-h-[65vh] sm:min-h-[75vh] lg:min-h-[480px] flex items-center justify-center bg-gradient-to-br from-[var(--color-brand-primary-darkest)] via-[var(--color-brand-primary-dark)] to-[var(--color-brand-secondary-dark)] text-[var(--color-brand-text-light)] overflow-hidden"
       >
+        {/* Fixed HeaderContent no topo do hero */}
         <div className="fixed top-0 left-0 right-0 z-[100] w-full">
           <div
             className="bg-gradient-to-r from-emerald-800/95 via-emerald-700/95 to-teal-700/95 backdrop-blur-md shadow-lg border-b border-white/10"
@@ -375,7 +439,7 @@ export default function InstrutoresClient({ initialInstructors }: Props) {
               className="inline-flex items-center gap-2 bg-gradient-to-r from-[var(--color-brand-accent)]/20 to-[var(--color-brand-primary)]/20 backdrop-blur-sm border border-[var(--color-brand-accent-light)]/30 rounded-full px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 lg:py-2.5 shadow-lg shadow-[var(--color-brand-accent)]/20"
             >
               <span className="text-xs sm:text-sm lg:text-base font-medium text-[var(--color-brand-text-muted)]">
-                Marketplace de Instrutores
+                {filteredInstructors.length} instrutores encontrados
               </span>
             </motion.div>
 
@@ -388,9 +452,9 @@ export default function InstrutoresClient({ initialInstructors }: Props) {
               }}
               className="text-[1.625rem] sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight leading-[1.25] sm:leading-tight px-0 max-w-full"
             >
-              <span className="block text-balance">Catálogo Completo de </span>
+              <span className="block text-balance">Encontre instrutores </span>
               <span className="bg-gradient-to-r from-[var(--color-brand-accent-light)] via-[var(--color-brand-accent)] to-[var(--color-brand-accent-dark)] bg-clip-text text-transparent drop-shadow-lg">
-                Instrutores
+                certificados
               </span>
             </motion.h1>
 
@@ -403,530 +467,261 @@ export default function InstrutoresClient({ initialInstructors }: Props) {
               className="mx-auto max-w-full sm:max-w-2xl text-[0.8125rem] sm:text-base md:text-lg lg:text-xl leading-relaxed text-[var(--color-brand-text-muted)] px-0"
             >
               <span className="block text-pretty">
-                Navegue pelo catálogo completo, filtre por cidade, categoria e preço. Encontre o instrutor perfeito para
-                você.
+                Compare, favorite e escolha o melhor instrutor para sua CNH. Use os filtros abaixo para encontrar
+                exatamente o que precisa.
               </span>
             </motion.p>
-
-            <motion.div variants={itemVariants} className="mx-auto max-w-4xl w-full px-0 sm:px-4">
-              <PremiumCard className="p-3 sm:p-6 bg-white/95 backdrop-blur-sm">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-2 sm:gap-4">
-                  {/* Search input */}
-                  <div className="md:col-span-2 relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
-                    <input
-                      type="text"
-                      placeholder="Buscar cidade/bairro"
-                      value={searchText}
-                      onChange={(e) => setSearchText(e.target.value)}
-                      className="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
-                    />
-                  </div>
-
-                  {/* Category select */}
-                  <div className="relative">
-                    <select
-                      value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value)}
-                      className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all appearance-none bg-white"
-                    >
-                      <option value="Todas">Todas</option>
-                      <option value="A">Cat. A</option>
-                      <option value="B">Cat. B</option>
-                      <option value="C">Cat. C</option>
-                      <option value="D">Cat. D</option>
-                      <option value="E">Cat. E</option>
-                      <option value="AB">AB</option>
-                    </select>
-                    <ChevronDown className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400 pointer-events-none" />
-                  </div>
-
-                  {/* Sort select */}
-                  <div className="relative">
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value as SortOption)}
-                      className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all appearance-none bg-white"
-                    >
-                      <option value="rating">⭐ Avaliação</option>
-                      <option value="price">💰 Preço</option>
-                      <option value="students">👥 Aprovados</option>
-                      <option value="experience">🏆 Experiência</option>
-                    </select>
-                    <ChevronDown className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400 pointer-events-none" />
-                  </div>
-                </div>
-
-                <div className="mt-3 sm:mt-4 flex items-center justify-between flex-wrap gap-2">
-                  <div className="flex items-center gap-2">
-                    <Button
-                      onClick={() => setShowFilters(!showFilters)}
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center gap-1 text-xs sm:text-sm py-1 sm:py-2 px-2 sm:px-3"
-                    >
-                      <SlidersHorizontal className="w-3 h-3 sm:w-4 sm:h-4" />
-                      Filtros
-                    </Button>
-                    {hasActiveFilters && (
-                      <Button
-                        onClick={clearFilters}
-                        variant="ghost"
-                        size="sm"
-                        className="text-xs text-gray-600 py-1 px-2"
-                      >
-                        Limpar
-                      </Button>
-                    )}
-                  </div>
-                  <div className="text-xs sm:text-sm text-gray-600 font-medium">
-                    <span className="text-emerald-600 font-bold">{filteredInstructors.length}</span> instrutores
-                  </div>
-                </div>
-
-                {hasActiveFilters && (
-                  <div className="mt-2 sm:mt-3 flex flex-wrap gap-1 sm:gap-2">
-                    {searchText && (
-                      <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium">
-                        <MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                        {searchText}
-                        <button onClick={() => setSearchText("")} className="ml-0.5 hover:text-emerald-900">
-                          <X className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                        </button>
-                      </span>
-                    )}
-                    {selectedCategory !== "Todas" && (
-                      <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium">
-                        Cat. {selectedCategory}
-                        <button onClick={() => setSelectedCategory("Todas")} className="ml-0.5 hover:text-emerald-900">
-                          <X className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                        </button>
-                      </span>
-                    )}
-                    {selectedSpecialties.map((spec) => (
-                      <span
-                        key={spec}
-                        className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium"
-                      >
-                        {spec}
-                        <button onClick={() => toggleSpecialty(spec)} className="ml-0.5 hover:text-emerald-900">
-                          <X className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </PremiumCard>
-            </motion.div>
 
             <motion.div
               variants={itemVariants}
               style={{
                 y: shouldDisableMotion ? 0 : buttonsY,
               }}
-              className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-5 justify-center items-stretch sm:items-center px-0 max-w-full"
+              className="mx-auto max-w-4xl w-full"
             >
-              <Breadcrumb />
+              <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-emerald-200/20 p-6 space-y-4">
+                {/* Busca principal */}
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Buscar por nome, especialidade, localização..."
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 text-gray-900 placeholder:text-gray-400"
+                  />
+                </div>
+
+                {/* Filtros rápidos */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  <select
+                    value={selectedCity}
+                    onChange={(e) => setSelectedCity(e.target.value)}
+                    className="px-4 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm text-gray-900"
+                  >
+                    <option value="">Todas as cidades</option>
+                    {allCities.map((city) => (
+                      <option key={city} value={city}>
+                        {city}
+                      </option>
+                    ))}
+                  </select>
+
+                  <select
+                    value={selectedState}
+                    onChange={(e) => setSelectedState(e.target.value)}
+                    className="px-4 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm text-gray-900"
+                  >
+                    <option value="">Todos os estados</option>
+                    {allStates.map((state) => (
+                      <option key={state} value={state}>
+                        {state}
+                      </option>
+                    ))}
+                  </select>
+
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as SortOption)}
+                    className="px-4 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm text-gray-900"
+                  >
+                    <option value="relevance">Relevância</option>
+                    <option value="rating">Melhor avaliação</option>
+                    <option value="price-low">Menor preço</option>
+                    <option value="price-high">Maior preço</option>
+                    <option value="students">Mais aprovados</option>
+                    <option value="experience">Mais experiente</option>
+                  </select>
+
+                  <Button
+                    onClick={handleResetFilters}
+                    variant="outline"
+                    className="text-emerald-700 border-emerald-200 hover:bg-emerald-50 bg-transparent"
+                  >
+                    Limpar filtros
+                  </Button>
+                </div>
+
+                {/* Ações premium */}
+                <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-100">
+                  <Button
+                    onClick={handleSaveSearch}
+                    variant="ghost"
+                    size="sm"
+                    className="text-emerald-700 hover:bg-emerald-50"
+                  >
+                    <Bookmark className="h-4 w-4 mr-2" />
+                    Salvar busca
+                  </Button>
+                  <Button
+                    onClick={handleShareSearch}
+                    variant="ghost"
+                    size="sm"
+                    className="text-emerald-700 hover:bg-emerald-50"
+                  >
+                    Compartilhar
+                  </Button>
+                  <label className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-700 cursor-pointer hover:bg-gray-50 rounded-md">
+                    <input
+                      type="checkbox"
+                      checked={onlySponsored}
+                      onChange={(e) => setOnlySponsored(e.target.checked)}
+                      className="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+                    />
+                    Somente patrocinados
+                  </label>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Breadcrumb */}
+            <motion.div variants={itemVariants} className="flex justify-center">
+              <Breadcrumb
+                items={[
+                  { label: "Home", href: "/" },
+                  { label: "Instrutores", href: "/instrutores" },
+                ]}
+              />
             </motion.div>
           </motion.div>
         </div>
 
-        <div ref={heroEndRef} className="absolute bottom-0 left-0 right-0 h-1 pointer-events-none" aria-hidden="true" />
+        <div ref={heroEndRef} className="absolute bottom-0 left-0 w-full h-1" />
       </motion.section>
 
-      <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
-        <div className="container mx-auto px-3 sm:px-4 max-w-7xl pt-8 relative z-20">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-6">
-            {/* Filters Panel - mantém igual mas compacto */}
-            <AnimatePresence>
-              {(showFilters || isDesktop) && (
-                <motion.aside
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="md:col-span-1 space-y-4"
-                >
-                  <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 sticky top-4 border border-emerald-100">
-                    <div className="flex items-center justify-between mb-3 sm:mb-4">
-                      <h3 className="font-bold text-base sm:text-lg text-gray-900">Filtros</h3>
-                      <Button variant="ghost" size="sm" onClick={() => setShowFilters(false)} className="md:hidden">
-                        <X className="w-4 h-4" />
-                      </Button>
-                    </div>
-
-                    {/* Price filter */}
-                    <div className="mb-4 sm:mb-6">
-                      <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
-                        Preço máx: R$ {maxPrice}
-                      </label>
-                      <Slider
-                        value={[maxPrice]}
-                        onValueChange={([val]) => setMaxPrice(val)}
-                        min={50}
-                        max={200}
-                        step={10}
-                        className="mb-2"
+      {/* Lista de instrutores */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-6 max-w-7xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredInstructors.map((instructor) => (
+              <PremiumCard key={instructor.id} hover shadow="md" className="relative">
+                {instructor.isSponsored && (
+                  <BadgeChip variant="premium" className="absolute top-4 right-4 z-10">
+                    Patrocinado
+                  </BadgeChip>
+                )}
+                <div className="p-6 space-y-4">
+                  <div className="flex items-center gap-4">
+                    <div className="relative w-16 h-16 rounded-full overflow-hidden bg-gray-100">
+                      <Image
+                        src={instructor.photo || "/placeholder.svg?height=64&width=64"}
+                        alt={instructor.name || "Instrutor"}
+                        fill
+                        className="object-cover"
                       />
                     </div>
-
-                    {/* Rating filter */}
-                    <div className="mb-4 sm:mb-6">
-                      <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Aval. mínima</label>
-                      <select
-                        value={minRating}
-                        onChange={(e) => setMinRating(Number.parseFloat(e.target.value))}
-                        className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm border-2 border-gray-200 rounded-lg focus:border-emerald-500 outline-none"
-                      >
-                        <option value="0">Todas</option>
-                        <option value="4.0">4.0+ ⭐</option>
-                        <option value="4.5">4.5+ ⭐⭐</option>
-                        <option value="4.8">4.8+ ⭐⭐⭐</option>
-                        <option value="4.9">4.9+ ⭐⭐⭐⭐</option>
-                      </select>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-900">{instructor.name}</h3>
+                      <p className="text-sm text-gray-600">{instructor.role}</p>
                     </div>
-
-                    {/* JF toggle */}
-                    <div className="mb-4 sm:mb-6">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={onlyJF}
-                          onChange={(e) => setOnlyJF(e.target.checked)}
-                          className="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"
-                        />
-                        <span className="text-xs sm:text-sm font-medium text-gray-700">Só Juiz de Fora/MG</span>
-                      </label>
-                    </div>
-
-                    {/* Specialties */}
-                    <div>
-                      <h4 className="text-xs sm:text-sm font-semibold text-gray-700 mb-2 sm:mb-3">Especialidades</h4>
-                      <div className="space-y-1.5 sm:space-y-2 max-h-48 sm:max-h-64 overflow-y-auto">
-                        {allSpecialties.map((spec) => (
-                          <label key={spec} className="flex items-center gap-2 cursor-pointer text-xs sm:text-sm">
-                            <input
-                              type="checkbox"
-                              checked={selectedSpecialties.includes(spec)}
-                              onChange={() => toggleSpecialty(spec)}
-                              className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"
-                            />
-                            <span className="text-gray-700">{spec}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </motion.aside>
-              )}
-            </AnimatePresence>
-
-            <div className="md:col-span-3 grid gap-4 sm:gap-6">
-              {filteredInstructors.length === 0 ? (
-                <PremiumCard className="p-8 text-center">
-                  <p className="text-gray-500">Nenhum instrutor encontrado com os filtros selecionados.</p>
-                </PremiumCard>
-              ) : (
-                filteredInstructors.map((inst) => {
-                  const instructorSlug = generateSlug(inst.name, inst.city)
-                  const cats = extractCategories(inst.role)
-
-                  return (
-                    <PremiumCard key={instructorSlug} hover className="overflow-hidden group relative">
-                      <div className="flex flex-col sm:flex-row">
-                        <div className="w-full sm:w-1/3 h-48 sm:h-full relative">
-                          <img
-                            src={inst.photo || "/placeholder.svg"}
-                            alt={inst.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="p-4 sm:p-6 sm:w-2/3 flex flex-col justify-between">
-                          <div>
-                            <div className="flex items-start justify-between gap-4 mb-3">
-                              <div>
-                                <h3 className="text-xl font-bold text-gray-900 mb-1">{inst.name}</h3>
-                                <div className="flex items-center gap-2 text-gray-600 text-sm mb-2">
-                                  <MapPin className="w-4 h-4 text-emerald-600" />
-                                  <span>
-                                    {inst.neighborhood}, {inst.city}/{inst.state}
-                                  </span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <BadgeChip variant="rating" icon={Star}>
-                                    {inst.rating}
-                                  </BadgeChip>
-                                  <span className="text-sm text-gray-600">{inst.experience}</span>
-                                </div>
-                              </div>
-                              <div className="text-right">
-                                <div className="text-2xl font-bold text-emerald-600">{inst.price}</div>
-                                <div className="text-xs text-gray-600">por aula</div>
-                              </div>
-                            </div>
-
-                            <div className="flex flex-wrap gap-2 mb-3">
-                              {cats.map((cat) => (
-                                <BadgeChip key={cat} variant="category">
-                                  Cat. {cat}
-                                </BadgeChip>
-                              ))}
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4 mb-4">
-                              <div className="flex items-center gap-2">
-                                <Award className="w-5 h-5 text-emerald-600" />
-                                <div>
-                                  <div className="font-bold text-gray-900">{inst.studentsApproved}</div>
-                                  <div className="text-xs text-gray-600">Aprovados</div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="flex gap-3 mt-4">
-                            <Link href={`/instrutores/${instructorSlug}`} className="flex-1">
-                              <Button variant="outline" className="w-full bg-transparent">
-                                Ver Perfil
-                              </Button>
-                            </Link>
-                            <Button
-                              onClick={() => openQuoteModal(instructorSlug, inst.name)}
-                              className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600"
-                            >
-                              Pedir Orçamento
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
+                    <div className="flex gap-2">
                       <button
-                        onClick={() => handleFavorite(instructorSlug, inst.name)}
+                        onClick={() => handleFavorite(instructor.id)}
                         className={cn(
-                          "absolute top-4 right-4 p-2 rounded-full transition-all",
-                          favorites.includes(instructorSlug) ? "bg-rose-500 text-white" : "bg-white/80 hover:bg-white",
+                          "p-2 rounded-full transition-colors",
+                          favorites.includes(instructor.id)
+                            ? "bg-red-100 text-red-600"
+                            : "bg-gray-100 text-gray-400 hover:bg-red-50 hover:text-red-500",
                         )}
                       >
-                        <Heart className={cn("h-5 w-5", favorites.includes(instructorSlug) && "fill-current")} />
+                        <Heart className={cn("h-4 w-4", favorites.includes(instructor.id) && "fill-current")} />
                       </button>
-                    </PremiumCard>
-                  )
-                })
-              )}
-            </div>
-          </div>
-        </div>
+                      <button
+                        onClick={() => handleCompare(instructor.id)}
+                        className={cn(
+                          "p-2 rounded-full transition-colors",
+                          compareList.includes(instructor.id)
+                            ? "bg-blue-100 text-blue-600"
+                            : "bg-gray-100 text-gray-400 hover:bg-blue-50 hover:text-blue-500",
+                        )}
+                      >
+                        <GitCompare className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
 
-        <div className="bg-gray-50 py-12">
-          <div className="container mx-auto px-3 sm:px-4 max-w-4xl">
-            <SectionHeader
-              title="Perguntas Frequentes"
-              subtitle="Tudo o que você precisa saber sobre o catálogo Via Betel"
-              centered
-            />
-            <ExpandableMenu items={FAQ_ITEMS.map((faq) => ({ title: faq.question, content: faq.answer }))} />
-          </div>
-        </div>
-      </div>
+                  <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <div className="flex items-center gap-1">
+                      <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
+                      <span className="font-medium">{instructor.rating}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Award className="h-4 w-4 text-emerald-600" />
+                      <span>{instructor.studentsApproved} aprovados</span>
+                    </div>
+                  </div>
 
-      {/* Quote Modal - mantém mas compacta fonte mobile */}
-      <AnimatePresence>
-        {showQuoteModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4"
-            onClick={() => setShowQuoteModal(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="sticky top-0 bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-4 sm:p-6 rounded-t-2xl flex items-center justify-between z-10">
-                <div>
-                  <h2 className="text-lg sm:text-2xl font-bold">Solicitar Orçamento</h2>
-                  {selectedInstructorForQuote && (
-                    <p className="text-xs sm:text-sm text-emerald-100 mt-1">Para: {selectedInstructorForQuote.name}</p>
-                  )}
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <MapPin className="h-4 w-4" />
+                    <span>{instructor.location}</span>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {instructor.specialties?.slice(0, 3).map((spec, idx) => (
+                      <BadgeChip key={idx} variant="secondary" size="sm">
+                        {spec}
+                      </BadgeChip>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                    <div>
+                      <p className="text-sm text-gray-600">A partir de</p>
+                      <p className="text-xl font-bold text-emerald-700">{instructor.price}</p>
+                    </div>
+                    <Link href={`/instrutores/${generateSlug(instructor.name || "")}`}>
+                      <Button>Ver perfil</Button>
+                    </Link>
+                  </div>
                 </div>
-                <button
-                  onClick={() => setShowQuoteModal(false)}
-                  className="text-white hover:bg-white/20 rounded-full p-1.5 sm:p-2 transition-colors"
-                >
-                  <X className="w-5 h-5 sm:w-6 sm:h-6" />
-                </button>
-              </div>
+              </PremiumCard>
+            ))}
+          </div>
 
-              <div className="p-4 sm:p-6">
-                {quoteSuccess ? (
-                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-center py-6 sm:py-8">
-                    <CheckCircle2 className="w-12 h-12 sm:w-16 sm:h-16 text-emerald-600 mx-auto mb-3 sm:mb-4" />
-                    <h3 className="text-lg sm:text-2xl font-bold text-gray-900 mb-2">Orçamento Enviado!</h3>
-                    <p className="text-xs sm:text-base text-gray-600 mb-4 sm:mb-6">
-                      A Via Betel entrará em contato em até 24 horas úteis.
-                    </p>
-                    <Button
-                      onClick={() => {
-                        setShowQuoteModal(false)
-                        setQuoteSuccess(false)
-                      }}
-                      className="bg-gradient-to-r from-emerald-600 to-teal-600"
-                    >
-                      Fechar
-                    </Button>
-                  </motion.div>
-                ) : (
-                  <form onSubmit={handleQuoteSubmit} className="space-y-3 sm:space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                      <div>
-                        <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
-                          Seu Nome *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={quoteForm.studentName}
-                          onChange={(e) => setQuoteForm({ ...quoteForm, studentName: e.target.value })}
-                          className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none"
-                          placeholder="João Silva"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
-                          WhatsApp *
-                        </label>
-                        <input
-                          type="tel"
-                          required
-                          value={quoteForm.studentWhatsApp}
-                          onChange={(e) => setQuoteForm({ ...quoteForm, studentWhatsApp: e.target.value })}
-                          className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none"
-                          placeholder="(32) 99999-9999"
-                        />
-                      </div>
-                    </div>
+          {filteredInstructors.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-600">Nenhum instrutor encontrado com os filtros aplicados.</p>
+              <Button onClick={handleResetFilters} className="mt-4">
+                Limpar filtros
+              </Button>
+            </div>
+          )}
+        </div>
+      </section>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                      <div>
-                        <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
-                          Cidade *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={quoteForm.city}
-                          onChange={(e) => setQuoteForm({ ...quoteForm, city: e.target.value })}
-                          className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none"
-                          placeholder="Juiz de Fora"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
-                          Bairro *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={quoteForm.neighborhood}
-                          onChange={(e) => setQuoteForm({ ...quoteForm, neighborhood: e.target.value })}
-                          className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none"
-                          placeholder="Centro"
-                        />
-                      </div>
-                    </div>
+      {/* FAQ */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-6 max-w-4xl">
+          <SectionHeader
+            title="Perguntas Frequentes"
+            subtitle="Tire suas dúvidas sobre como funciona o marketplace Via Betel"
+          />
+          <div className="mt-8">
+            <ExpandableMenu items={FAQ_ITEMS} />
+          </div>
+        </div>
+      </section>
 
-                    <div>
-                      <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
-                        Categoria CNH *
-                      </label>
-                      <select
-                        value={quoteForm.category}
-                        onChange={(e) => setQuoteForm({ ...quoteForm, category: e.target.value })}
-                        className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none"
-                      >
-                        <option value="A">Categoria A (Moto)</option>
-                        <option value="B">Categoria B (Carro)</option>
-                        <option value="C">Categoria C (Caminhão)</option>
-                        <option value="D">Categoria D (Ônibus)</option>
-                        <option value="E">Categoria E (Carreta)</option>
-                        <option value="AB">AB (Moto + Carro)</option>
-                      </select>
-                    </div>
+      {compareList.length > 0 && (
+        <div className="fixed bottom-6 right-6 z-50 bg-white rounded-xl shadow-2xl border border-gray-200 p-4 max-w-sm">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-semibold text-gray-900">Comparar ({compareList.length}/3)</h3>
+            <Button onClick={clearCompare} variant="ghost" size="sm">
+              Limpar
+            </Button>
+          </div>
+          <Button className="w-full" disabled={compareList.length < 2}>
+            Comparar agora
+          </Button>
+        </div>
+      )}
 
-                    <div>
-                      <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
-                        Disponibilidade (3 opções de horário)
-                      </label>
-                      <div className="space-y-2">
-                        {["availability1", "availability2", "availability3"].map((field, idx) => (
-                          <input
-                            key={field}
-                            type="text"
-                            value={quoteForm[field as keyof typeof quoteForm]}
-                            onChange={(e) => setQuoteForm({ ...quoteForm, [field]: e.target.value })}
-                            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border-2 border-gray-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none"
-                            placeholder={`Opção ${idx + 1}: Ex: Seg/Qua 14h-16h`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
-                        Objetivo *
-                      </label>
-                      <textarea
-                        required
-                        value={quoteForm.objective}
-                        onChange={(e) => setQuoteForm({ ...quoteForm, objective: e.target.value })}
-                        rows={2}
-                        className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none resize-none"
-                        placeholder="Ex: Primeira habilitação, reciclagem, mudança de categoria..."
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
-                        Observações
-                      </label>
-                      <textarea
-                        value={quoteForm.notes}
-                        onChange={(e) => setQuoteForm({ ...quoteForm, notes: e.target.value })}
-                        rows={2}
-                        className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none resize-none"
-                        placeholder="Informações adicionais..."
-                      />
-                    </div>
-
-                    <div className="flex gap-3 pt-3 sm:pt-4">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setShowQuoteModal(false)}
-                        className="flex-1"
-                        disabled={isSubmittingQuote}
-                      >
-                        Cancelar
-                      </Button>
-                      <Button
-                        type="submit"
-                        className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
-                        disabled={isSubmittingQuote}
-                      >
-                        {isSubmittingQuote ? "Enviando..." : "Enviar Orçamento"}
-                      </Button>
-                    </div>
-                  </form>
-                )}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <LoginGuardModal open={showLoginGuard} onOpenChange={setShowLoginGuard} feature={loginGuardFeature} />
+      <LoginGuardModal
+        open={showLoginGuard}
+        onClose={() => setShowLoginGuard(false)}
+        feature={loginGuardFeature}
+        returnTo={`${pathname}?${searchParams.toString()}`}
+      />
     </>
   )
 }

@@ -27,7 +27,7 @@ type WeekSchedule = {
 type FormData = {
   nome: string
   email: string
-  whatsapp: string
+  phone: string
   cidade: string
   uf: string
   categorias: string[]
@@ -56,7 +56,7 @@ export default function InstrutorClientPage() {
   const [formData, setFormData] = useState<FormData>({
     nome: "",
     email: "",
-    whatsapp: "",
+    phone: "",
     cidade: "",
     uf: "",
     categorias: [],
@@ -94,7 +94,7 @@ export default function InstrutorClientPage() {
     }
   }, [openDropdown])
 
-  const formatWhatsApp = (value: string) => {
+  const formatPhone = (value: string) => {
     const numbers = value.replace(/\D/g, "")
     if (numbers.length <= 11) {
       return numbers.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3")
@@ -194,7 +194,7 @@ Disponibilidade semanal:
 ${formatDisponibilidade()}
 
 Veículo próprio: ${formData.veiculo}
-WhatsApp: ${formData.whatsapp}`,
+Telefone: ${formData.phone}`,
     )
 
     setTimeout(() => {
@@ -287,7 +287,9 @@ WhatsApp: ${formData.whatsapp}`,
         >
           <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto mb-2" />
           <h2 className="text-xl font-bold text-gray-900 mb-1.5">Recebido com sucesso!</h2>
-          <p className="text-gray-600 mb-3 text-sm">Abrindo WhatsApp para conversarmos...</p>
+          <p className="text-gray-600 mb-3 text-sm">
+            Nossa equipe entrará em contato por email em até 24h para continuar sua jornada!
+          </p>
           <Link href="/">
             <Button className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-semibold px-5 py-3 text-sm shadow-lg hover:shadow-2xl transition-all border-2 border-amber-400">
               Voltar ao início
@@ -367,14 +369,11 @@ WhatsApp: ${formData.whatsapp}`,
               </div>
 
               <div>
-                <label className="block text-[10px] font-semibold text-emerald-900 mb-0.5">
-                  WhatsApp <span className="text-red-500">*</span>
-                </label>
+                <label className="block text-[10px] font-semibold text-emerald-900 mb-0.5">Telefone (opcional)</label>
                 <input
                   type="tel"
-                  required
-                  value={formData.whatsapp}
-                  onChange={(e) => setFormData({ ...formData, whatsapp: formatWhatsApp(e.target.value) })}
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: formatPhone(e.target.value) })}
                   className="w-full px-2 py-1 text-[11px] border border-emerald-300 rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-white"
                   placeholder="(32) 98888-8888"
                   maxLength={15}

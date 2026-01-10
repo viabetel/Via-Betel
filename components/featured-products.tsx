@@ -28,10 +28,10 @@ const benefitCards = [
     id: "support",
     title: "Suporte Total",
     description:
-      "Nossa equipe está disponível para ajudar você em cada passo da jornada. Com atendimento rápido via chat, WhatsApp e telefone, resolução eficiente de problemas e acompanhamento contínuo, garantimos que você tenha a melhor experiência possível na plataforma Via Betel.",
+      "Nossa equipe está disponível para ajudar você em cada passo da jornada. Com atendimento rápido via chat interno e email, resolução eficiente de problemas e acompanhamento contínuo, garantimos que você tenha a melhor experiência possível na plataforma Via Betel.",
     icon: Headphones,
-    ctaText: "FALAR COM SUPORTE",
-    ctaLink: "#contato",
+    ctaText: "CENTRAL DE AJUDA",
+    ctaLink: "/suporte",
   },
 ]
 

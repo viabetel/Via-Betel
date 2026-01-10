@@ -1,6 +1,7 @@
 "use client"
 
 import dynamic from "next/dynamic"
+import { instructors } from "@/data/instructors-data"
 
 const InstrutoresClient = dynamic(() => import("./instrutores-client"), {
   ssr: false,
@@ -15,5 +16,5 @@ const InstrutoresClient = dynamic(() => import("./instrutores-client"), {
 })
 
 export default function InstrutoresDynamic() {
-  return <InstrutoresClient />
+  return <InstrutoresClient initialInstructors={instructors} />
 }

@@ -1,6 +1,6 @@
 "use client"
 import { motion } from "framer-motion"
-import { Instagram, Mail, Phone } from "lucide-react"
+import { Instagram, Mail } from "lucide-react"
 import { Reveal } from "./reveal"
 import { BlurPanel } from "./blur-panel"
 import { AnimatedText } from "./animated-text"
@@ -13,13 +13,6 @@ export function NewsletterSection() {
       value: "@viabetel",
       link: "https://instagram.com/viabetel",
       color: "from-amber-500 to-amber-600",
-    },
-    {
-      icon: Phone,
-      label: "WhatsApp",
-      value: "(32) 98809-3506",
-      link: "https://wa.me/5532988093506",
-      color: "from-green-500 to-green-600",
     },
     {
       icon: Mail,
@@ -48,13 +41,13 @@ export function NewsletterSection() {
                 </p>
               </div>
 
-              <div className="grid md:grid-cols-3 gap-7">
+              <div className="grid md:grid-cols-2 gap-7 max-w-2xl mx-auto">
                 {contactChannels.map((channel, index) => (
                   <motion.a
                     key={channel.label}
                     href={channel.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    target={channel.label === "Instagram" ? "_blank" : undefined}
+                    rel={channel.label === "Instagram" ? "noopener noreferrer" : undefined}
                     className="group block"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}

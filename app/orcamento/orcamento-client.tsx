@@ -19,7 +19,7 @@ export default function OrcamentoClient() {
     objective: "",
     notes: "",
     studentName: "",
-    studentWhatsApp: "",
+    studentPhone: "", // Renomeado de studentWhatsApp para studentPhone
   })
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -213,11 +213,11 @@ export default function OrcamentoClient() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">WhatsApp</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Telefone</label>
                   <input
                     type="tel"
-                    value={formData.studentWhatsApp}
-                    onChange={(e) => setFormData({ ...formData, studentWhatsApp: e.target.value })}
+                    value={formData.studentPhone}
+                    onChange={(e) => setFormData({ ...formData, studentPhone: e.target.value })}
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none"
                     placeholder="(32) 98888-8888"
                   />

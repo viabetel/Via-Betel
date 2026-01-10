@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils"
 type FormData = {
   nome: string
   email: string
-  whatsapp: string
+  telefone: string
   cidade: string
   uf: string
   categoria: string
@@ -23,7 +23,7 @@ export default function AlunoClientPage() {
   const [formData, setFormData] = useState<FormData>({
     nome: "",
     email: "",
-    whatsapp: "",
+    telefone: "",
     cidade: "",
     uf: "",
     categoria: "",
@@ -51,7 +51,7 @@ export default function AlunoClientPage() {
     }
   }, [openDropdown])
 
-  const formatWhatsApp = (value: string) => {
+  const formatPhone = (value: string) => {
     const numbers = value.replace(/\D/g, "")
     if (numbers.length <= 11) {
       return numbers.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3")
@@ -85,24 +85,6 @@ export default function AlunoClientPage() {
     await new Promise((resolve) => setTimeout(resolve, 500))
 
     setIsSuccess(true)
-
-    const whatsappMessage = encodeURIComponent(
-      `Olá! Vim do Instagram da Via Betel. Quero aulas de direção. Pode me orientar sobre valores e disponibilidade?
-
-Meus dados:
-Nome: ${formData.nome}
-E-mail: ${formData.email}
-Cidade: ${formData.cidade}/${formData.uf}
-Categoria: ${formData.categoria}
-Objetivo: ${formData.objetivo}
-Melhor horário: ${formData.horario}
-WhatsApp: ${formData.whatsapp}`,
-    )
-
-    setTimeout(() => {
-      window.open(`https://wa.me/5532988093506?text=${whatsappMessage}`, "_blank")
-    }, 800)
-
     setIsSubmitting(false)
   }
 
@@ -116,7 +98,9 @@ WhatsApp: ${formData.whatsapp}`,
         >
           <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto mb-2" />
           <h2 className="text-xl font-bold text-gray-900 mb-1.5">Recebido com sucesso!</h2>
-          <p className="text-gray-600 mb-3 text-sm">Abrindo WhatsApp para conversarmos...</p>
+          <p className="text-gray-600 mb-3 text-sm">
+            Nosso time entrará em contato por email ou telefone em até 24h para continuar sua jornada!
+          </p>
           <Link href="/">
             <Button className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-semibold px-5 py-3 text-sm shadow-lg">
               Voltar ao início
@@ -155,7 +139,7 @@ WhatsApp: ${formData.whatsapp}`,
               <h1 className="text-xl md:text-2xl font-bold text-white mb-1">Comece sua jornada!</h1>
               <p className="text-emerald-50 text-sm">Conecte-se com instrutores qualificados</p>
             </div>
-            <p className="text-gray-600 text-xs">Preencha os dados abaixo para falarmos no WhatsApp</p>
+            <p className="text-gray-600 text-xs">Preencha os dados abaixo para recebermos seu contato</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-3" ref={dropdownRef}>
@@ -194,14 +178,11 @@ WhatsApp: ${formData.whatsapp}`,
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-emerald-900 mb-1">
-                  WhatsApp <span className="text-red-500">*</span>
-                </label>
+                <label className="block text-[11px] font-semibold text-emerald-900 mb-1">Telefone (opcional)</label>
                 <input
                   type="tel"
-                  required
-                  value={formData.whatsapp}
-                  onChange={(e) => setFormData({ ...formData, whatsapp: formatWhatsApp(e.target.value) })}
+                  value={formData.telefone}
+                  onChange={(e) => setFormData({ ...formData, telefone: formatPhone(e.target.value) })}
                   className="w-full px-2.5 py-1.5 text-xs border border-emerald-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-white"
                   placeholder="(32) 98888-8888"
                   maxLength={15}
@@ -429,7 +410,7 @@ WhatsApp: ${formData.whatsapp}`,
                   Enviando...
                 </>
               ) : (
-                "Enviar e falar no WhatsApp"
+                "Enviar solicitação"
               )}
             </Button>
           </form>
