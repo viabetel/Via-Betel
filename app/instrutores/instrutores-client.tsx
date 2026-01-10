@@ -25,7 +25,7 @@ import { instructors } from "@/data/instructors-data"
 import { extractCategories, parsePrice, parseRating, generateSlug } from "@/lib/instructor-utils"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
-import Header from "@/components/Header"
+import Header from "@/components/header" // Fixed import to use lowercase 'header' matching actual filename
 import Breadcrumb from "@/components/breadcrumb"
 
 type SortOption = "rating" | "price" | "students" | "experience"

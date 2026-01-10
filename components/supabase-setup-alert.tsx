@@ -1,35 +1,17 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { createClient } from "@/lib/supabase/client"
+import { useState } from "react"
 import { AlertCircle, Database, X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 export function SupabaseSetupAlert() {
-  const [needsSetup, setNeedsSetup] = useState(false)
+  // O alerta agora é mostrado apenas via query param ?setup=1 para debug
   const [isDismissed, setIsDismissed] = useState(false)
-  const [isChecking, setIsChecking] = useState(true)
 
-  useEffect(() => {
-    const checkSetup = async () => {
-      try {
-        const supabase = createClient()
-        const { error } = await supabase.from("profiles").select("count")
+  // Check if setup alert should be shown via query param
+  const shouldShow = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("setup") === "1"
 
-        if (error && (error.code === "PGRST205" || error.code === "PGRST116")) {
-          setNeedsSetup(true)
-        }
-      } catch (error) {
-        console.warn("[v0] Supabase setup check failed (ignorado):", error)
-      } finally {
-        setIsChecking(false)
-      }
-    }
-
-    checkSetup()
-  }, [])
-
-  if (isChecking || !needsSetup || isDismissed) return null
+  if (!shouldShow || isDismissed) return null
 
   return (
     <AnimatePresence>
