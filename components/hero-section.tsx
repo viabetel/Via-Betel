@@ -110,7 +110,7 @@ export function HeroSection() {
   return (
     <motion.section
       ref={heroRef}
-      className="relative h-[625px] sm:h-[650px] lg:h-[687px] flex flex-col overflow-hidden"
+      className="relative h-[469px] sm:h-[492px] lg:h-[516px] flex flex-col overflow-hidden"
       style={{
         background: "linear-gradient(135deg, #064e3b 0%, #065f46 35%, #047857 70%, #0d9488 100%)",
         WebkitBackgroundClip: "padding-box",
@@ -134,7 +134,7 @@ export function HeroSection() {
       />
 
       {/* Organic shape na base */}
-      <div className="absolute bottom-0 left-0 right-0 h-[125px] sm:h-[150px] overflow-hidden">
+      <div className="absolute bottom-0 left-0 right-0 h-[75px] sm:h-[90px] overflow-hidden">
         <svg
           viewBox="0 0 1200 120"
           preserveAspectRatio="none"
@@ -156,14 +156,14 @@ export function HeroSection() {
 
       {/* Glow shapes decorativos */}
       <div
-        className="absolute top-20 left-10 w-[360px] h-[360px] bg-amber-500/10 rounded-full blur-3xl"
+        className="absolute top-20 left-10 w-[300px] h-[300px] bg-amber-500/10 rounded-full blur-3xl"
         style={{
           animation: "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
           WebkitAnimation: "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         }}
       />
       <div
-        className="absolute bottom-20 right-10 w-[400px] h-[400px] bg-teal-400/10 rounded-full blur-3xl"
+        className="absolute bottom-20 right-10 w-[320px] h-[320px] bg-teal-400/10 rounded-full blur-3xl"
         style={{
           animation: "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
           animationDelay: "1s",
@@ -184,8 +184,8 @@ export function HeroSection() {
         </div>
       </div>
 
-      <div className="container relative z-10 px-4 sm:px-6 flex-1 flex items-center max-w-7xl w-full mx-auto">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full">
+      <div className="container relative z-10 px-4 sm:px-6 flex-1 flex items-center max-w-7xl w-full mx-auto py-6">
+        <div className="grid lg:grid-cols-[1fr_auto] gap-8 lg:gap-12 items-center w-full">
           {/* Conteúdo esquerdo com carousel */}
           <AnimatePresence mode="wait">
             <motion.div
@@ -194,19 +194,19 @@ export function HeroSection() {
               animate={{ opacity: 1, x: 0 }}
               exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, x: 50 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              className="text-white space-y-4 sm:space-y-5"
+              className="text-white space-y-2 sm:space-y-3 max-w-xl"
             >
               <div
-                className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-bold text-white shadow-lg bg-gradient-to-r ${slide.badgeColor}`}
+                className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold text-white shadow-lg bg-gradient-to-r ${slide.badgeColor}`}
               >
-                <Icon className="w-4 h-4" />
+                <Icon className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                 {slide.badge}
               </div>
 
               <div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-2">{slide.title}</h1>
+                <h1 className="text-base sm:text-lg lg:text-xl font-bold leading-tight mb-0.5">{slide.title}</h1>
                 <h2
-                  className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 bg-clip-text text-transparent"
+                  className="text-base sm:text-lg lg:text-xl font-bold leading-tight bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 bg-clip-text text-transparent"
                   style={{
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
@@ -216,12 +216,12 @@ export function HeroSection() {
                 </h2>
               </div>
 
-              <p className="text-base sm:text-lg text-emerald-100 max-w-lg leading-relaxed">{slide.description}</p>
+              <p className="text-[10px] sm:text-xs text-emerald-100 leading-relaxed">{slide.description}</p>
 
               <Button
                 asChild
-                size="lg"
-                className="bg-gradient-to-r from-teal-400 to-teal-500 hover:from-teal-500 hover:to-teal-600 text-emerald-900 font-bold shadow-2xl shadow-teal-500/50 border-0 px-8 py-5 text-base rounded-xl hover:scale-105 transition-all duration-300"
+                size="sm"
+                className="bg-gradient-to-r from-teal-400 to-teal-500 hover:from-teal-500 hover:to-teal-600 text-emerald-900 font-bold shadow-2xl shadow-teal-500/50 border-0 px-3 py-1.5 text-[10px] sm:text-xs rounded-lg hover:scale-105 transition-all duration-300"
                 style={{
                   WebkitTapHighlightColor: "transparent",
                 }}
@@ -231,7 +231,6 @@ export function HeroSection() {
             </motion.div>
           </AnimatePresence>
 
-          {/* Card direito animado */}
           <AnimatePresence mode="wait">
             <motion.div
               key={`badge-${currentSlide}`}
@@ -239,19 +238,19 @@ export function HeroSection() {
               animate={{ opacity: 1, scale: 1 }}
               exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              className="flex justify-center lg:justify-end"
+              className="hidden lg:flex justify-end shrink-0"
             >
-              <div className="relative w-[260px] h-[320px] sm:w-[280px] sm:h-[360px]">
+              <div className="relative w-[120px] h-[160px]">
                 <div
-                  className="absolute inset-0 bg-gradient-to-br from-white via-emerald-50 to-teal-50 rounded-3xl shadow-2xl border-4 border-white/30 overflow-hidden"
+                  className="absolute inset-0 bg-gradient-to-br from-white via-emerald-50 to-teal-50 rounded-2xl shadow-2xl border-2 border-white/30 overflow-hidden"
                   style={{
                     backdropFilter: "blur(8px)",
                     WebkitBackdropFilter: "blur(8px)",
                   }}
                 >
-                  <div className="absolute top-5 left-5 right-5">
+                  <div className="absolute top-2 left-2 right-2">
                     <div
-                      className={`text-7xl sm:text-8xl font-black bg-gradient-to-r ${slide.badgeColor} bg-clip-text text-transparent leading-none`}
+                      className={`text-3xl font-black bg-gradient-to-r ${slide.badgeColor} bg-clip-text text-transparent leading-none`}
                       style={{
                         WebkitBackgroundClip: "text",
                         WebkitTextFillColor: "transparent",
@@ -261,20 +260,20 @@ export function HeroSection() {
                     </div>
                   </div>
 
-                  <div className="absolute bottom-5 left-5 right-5 space-y-2">
-                    <div className="text-xl sm:text-2xl font-bold text-teal-900 leading-tight">{slide.badge}</div>
+                  <div className="absolute bottom-2 left-2 right-2 space-y-0.5">
+                    <div className="text-xs font-bold text-teal-900 leading-tight">{slide.badge}</div>
                     <div
-                      className="text-base sm:text-lg font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent"
+                      className="text-[9px] font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent"
                       style={{
                         WebkitBackgroundClip: "text",
                         WebkitTextFillColor: "transparent",
                       }}
                     >
-                      Via Betel 2025
+                      Betel 2025
                     </div>
                   </div>
 
-                  <div className="absolute bottom-28 left-5 right-5 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent opacity-30" />
+                  <div className="absolute bottom-16 left-2 right-2 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent opacity-30" />
                 </div>
 
                 <div className={`absolute inset-0 bg-gradient-to-r ${slide.badgeColor} opacity-20 blur-2xl -z-10`} />
@@ -283,10 +282,10 @@ export function HeroSection() {
           </AnimatePresence>
         </div>
 
-        <div className="absolute bottom-8 left-0 right-0 flex items-center justify-center gap-4">
+        <div className="absolute bottom-6 left-0 right-0 flex items-center justify-center gap-2">
           <button
             onClick={handlePrevSlide}
-            className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all hover:scale-110"
+            className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all hover:scale-110"
             style={{
               WebkitTapHighlightColor: "transparent",
               backdropFilter: "blur(8px)",
@@ -297,18 +296,18 @@ export function HeroSection() {
               if (e.key === "ArrowLeft") handlePrevSlide()
             }}
           >
-            <ChevronLeft className="w-5 h-5 text-white" />
+            <ChevronLeft className="w-4 h-4 text-white" />
           </button>
 
-          <div className="flex gap-2.5" role="tablist" aria-label="Slides do carousel">
+          <div className="flex gap-1.5" role="tablist" aria-label="Slides do carousel">
             {HERO_SLIDES.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => handleDotClick(idx)}
-                className={`h-2.5 rounded-full transition-all ${
+                className={`h-1.5 rounded-full transition-all ${
                   idx === currentSlide
-                    ? "w-10 bg-gradient-to-r from-teal-400 to-teal-500 shadow-lg shadow-teal-500/50"
-                    : "w-2.5 bg-white/40 hover:bg-white/60"
+                    ? "w-6 bg-gradient-to-r from-teal-400 to-teal-500 shadow-lg shadow-teal-500/50"
+                    : "w-1.5 bg-white/40 hover:bg-white/60"
                 }`}
                 style={{
                   WebkitTapHighlightColor: "transparent",
@@ -322,7 +321,7 @@ export function HeroSection() {
 
           <button
             onClick={handleNextSlide}
-            className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all hover:scale-110"
+            className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all hover:scale-110"
             style={{
               WebkitTapHighlightColor: "transparent",
               backdropFilter: "blur(8px)",
@@ -333,7 +332,7 @@ export function HeroSection() {
               if (e.key === "ArrowRight") handleNextSlide()
             }}
           >
-            <ChevronRight className="w-5 h-5 text-white" />
+            <ChevronRight className="w-4 h-4 text-white" />
           </button>
         </div>
       </div>

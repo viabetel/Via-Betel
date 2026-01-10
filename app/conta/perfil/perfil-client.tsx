@@ -117,6 +117,19 @@ export function ContaPerfilClient() {
     }
   }
 
+  const handleDeleteAccount = async () => {
+    if (!user) return
+
+    if (
+      confirm(
+        "Tem certeza que deseja deletar sua conta? Esta ação é irreversível e todos os seus dados serão perdidos.",
+      )
+    ) {
+      // TODO: Implementar lógica de deletar conta
+      alert("Função de deletar conta será implementada em breve")
+    }
+  }
+
   if (authLoading) {
     return (
       <motion.div
@@ -444,6 +457,21 @@ export function ContaPerfilClient() {
               )}
             </Button>
           </div>
+
+          <PremiumCard className="p-6 border-2 border-red-200 bg-red-50/30">
+            <h2 className="text-xl font-bold text-red-800 mb-2">Zona de Perigo</h2>
+            <p className="text-sm text-gray-700 mb-4">
+              A exclusão da conta é permanente e não pode ser desfeita. Todos os seus dados, incluindo solicitações,
+              favoritos e conversas, serão removidos.
+            </p>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteAccount}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              Deletar Conta Permanentemente
+            </Button>
+          </PremiumCard>
         </motion.div>
       </div>
     </motion.div>
