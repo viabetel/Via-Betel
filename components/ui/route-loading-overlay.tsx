@@ -18,10 +18,9 @@ export function RouteLoadingOverlay() {
       setIsLoading(true)
       setPrevPathname(pathname)
 
-      // Hide after short delay (component will mount)
       const timer = setTimeout(() => {
         setIsLoading(false)
-      }, 500)
+      }, 400)
 
       return () => clearTimeout(timer)
     }

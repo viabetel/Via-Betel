@@ -372,7 +372,9 @@ export default function RootLayout({
       </head>
       <body className="font-sans bg-neutral-50 text-neutral-900 overflow-x-hidden antialiased">
         <AuthProvider>
-          <TopLoadingBar />
+          <Suspense fallback={null}>
+            <TopLoadingBar />
+          </Suspense>
           <RouteLoadingOverlay />
           <SupabaseSetupAlert />
           {children}
