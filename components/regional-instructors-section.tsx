@@ -2,55 +2,21 @@
 
 import { motion } from "framer-motion"
 import { MapPin, Star, Award, Clock } from "lucide-react"
+import Link from "next/link"
 import { cn } from "@/lib/utils"
+import { instructors as allInstructors } from "@/data/instructors-data"
+import { generateSlug, extractCategories } from "@/lib/instructor-utils"
 
-const instructors = [
-  {
-    name: "Carlos Silva",
-    photo: "/professional-male-driving-instructor-realistic-por.jpg",
-    city: "Belo Horizonte, MG",
-    categories: ["B", "C"],
-    rating: 4.8,
-    experience: 5,
-    students: 87,
-  },
-  {
-    name: "Marina Costa",
-    photo: "/professional-female-driving-instructor-realistic-p.jpg",
-    city: "Contagem, MG",
-    categories: ["B", "A"],
-    rating: 4.9,
-    experience: 7,
-    students: 123,
-  },
-  {
-    name: "Roberto Almeida",
-    photo: "/professional-male-instructor-realistic-portrait-sm.jpg",
-    city: "Betim, MG",
-    categories: ["B"],
-    rating: 4.7,
-    experience: 4,
-    students: 65,
-  },
-  {
-    name: "Paula Mendes",
-    photo: "/professional-female-instructor-new-portrait.jpg",
-    city: "Nova Lima, MG",
-    categories: ["B", "C"],
-    rating: 4.9,
-    experience: 6,
-    students: 94,
-  },
-  {
-    name: "José Santos",
-    photo: "/professional-male-driving-teacher-realistic-portra.jpg",
-    city: "Sabará, MG",
-    categories: ["B", "C", "D"],
-    rating: 5.0,
-    experience: 8,
-    students: 156,
-  },
-]
+const instructors = allInstructors.slice(0, 5).map((inst) => ({
+  name: inst.name,
+  photo: inst.photo,
+  city: `${inst.neighborhood}, ${inst.city}`,
+  categories: extractCategories(inst.role),
+  rating: Number.parseFloat(inst.rating),
+  experience: Number.parseInt(inst.experience),
+  students: inst.studentsApproved,
+  slug: generateSlug(inst.name, inst.city),
+}))
 
 export function RegionalInstructorsSection() {
   return (
@@ -170,14 +136,16 @@ export function RegionalInstructorsSection() {
                     </div>
                   </div>
 
-                  {/* CTA Button */}
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full mt-1.5 sm:mt-2.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 text-white font-semibold text-[8px] sm:text-[10px] py-1.5 sm:py-2 rounded-lg hover:shadow-lg transition-all min-h-[32px] sm:min-h-[40px]"
-                  >
-                    Ver
-                  </motion.button>
+                  {/* Updated CTA Button */}
+                  <Link href={`/instrutores/${instructor.slug}`} className="block">
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="w-full mt-1.5 sm:mt-2.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 text-white font-semibold text-[8px] sm:text-[10px] py-1.5 sm:py-2 rounded-lg hover:shadow-lg transition-all min-h-[32px] sm:min-h-[40px]"
+                    >
+                      Ver Perfil
+                    </motion.button>
+                  </Link>
                 </div>
               </motion.div>
             ))}
@@ -186,20 +154,22 @@ export function RegionalInstructorsSection() {
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-emerald-300 to-transparent opacity-50 pointer-events-none" />
         </div>
 
-        {/* View More Button */}
+        {/* Updated "Ver Todos" Button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center mt-6 sm:mt-8"
         >
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-white text-emerald-600 font-bold text-sm px-6 sm:px-8 py-3 rounded-xl border-2 border-emerald-600 hover:bg-emerald-50 transition-all shadow-lg min-h-[44px]"
-          >
-            Ver Todos os Instrutores
-          </motion.button>
+          <Link href="/instrutores">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-white text-emerald-600 font-bold text-sm px-6 sm:px-8 py-3 rounded-xl border-2 border-emerald-600 hover:bg-emerald-50 transition-all shadow-lg min-h-[44px]"
+            >
+              Ver Todos os Instrutores
+            </motion.button>
+          </Link>
         </motion.div>
       </div>
     </section>

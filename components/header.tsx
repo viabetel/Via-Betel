@@ -109,6 +109,13 @@ export function Header() {
                     className="absolute top-full right-0 mt-2 bg-gradient-to-br from-emerald-50 via-white to-amber-50 rounded-xl shadow-2xl py-2 min-w-[180px] z-[9999] border-2 border-emerald-300/50 backdrop-blur-sm"
                   >
                     <Link
+                      href="/instrutores"
+                      onClick={() => setOpenDropdown(null)}
+                      className="block px-3 py-2 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-xs transition-all font-medium"
+                    >
+                      Encontrar Instrutores
+                    </Link>
+                    <Link
                       href="/aluno"
                       onClick={() => setOpenDropdown(null)}
                       className="block px-3 py-2 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-xs transition-all font-medium"
@@ -176,6 +183,13 @@ export function Header() {
                       className="absolute top-full left-0 mt-2 bg-gradient-to-br from-emerald-50 via-white to-amber-50 rounded-xl shadow-2xl py-3 min-w-[220px] z-[9999] border-2 border-emerald-300/50 backdrop-blur-sm"
                     >
                       <Link
+                        href="/instrutores"
+                        onClick={() => setOpenDropdown(null)}
+                        className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2"
+                      >
+                        Encontrar Instrutores
+                      </Link>
+                      <Link
                         href="/aluno"
                         onClick={() => setOpenDropdown(null)}
                         className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2"
@@ -185,7 +199,7 @@ export function Header() {
                       <Link
                         href="/instrutor"
                         onClick={() => setOpenDropdown(null)}
-                        className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2"
+                        className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2 border-t border-emerald-200 mt-1 pt-2.5"
                       >
                         Para Instrutores
                       </Link>
