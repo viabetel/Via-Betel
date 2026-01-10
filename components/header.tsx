@@ -158,7 +158,6 @@ export function Header() {
 
             {/* Desktop navigation - hidden on mobile */}
             <div className="hidden md:flex items-center gap-2 lg:gap-3">
-              {/* Para você dropdown */}
               <div className="relative">
                 <Button
                   variant="ghost"
@@ -185,9 +184,16 @@ export function Header() {
                       <Link
                         href="/instrutores"
                         onClick={() => setOpenDropdown(null)}
+                        className="block px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-bold rounded-md mx-2 mb-2 transition-all hover:from-emerald-600 hover:to-teal-600"
+                      >
+                        🔍 Encontrar Instrutores
+                      </Link>
+                      <Link
+                        href="/orcamento"
+                        onClick={() => setOpenDropdown(null)}
                         className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2"
                       >
-                        Encontrar Instrutores
+                        Pedir Orçamento
                       </Link>
                       <Link
                         href="/aluno"
@@ -197,7 +203,7 @@ export function Header() {
                         Para Alunos
                       </Link>
                       <Link
-                        href="/instrutor"
+                        href="/para-instrutores"
                         onClick={() => setOpenDropdown(null)}
                         className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2 border-t border-emerald-200 mt-1 pt-2.5"
                       >

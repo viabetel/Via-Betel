@@ -8,68 +8,113 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+// Lead do aluno solicitando orçamento (sem contato direto com instrutor)
 model Lead {
-  id               String   @id @default(cuid())
-  tipo             String   // "aluno" ou "instrutor"
-  nome             String
-  whatsapp         String
-  cidade           String
-  categoria        String?  // categoria desejada pelo aluno
-  objetivo         String?
-  horario          String?
-  categorias       String?  // categorias que o instrutor ensina (separadas por vírgula)
-  experiencia      String?
-  disponibilidade  String?
-  veiculo          String?
-  createdAt        DateTime @default(now())
+  id               String           @id @default(cuid())
+  city             String
+  neighborhood     String?
+  category         String          // CNH desejada
+  availability1    String          // opção 1
+  availability2    String?         // opção 2
+  availability3    String?         // opção 3
+  objective        String?         // baliza, medo, prova, etc
+  notes            String?
+  studentName      String?         // opcional
+  studentWhatsApp  String?         // opcional (nunca exposto ao instrutor)
+  status           LeadStatus      @default(PENDING)
+  createdAt        DateTime        @default(now())
+  
+  proposals        LeadProposal[]
   
   @@map("leads")
 }
 
-model Order {
-  id               String             @id @default(cuid())
-  instructorSlug   String
-  planId           String            // PLAN_1, PLAN_5, PLAN_10
-  amount           Int                // em centavos
-  currency         String             @default("brl")
-  status           OrderStatus        @default(PENDING)
-  stripeSessionId  String?           @unique
-  customerEmail    String?
-  customerName     String?
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
+// Proposta do instrutor para um lead
+model LeadProposal {
+  id              String   @id @default(cuid())
+  leadId          String
+  lead            Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  instructorId    String
+  instructor      Instructor @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+  message         String
+  suggestedPrice  Int      // em centavos
+  availability    String   // ex: "Segunda 08:00-12:00"
+  createdAt       DateTime @default(now())
   
-  bookingRequests  BookingRequest[]
-
-  @@map("orders")
+  @@map("lead_proposals")
 }
 
-model BookingRequest {
-  id            String   @id @default(cuid())
-  orderId       String
-  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+// Instrutor (paga assinatura para aparecer no catálogo)
+model Instructor {
+  id               String          @id @default(cuid())
+  slug             String          @unique
+  name             String
+  email            String          @unique
+  city             String
+  state            String
+  categories       String          // "A,B,C"
+  rating           Float           @default(4.5)
+  price            Int             // em centavos
+  specialties      String          // JSON array
+  status           InstructorStatus @default(PENDING)
+  createdAt        DateTime        @default(now())
   
-  city          String
-  neighborhood  String?
-  option1       String   // "Segunda 08:00-12:00"
-  option2       String?
-  option3       String?
-  notes         String?
+  subscription     Subscription?
+  boosts           Boost[]
+  proposals        LeadProposal[]
   
-  status        BookingStatus @default(PENDING_CONFIRMATION)
-  createdAt     DateTime @default(now())
-
-  @@map("booking_requests")
+  @@map("instructors")
 }
 
-enum OrderStatus {
+// Assinatura do instrutor (Stripe Subscription)
+model Subscription {
+  id                      String   @id @default(cuid())
+  instructorId            String   @unique
+  instructor              Instructor @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+  stripeCustomerId        String   @unique
+  stripeSubscriptionId    String   @unique
+  status                  SubscriptionStatus @default(ACTIVE)
+  currentPeriodEnd        DateTime
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+  
+  @@map("subscriptions")
+}
+
+// Impulsionamento/Anúncios (add-on pago)
+model Boost {
+  id                String   @id @default(cuid())
+  instructorId      String
+  instructor        Instructor @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+  type              BoostType
+  city              String
+  startsAt          DateTime
+  endsAt            DateTime
+  stripePaymentId   String?
+  createdAt         DateTime @default(now())
+  
+  @@map("boosts")
+}
+
+enum LeadStatus {
   PENDING
-  PAID
+  CONTACTED
+  CLOSED
+}
+
+enum InstructorStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
   CANCELED
 }
 
-enum BookingStatus {
-  PENDING_CONFIRMATION
-  CONFIRMED
-  REJECTED
+enum BoostType {
+  IMPULSIONAR_7_DIAS
+  VITRINE_30_DIAS
 }

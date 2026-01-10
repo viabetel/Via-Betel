@@ -8,7 +8,7 @@ import Link from "next/link"
 export function HeroSection() {
   const handleWhatsAppClick = () => {
     const message = encodeURIComponent(
-      "Olá! Vim do Instagram da Via Betel. Quero aulas de direção. Pode me orientar sobre valores e disponibilidade?",
+      "Olá! Vim do site da Via Betel. Quero aulas de direção. Pode me orientar sobre valores e disponibilidade?",
     )
     window.open(`https://wa.me/5532988093506?text=${message}`, "_blank")
   }
@@ -91,15 +91,23 @@ export function HeroSection() {
               asChild
               className="w-full sm:w-auto bg-gradient-to-r from-[var(--color-brand-accent)] to-[var(--color-brand-accent-dark)] hover:from-[var(--color-brand-accent-dark)] hover:to-[var(--color-brand-accent-darker)] text-[var(--color-brand-text-light)] font-semibold px-4 sm:px-8 lg:px-10 py-3 sm:py-4 lg:py-5 text-[0.8125rem] sm:text-base lg:text-lg shadow-xl shadow-[var(--color-brand-accent)]/30 hover:shadow-2xl hover:shadow-[var(--color-brand-accent)]/40 transition-all hover:scale-105 min-h-[48px] border border-[var(--color-brand-accent-light)]/50 active:scale-95"
             >
-              <Link href="/instrutores">Encontrar Instrutores</Link>
+              <Link href="/instrutores">Ver Catálogo de Instrutores</Link>
+            </Button>
+            <Button
+              size="lg"
+              asChild
+              variant="outline"
+              className="w-full sm:w-auto border-2 border-[var(--color-brand-accent-light)] bg-transparent text-[var(--color-brand-text-muted)] hover:bg-[var(--color-brand-accent)]/20 hover:border-[var(--color-brand-accent-light)] font-semibold px-4 sm:px-8 lg:px-10 py-3 sm:py-4 lg:py-5 text-[0.8125rem] sm:text-base lg:text-lg transition-all hover:scale-105 min-h-[48px] active:scale-95"
+            >
+              <Link href="/orcamento">Quero Orçamento Rápido</Link>
             </Button>
             <Button
               size="lg"
               onClick={handleWhatsAppClick}
-              variant="outline"
-              className="w-full sm:w-auto border-2 border-[var(--color-brand-accent-light)] bg-transparent text-[var(--color-brand-text-muted)] hover:bg-[var(--color-brand-accent)]/20 hover:border-[var(--color-brand-accent-light)] font-semibold px-4 sm:px-8 lg:px-10 py-3 sm:py-4 lg:py-5 text-[0.8125rem] sm:text-base lg:text-lg transition-all hover:scale-105 min-h-[48px] active:scale-95"
+              variant="ghost"
+              className="w-full sm:w-auto text-[var(--color-brand-text-muted)] hover:bg-[var(--color-brand-accent)]/10 font-medium px-4 py-3 text-[0.8125rem] sm:text-base transition-all"
             >
-              Chamar no WhatsApp
+              Suporte WhatsApp
             </Button>
           </motion.div>
 

@@ -14,6 +14,7 @@ export const instructors = [
     specialties: ["Primeira Habilitação", "Iniciantes", "Confiança ao Volante"],
     bio: "Instrutor especializado em carros com foco em excelência e segurança no trânsito.",
     photo: "/images/instructor-1.jpg",
+    isSponsored: true,
   },
   {
     id: "instructor-2",
@@ -30,6 +31,7 @@ export const instructors = [
     specialties: ["Pilotagem de Motos", "Categoria A", "Segurança em Duas Rodas"],
     bio: "Instrutora especializada em motos com foco em excelência e segurança no trânsito.",
     photo: "/images/instructor-2.jpg",
+    isSponsored: true,
   },
   {
     id: "instructor-3",
@@ -46,6 +48,7 @@ export const instructors = [
     specialties: ["Veículos Pesados", "Caminhões", "Categoria C"],
     bio: "Instrutor especializado em profissionalizante com foco em excelência e segurança no trânsito.",
     photo: "/images/instructor-3.jpg",
+    isSponsored: true,
   },
   {
     id: "instructor-4",
@@ -62,6 +65,7 @@ export const instructors = [
     specialties: ["Aulas para Mulheres", "Empoderamento Feminino", "Ambiente Acolhedor"],
     bio: "Instrutora especializada em carros com foco em excelência e segurança no trânsito.",
     photo: "/images/instructor-4.jpg",
+    isSponsored: false,
   },
   {
     id: "instructor-5",
@@ -78,6 +82,7 @@ export const instructors = [
     specialties: ["Direção Defensiva", "Segurança no Trânsito", "Prevenção de Acidentes"],
     bio: "Instrutor especializado em motos e carros com foco em excelência e segurança no trânsito.",
     photo: "/images/instructor-5.jpg",
+    isSponsored: false,
   },
   {
     id: "instructor-6",
@@ -94,6 +99,7 @@ export const instructors = [
     specialties: ["Estacionamento", "Baliza", "Manobras Complexas"],
     bio: "Instrutora especializada em motos e carros com foco em excelência e segurança no trânsito.",
     photo: "/images/instructor-6.jpg",
+    isSponsored: false,
   },
   {
     id: "instructor-7",
@@ -110,6 +116,7 @@ export const instructors = [
     specialties: ["Trânsito Urbano", "Grandes Centros", "Hora do Rush"],
     bio: "Instrutor especializado em caminhões com foco em excelência e segurança no trânsito.",
     photo: "/images/instructor-7.jpg",
+    isSponsored: false,
   },
   {
     id: "instructor-8",
@@ -126,6 +133,7 @@ export const instructors = [
     specialties: ["Jovens Condutores", "Adolescentes", "CNH aos 18"],
     bio: "Instrutora especializada em carros com foco em excelência e segurança no trânsito.",
     photo: "/images/instructor-8.jpg",
+    isSponsored: false,
   },
   {
     id: "instructor-9",
@@ -142,6 +150,7 @@ export const instructors = [
     specialties: ["Ônibus", "Transporte de Passageiros", "Categoria D"],
     bio: "Instrutor especializado em ônibus com foco em excelência e segurança no trânsito.",
     photo: "/images/instructor-9.jpg",
+    isSponsored: false,
   },
   {
     id: "instructor-10",
@@ -158,6 +167,7 @@ export const instructors = [
     specialties: ["Idosos", "Terceira Idade", "Renovação CNH"],
     bio: "Instrutora especializada em motos com foco em excelência e segurança no trânsito.",
     photo: "/images/instructor-10.jpg",
+    isSponsored: false,
   },
   {
     id: "instructor-11",
@@ -174,6 +184,7 @@ export const instructors = [
     specialties: ["Ansiedade", "Medo de Dirigir", "Apoio Psicológico"],
     bio: "Instrutor especializado em carros e caminhões com foco em excelência e segurança no trânsito.",
     photo: "/images/instructor-11.jpg",
+    isSponsored: false,
   },
   {
     id: "instructor-12",
@@ -190,6 +201,7 @@ export const instructors = [
     specialties: ["Aulas Noturnas", "Direção Noite", "Visibilidade Reduzida"],
     bio: "Instrutora especializada em carros com foco em excelência e segurança no trânsito.",
     photo: "/images/instructor-12.jpg",
+    isSponsored: false,
   },
   {
     id: "instructor-13",
@@ -206,6 +218,7 @@ export const instructors = [
     specialties: ["Carretas", "Articulados", "Categoria E"],
     bio: "Instrutor especializado em todas categorias com foco em excelência e segurança no trânsito.",
     photo: "/images/instructor-13.jpg",
+    isSponsored: false,
   },
   {
     id: "instructor-14",
@@ -222,6 +235,7 @@ export const instructors = [
     specialties: ["Direção Econômica", "Economia de Combustível", "Sustentabilidade"],
     bio: "Instrutora especializada em carros com foco em excelência e segurança no trânsito.",
     photo: "/images/instructor-14.jpg",
+    isSponsored: false,
   },
   {
     id: "instructor-15",
@@ -238,6 +252,7 @@ export const instructors = [
     specialties: ["Motos Esportivas", "Alta Performance", "Pilotagem Avançada"],
     bio: "Instrutor especializado em motos com foco em excelência e segurança no trânsito.",
     photo: "/images/instructor-15.jpg",
+    isSponsored: false,
   },
   {
     id: "instructor-16",
@@ -254,6 +269,7 @@ export const instructors = [
     specialties: ["Direção em Chuva", "Condições Adversas", "Aquaplanagem"],
     bio: "Instrutora especializada em motos e carros com foco em excelência e segurança no trânsito.",
     photo: "/images/instructor-16.jpg",
+    isSponsored: false,
   },
   {
     id: "instructor-17",
@@ -270,6 +286,7 @@ export const instructors = [
     specialties: ["Rodovias", "Viagens", "Longas Distâncias"],
     bio: "Instrutor especializado em carros com foco em excelência e segurança no trânsito.",
     photo: "/images/instructor-17.jpg",
+    isSponsored: false,
   },
   {
     id: "instructor-18",
@@ -286,6 +303,7 @@ export const instructors = [
     specialties: ["Cadeirantes", "PCD", "Adaptações Veiculares"],
     bio: "Instrutora especializada em carros com foco em excelência e segurança no trânsito.",
     photo: "/images/instructor-18.jpg",
+    isSponsored: false,
   },
   {
     id: "instructor-19",
@@ -302,6 +320,7 @@ export const instructors = [
     specialties: ["Ladeiras", "Morros", "Rampas Íngremes"],
     bio: "Instrutor especializado em caminhões com foco em excelência e segurança no trânsito.",
     photo: "/images/instructor-19.jpg",
+    isSponsored: false,
   },
   {
     id: "instructor-20",
@@ -318,5 +337,6 @@ export const instructors = [
     specialties: ["Reciclagem", "Retorno à Direção", "Anos sem Dirigir"],
     bio: "Instrutora especializada em carros com foco em excelência e segurança no trânsito.",
     photo: "/images/instructor-20.jpg",
+    isSponsored: false,
   },
 ]
