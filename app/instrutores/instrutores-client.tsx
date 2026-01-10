@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Search, SlidersHorizontal, MapPin, Star, Award, X } from "lucide-react"
 import Link from "next/link"
@@ -20,6 +20,16 @@ export default function InstrutoresClient() {
   const [onlyJF, setOnlyJF] = useState(false)
   const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>([])
   const [showFilters, setShowFilters] = useState(false)
+  const [isDesktop, setIsDesktop] = useState(false)
+
+  useEffect(() => {
+    const checkDesktop = () => {
+      setIsDesktop(window.innerWidth >= 768)
+    }
+    checkDesktop()
+    window.addEventListener("resize", checkDesktop)
+    return () => window.removeEventListener("resize", checkDesktop)
+  }, [])
 
   const allSpecialties = useMemo(() => {
     const specs = new Set<string>()
@@ -179,7 +189,7 @@ export default function InstrutoresClient() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Filters Panel */}
           <AnimatePresence>
-            {(showFilters || window.innerWidth >= 768) && (
+            {(showFilters || isDesktop) && (
               <motion.aside
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
