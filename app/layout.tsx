@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
+import { MotionDebugBadge } from "@/components/motion-debug-badge"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -364,7 +365,10 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
       </head>
-      <body className="font-sans bg-neutral-50 text-neutral-900 overflow-x-hidden antialiased">{children}</body>
+      <body className="font-sans bg-neutral-50 text-neutral-900 overflow-x-hidden antialiased">
+        {children}
+        <MotionDebugBadge />
+      </body>
     </html>
   )
 }

@@ -6,6 +6,7 @@ import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { instructors as allInstructors } from "@/data/instructors-data"
 import { generateSlug, extractCategories } from "@/lib/instructor-utils"
+import { useMotionDebug } from "@/hooks/use-motion-debug"
 
 const instructors = allInstructors.slice(0, 5).map((inst) => ({
   name: inst.name,
@@ -19,6 +20,33 @@ const instructors = allInstructors.slice(0, 5).map((inst) => ({
 }))
 
 export function RegionalInstructorsSection() {
+  const { shouldDisableMotion } = useMotionDebug()
+
+  const cardVariants = shouldDisableMotion
+    ? {}
+    : {
+        hover: {
+          y: -6,
+          scale: 1.01,
+          transition: { duration: 0.3, ease: "easeOut" },
+        },
+        tap: { scale: 0.98 },
+      }
+
+  const containerVariants = shouldDisableMotion
+    ? { initial: { opacity: 1 }, animate: { opacity: 1 } }
+    : {
+        initial: { opacity: 0 },
+        animate: { opacity: 1, transition: { staggerChildren: 0.1 } },
+      }
+
+  const itemVariants = shouldDisableMotion
+    ? { initial: { opacity: 1, y: 0 }, animate: { opacity: 1, y: 0 } }
+    : {
+        initial: { opacity: 0, y: 20 },
+        animate: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+      }
+
   return (
     <section className="relative py-6 sm:py-12 md:py-14 lg:py-16 overflow-hidden bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50">
       {/* Background decorative elements */}
@@ -30,15 +58,15 @@ export function RegionalInstructorsSection() {
       <div className="container mx-auto px-4 sm:px-6 relative z-10 w-full max-w-7xl">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={shouldDisableMotion ? { opacity: 1 } : { opacity: 0, y: 24 }}
+          whileInView={shouldDisableMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
           className="text-center mb-4 sm:mb-8 md:mb-10"
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+            initial={shouldDisableMotion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+            whileInView={shouldDisableMotion ? { opacity: 1, scale: 1 } : { opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             className="inline-flex items-center gap-1 bg-white/80 backdrop-blur-sm border border-emerald-200 rounded-full px-2 sm:px-4 py-1 sm:py-2 mb-2 sm:mb-4 shadow-lg"
           >
@@ -61,7 +89,13 @@ export function RegionalInstructorsSection() {
           </p>
         </motion.div>
 
-        <div className="relative -mx-4 sm:mx-0">
+        <motion.div
+          variants={containerVariants}
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true }}
+          className="relative -mx-4 sm:mx-0"
+        >
           <div
             className="flex gap-1.5 sm:gap-4 overflow-x-auto pb-3 px-4 sm:px-0 snap-x snap-mandatory scrollbar-hide"
             style={{
@@ -73,12 +107,10 @@ export function RegionalInstructorsSection() {
             {instructors.map((instructor, idx) => (
               <motion.div
                 key={idx}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1, duration: 0.5 }}
-                whileHover={{ y: -8, transition: { duration: 0.2 } }}
-                className="group relative bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 flex-shrink-0 w-[28%] min-w-[95px] sm:w-64 snap-start"
+                variants={itemVariants}
+                whileHover={cardVariants.hover}
+                whileTap={cardVariants.tap}
+                className="group relative bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 flex-shrink-0 w-[28%] min-w-[95px] sm:w-64 snap-start"
               >
                 {/* Photo */}
                 <div className="relative h-12 sm:h-28 overflow-hidden bg-gradient-to-br from-emerald-100 to-teal-100">
@@ -137,8 +169,8 @@ export function RegionalInstructorsSection() {
                   {/* CTA Button */}
                   <Link href={`/instrutores/${instructor.slug}`} className="block">
                     <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                      whileHover={shouldDisableMotion ? {} : { scale: 1.02 }}
+                      whileTap={shouldDisableMotion ? {} : { scale: 0.98 }}
                       className="w-full mt-1 sm:mt-2.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 text-white font-semibold text-[7px] sm:text-[10px] py-1 sm:py-2 rounded-md hover:shadow-lg transition-all min-h-[28px] sm:min-h-[40px]"
                     >
                       Ver
@@ -150,20 +182,20 @@ export function RegionalInstructorsSection() {
           </div>
 
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-emerald-300 to-transparent opacity-50 pointer-events-none" />
-        </div>
+        </motion.div>
 
         {/* "Ver Todos" Button */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={shouldDisableMotion ? { opacity: 1 } : { opacity: 0, y: 16 }}
+          whileInView={shouldDisableMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center mt-4 sm:mt-8"
         >
           <Link href="/instrutores">
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-white text-emerald-600 font-bold text-xs sm:text-sm px-4 sm:px-8 py-2 sm:py-3 rounded-lg border-2 border-emerald-600 hover:bg-emerald-50 transition-all shadow-lg min-h-[40px] sm:min-h-[44px]"
+              whileHover={shouldDisableMotion ? {} : { scale: 1.05, y: -2 }}
+              whileTap={shouldDisableMotion ? {} : { scale: 0.95 }}
+              className="bg-white text-emerald-600 font-bold text-xs sm:text-sm px-4 sm:px-8 py-2 sm:py-3 rounded-lg border-2 border-emerald-600 hover:bg-emerald-50 hover:shadow-xl transition-all shadow-lg min-h-[40px] sm:min-h-[44px]"
             >
               Ver Todos os Instrutores
             </motion.button>
