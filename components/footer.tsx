@@ -16,17 +16,18 @@ export function Footer() {
   const footerLinks = {
     "Para Alunos": [
       { name: "Buscar aulas", href: "/aluno" },
-      { name: "Como funciona", href: "#how-it-works" },
+      { name: "Como funciona", href: "#como-funciona" },
       { name: "Categorias CNH", href: "#categorias" },
     ],
     Recursos: [
-      { name: "Blog / Dicas", href: "#recursos" },
-      { name: "Materiais de estudo", href: "#recursos" },
+      { name: "Blog / Dicas", href: "/blog" },
+      { name: "Materiais de estudo", href: "/materiais" },
     ],
     "Legal e Contato": [
-      { name: "Termos de uso", href: "#termos" },
-      { name: "Política de privacidade", href: "#privacidade" },
+      { name: "Termos de uso", href: "/termos" },
+      { name: "Política de privacidade", href: "/privacidade" },
       { name: "Trabalhe conosco", href: "#" },
+      { name: "Central de Ajuda", href: "/suporte" },
     ],
   }
 
@@ -336,15 +337,15 @@ export function Footer() {
             <p>&copy; {currentYear} Via Betel. Todos os direitos reservados.</p>
           </div>
           <div className="flex flex-wrap justify-center gap-3 sm:gap-4 text-xs sm:text-sm text-neutral-500">
-            <AppLink href="#privacidade" className="hover:text-green-400 transition-colors">
+            <AppLink href="/privacidade" className="hover:text-green-400 transition-colors">
               Privacidade
             </AppLink>
             <span>•</span>
-            <AppLink href="#termos" className="hover:text-green-400 transition-colors">
+            <AppLink href="/termos" className="hover:text-green-400 transition-colors">
               Termos
             </AppLink>
             <span>•</span>
-            <AppLink href="#cookies" className="hover:text-green-400 transition-colors">
+            <AppLink href="/cookies" className="hover:text-green-400 transition-colors">
               Cookies
             </AppLink>
           </div>

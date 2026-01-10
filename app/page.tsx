@@ -7,8 +7,23 @@ import { MaterialsSection } from "@/components/materials-section"
 import { RegionalInstructorsSection } from "@/components/regional-instructors-section"
 import { ResourcesSection } from "@/components/resources-section"
 import { Footer } from "@/components/footer"
+import { useState, useEffect } from "react"
 
 export default function HomePage() {
+  const [isHeroVisible, setIsHeroVisible] = useState(true)
+
+  useEffect(() => {
+    const handleHeroVisibility = (e: CustomEvent) => {
+      setIsHeroVisible(e.detail.isHeroVisible)
+    }
+
+    window.addEventListener("heroVisibilityChange", handleHeroVisibility as EventListener)
+
+    return () => {
+      window.removeEventListener("heroVisibilityChange", handleHeroVisibility as EventListener)
+    }
+  }, [])
+
   const organizationData = {
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
@@ -230,8 +245,12 @@ export default function HomePage() {
         <Header />
         <HeroSection />
         <FeaturedProducts />
-        <HowItWorksSection />
-        <MaterialsSection />
+        <div id="categorias">
+          <MaterialsSection />
+        </div>
+        <div id="como-funciona">
+          <HowItWorksSection />
+        </div>
         <RegionalInstructorsSection />
         <ResourcesSection />
         <Footer />

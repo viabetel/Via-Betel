@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { AppLink } from "@/components/app-link"
 import {
@@ -93,8 +92,26 @@ export function HeaderContent({ isScrolled = false, variant = "header" }: Header
   }
 
   // Cores adaptadas ao contexto (hero vs header scrolled)
-  const textColor = variant === "hero" ? "text-white" : isScrolled ? "text-gray-700" : "text-white"
-  const hoverBg = variant === "hero" ? "hover:bg-white/10" : isScrolled ? "hover:bg-gray-100" : "hover:bg-white/10"
+  const textColor = variant === "hero" || !isScrolled ? "text-white" : "text-emerald-900"
+  const hoverBg = variant === "hero" || !isScrolled ? "hover:bg-white/10" : "hover:bg-emerald-50"
+
+  const userMenuItems =
+    profile?.role === "INSTRUCTOR"
+      ? [
+          { icon: User, label: "Meu Perfil", href: "/conta/perfil" },
+          { icon: Briefcase, label: "Meus Anúncios", href: "/conta/anuncios" },
+          { icon: Calendar, label: "Disponibilidade", href: "/conta/disponibilidade" },
+          { icon: ClipboardList, label: "Minhas Solicitações", href: "/conta/solicitacoes" },
+          { icon: Settings, label: "Configurações", href: "/conta/configuracoes" },
+          { icon: Shield, label: "Segurança", href: "/conta/seguranca" },
+        ]
+      : [
+          { icon: User, label: "Meu Perfil", href: "/conta/perfil" },
+          { icon: Heart, label: "Favoritos", href: "/conta/favoritos" },
+          { icon: ClipboardList, label: "Minhas Solicitações", href: "/conta/solicitacoes" },
+          { icon: Settings, label: "Configurações", href: "/conta/configuracoes" },
+          { icon: Shield, label: "Segurança", href: "/conta/seguranca" },
+        ]
 
   return (
     <div className="flex items-center justify-between h-12 sm:h-14 md:h-16 px-2 sm:px-4 md:px-6 lg:px-8 w-full">
@@ -159,27 +176,30 @@ export function HeaderContent({ isScrolled = false, variant = "header" }: Header
                   Para Instrutores
                 </AppLink>
                 <div className="border-t border-emerald-200 my-1"></div>
-                <a
-                  href="#aulas-praticas"
+                <AppLink
+                  href="/instrutores?category=A"
+                  variant="nav"
                   onClick={() => setOpenDropdown(null)}
                   className="block px-3 py-2 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-xs transition-all font-medium"
                 >
                   Aulas Práticas
-                </a>
-                <a
-                  href="#simulado"
+                </AppLink>
+                <AppLink
+                  href="/simulados"
+                  variant="nav"
                   onClick={() => setOpenDropdown(null)}
                   className="block px-3 py-2 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-xs transition-all font-medium"
                 >
                   Simulados
-                </a>
-                <a
-                  href="#renovacao"
+                </AppLink>
+                <AppLink
+                  href="/renovacao"
+                  variant="nav"
                   onClick={() => setOpenDropdown(null)}
                   className="block px-3 py-2 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-xs transition-all font-medium"
                 >
                   Renovação CNH
-                </a>
+                </AppLink>
               </motion.div>
             )}
           </AnimatePresence>
@@ -269,27 +289,30 @@ export function HeaderContent({ isScrolled = false, variant = "header" }: Header
                   transition={{ duration: 0.2, ease: "easeOut" }}
                   className="absolute top-full left-0 mt-2 bg-gradient-to-br from-emerald-50 via-white to-amber-50 rounded-xl shadow-2xl py-3 min-w-[220px] z-[9999] border-2 border-emerald-300/50 backdrop-blur-sm"
                 >
-                  <Link
-                    href="#aulas-praticas"
+                  <AppLink
+                    href="/instrutores?category=A"
+                    variant="nav"
                     onClick={() => setOpenDropdown(null)}
                     className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2"
                   >
                     Aulas Práticas
-                  </Link>
-                  <Link
-                    href="#simulado"
+                  </AppLink>
+                  <AppLink
+                    href="/simulados"
+                    variant="nav"
                     onClick={() => setOpenDropdown(null)}
                     className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2"
                   >
                     Simulados
-                  </Link>
-                  <Link
-                    href="#renovacao"
+                  </AppLink>
+                  <AppLink
+                    href="/renovacao"
+                    variant="nav"
                     onClick={() => setOpenDropdown(null)}
                     className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2 border-t border-emerald-200 mt-1 pt-2.5"
                   >
                     Renovação CNH
-                  </Link>
+                  </AppLink>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -455,93 +478,18 @@ export function HeaderContent({ isScrolled = false, variant = "header" }: Header
                     </div>
 
                     <div className="py-1">
-                      <AppLink
-                        href="/conta"
-                        variant="nav"
-                        onClick={() => setOpenDropdown(null)}
-                        className="flex items-center gap-3 px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-semibold"
-                      >
-                        <User className="w-4 h-4" />
-                        Minha Conta
-                      </AppLink>
-                      <AppLink
-                        href="/conta/perfil"
-                        variant="nav"
-                        onClick={() => setOpenDropdown(null)}
-                        className="flex items-center gap-3 px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all"
-                      >
-                        <User className="w-4 h-4" />
-                        Ver perfil
-                      </AppLink>
-                    </div>
-
-                    {profile?.role === "STUDENT" && (
-                      <div className="py-1">
+                      {userMenuItems.map((item) => (
                         <AppLink
-                          href="/conta/solicitacoes"
+                          key={item.label}
+                          href={item.href}
                           variant="nav"
                           onClick={() => setOpenDropdown(null)}
                           className="flex items-center gap-3 px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all"
                         >
-                          <ClipboardList className="w-4 h-4" />
-                          Minhas Solicitações
+                          {item.icon && <item.icon className="w-4 h-4" />}
+                          {item.label}
                         </AppLink>
-                        <AppLink
-                          href="/conta/favoritos"
-                          variant="nav"
-                          onClick={() => setOpenDropdown(null)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all"
-                        >
-                          <Heart className="w-4 h-4" />
-                          Instrutores Favoritos
-                        </AppLink>
-                      </div>
-                    )}
-
-                    {profile?.role === "INSTRUCTOR" && (
-                      <div className="py-1">
-                        <AppLink
-                          href="/conta/anuncios"
-                          variant="nav"
-                          onClick={() => setOpenDropdown(null)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all"
-                        >
-                          <Briefcase className="w-4 h-4" />
-                          Meus Anúncios
-                        </AppLink>
-                        <AppLink
-                          href="/conta/disponibilidade"
-                          variant="nav"
-                          onClick={() => setOpenDropdown(null)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all"
-                        >
-                          <Calendar className="w-4 h-4" />
-                          Disponibilidade
-                        </AppLink>
-                      </div>
-                    )}
-
-                    <div className="border-t border-emerald-200 my-1"></div>
-
-                    <div className="py-1">
-                      <AppLink
-                        href="/conta/seguranca"
-                        variant="nav"
-                        onClick={() => setOpenDropdown(null)}
-                        className="flex items-center gap-3 px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all"
-                      >
-                        <Shield className="w-4 h-4" />
-                        Segurança
-                      </AppLink>
-                      <AppLink
-                        href="/conta/preferencias"
-                        variant="nav"
-                        onClick={() => setOpenDropdown(null)}
-                        className="flex items-center gap-3 px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all"
-                      >
-                        <Settings className="w-4 h-4" />
-                        Preferências
-                      </AppLink>
+                      ))}
                     </div>
 
                     <div className="border-t border-emerald-200 my-1"></div>

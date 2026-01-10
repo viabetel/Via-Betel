@@ -1,42 +1,40 @@
 "use client"
 import { motion, useScroll, useTransform } from "framer-motion"
 import { Reveal } from "./reveal"
-import { GraduationCap, Users, Headphones, ChevronDown } from "lucide-react"
-import { useRef, useState } from "react"
-import Link from "next/link"
+import { GraduationCap, Users, Sparkles, ArrowRight } from "lucide-react"
+import { useRef } from "react"
+import { AppLink } from "@/components/app-link"
 
 const benefitCards = [
   {
     id: "instructor-benefits",
     title: "Para Instrutores",
+    subtitle: "Expanda seu negócio",
     description:
-      "Conecte-se com alunos em todo o país e expanda sua agenda de forma inteligente. Receba pagamentos garantidos, gerencie horários facilmente e conte com suporte completo para focar no que importa: ensinar com excelência e construir sua reputação profissional.",
+      "Conecte-se com alunos qualificados, receba pagamentos garantidos através da plataforma e gerencie sua agenda de forma inteligente. Construa sua reputação e cresça com segurança.",
     icon: GraduationCap,
-    ctaText: "RECEBER ALUNOS",
+    badge: "PROFISSIONAIS",
+    ctaText: "Começar a receber alunos",
     ctaLink: "/instrutor",
+    gradient: "from-emerald-500 to-teal-600",
+    iconBg: "bg-gradient-to-br from-emerald-500 to-teal-600",
   },
   {
     id: "student-benefits",
     title: "Para Alunos",
+    subtitle: "Aprenda com os melhores",
     description:
-      "Encontre o instrutor perfeito para você com horários flexíveis que se adaptam à sua rotina. Tenha acompanhamento personalizado em cada etapa, acesso a material didático completo e conte com metodologias comprovadas para sua aprovação garantida no menor tempo possível.",
+      "Escolha instrutores verificados com horários flexíveis que se adaptam à sua rotina. Tenha acompanhamento personalizado, material didático completo e metodologia comprovada para sua aprovação.",
     icon: Users,
-    ctaText: "COMEÇAR AGORA",
+    badge: "MARKETPLACE",
+    ctaText: "Encontrar instrutor ideal",
     ctaLink: "/aluno",
-  },
-  {
-    id: "support",
-    title: "Suporte Total",
-    description:
-      "Nossa equipe está disponível para ajudar você em cada passo da jornada. Com atendimento rápido via chat interno e email, resolução eficiente de problemas e acompanhamento contínuo, garantimos que você tenha a melhor experiência possível na plataforma Via Betel.",
-    icon: Headphones,
-    ctaText: "CENTRAL DE AJUDA",
-    ctaLink: "/suporte",
+    gradient: "from-emerald-600 to-teal-700",
+    iconBg: "bg-gradient-to-br from-emerald-600 to-teal-700",
   },
 ]
 
 export function FeaturedProducts() {
-  const [expandedCards, setExpandedCards] = useState<{ [key: string]: boolean }>({})
   const sectionRef = useRef(null)
 
   const { scrollYProgress } = useScroll({
@@ -47,44 +45,51 @@ export function FeaturedProducts() {
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0])
   const y = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [100, 0, 0, -100])
 
-  const card1Y = useTransform(scrollYProgress, [0.2, 0.5], [20, -10])
-  const card2Y = useTransform(scrollYProgress, [0.2, 0.5], [30, -15])
-  const card3Y = useTransform(scrollYProgress, [0.2, 0.5], [40, -20])
-
-  const toggleCard = (cardId: string) => {
-    setExpandedCards((prev) => ({ ...prev, [cardId]: !prev[cardId] }))
-  }
-
   return (
     <motion.section
       ref={sectionRef}
-      className="py-6 sm:py-12 md:py-14 lg:py-16 pb-0 relative overflow-hidden bg-white"
+      className="py-16 sm:py-20 lg:py-24 relative overflow-hidden"
       id="featured-products"
-      style={{ opacity, y }}
+      style={{
+        opacity,
+        y,
+        background: "linear-gradient(180deg, #ffffff 0%, #f9fafb 50%, #ffffff 100%)",
+      }}
     >
-      <div className="container mx-auto px-3 sm:px-6 max-w-7xl w-full relative z-10">
+      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.02]" />
+      <div className="absolute top-20 right-10 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-20 left-10 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl" />
+
+      <div className="container mx-auto px-4 sm:px-6 max-w-7xl w-full relative z-10">
         <Reveal>
           <motion.div
-            className="text-left mb-2 sm:mb-8 md:mb-10"
+            className="text-center mb-12 sm:mb-16 lg:mb-20"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.6 }}
           >
-            <h2
-              className="text-sm sm:text-2xl lg:text-3xl text-neutral-900 mb-0.5 sm:mb-3"
-              style={{ fontSize: "clamp(0.875rem, 3vw, 2rem)" }}
-            >
-              Por que escolher a <span className="italic font-light">Via Betel</span>
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <Sparkles className="w-5 h-5 text-amber-600" />
+              <span className="text-sm font-bold tracking-wider text-amber-600 uppercase">Por que escolher</span>
+              <Sparkles className="w-5 h-5 text-amber-600" />
+            </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+              A melhor plataforma para
+              <br />
+              <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                instrutores e alunos
+              </span>
             </h2>
-            <p className="text-[10px] sm:text-base text-neutral-600 max-w-2xl text-pretty leading-tight sm:leading-normal">
-              Conectamos instrutores qualificados a alunos dedicados, criando a melhor experiência de aprendizado.
+            <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Conectamos instrutores certificados a alunos dedicados, criando experiências de aprendizado seguras,
+              personalizadas e de alta qualidade.
             </p>
           </motion.div>
         </Reveal>
 
         <motion.div
-          className="grid grid-cols-1 gap-1.5 sm:gap-5 md:gap-6"
+          className="flex flex-col gap-6 sm:gap-8"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
@@ -93,99 +98,95 @@ export function FeaturedProducts() {
             visible: {
               opacity: 1,
               transition: {
-                staggerChildren: 0.15,
-                delayChildren: 0.2,
+                staggerChildren: 0.2,
+                delayChildren: 0.1,
               },
             },
           }}
         >
           {benefitCards.map((card, index) => {
             const IconComponent = card.icon
-            const cardYTransform = index === 0 ? card1Y : index === 1 ? card2Y : card3Y
-            const isExpanded = expandedCards[card.id]
 
             return (
               <motion.div
                 key={card.id}
-                style={{ y: cardYTransform }}
                 variants={{
-                  hidden: { opacity: 0, y: 30, scale: 0.95 },
+                  hidden: { opacity: 0, y: 40 },
                   visible: {
                     opacity: 1,
                     y: 0,
-                    scale: 1,
                     transition: {
-                      duration: 0.5,
+                      duration: 0.6,
                       ease: [0.21, 0.47, 0.32, 0.98],
                     },
                   },
                 }}
               >
-                <Reveal delay={index * 0.1}>
-                  <div className="group relative h-full rounded-lg sm:rounded-2xl overflow-hidden bg-white shadow-xl hover:shadow-2xl transition-all duration-500 border-2 border-emerald-100 hover:border-emerald-300">
-                    <div className="flex flex-col md:flex-row h-full min-h-[100px] sm:min-h-[180px]">
-                      <div className="flex items-center justify-between p-2 sm:p-6 md:p-7 bg-gradient-to-br from-emerald-50 to-teal-50 md:w-[35%] md:flex-col relative overflow-hidden border-r-2 border-emerald-100">
-                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-emerald-100/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                <Reveal delay={index * 0.15}>
+                  <div className="group relative overflow-hidden rounded-2xl sm:rounded-3xl bg-white border-2 border-gray-100 hover:border-emerald-200 shadow-lg hover:shadow-2xl transition-all duration-500">
+                    <div className="flex flex-col md:flex-row">
+                      {/* Bloco esquerdo: ícone + CTA */}
+                      <div className="relative md:w-[35%] lg:w-[30%] bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-8 flex flex-col items-center justify-center gap-6 border-r-2 border-gray-100 overflow-hidden">
+                        {/* Decoração */}
+                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-emerald-100/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
-                        <div className="group-hover:scale-110 transition-transform duration-300 relative z-10 bg-emerald-600 rounded-2xl p-2 sm:p-3">
-                          <IconComponent
-                            className="w-6 h-6 sm:w-10 sm:h-10 text-white drop-shadow-lg"
-                            strokeWidth={1.5}
-                          />
+                        {/* Badge pequeno */}
+                        <div className="absolute top-4 left-4">
+                          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-bold tracking-wider bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md">
+                            {card.badge}
+                          </span>
                         </div>
 
-                        <Link href={card.ctaLink} className="relative z-10 w-auto md:w-full">
+                        {/* Ícone grande */}
+                        <div
+                          className={`relative z-10 ${card.iconBg} rounded-3xl p-6 shadow-xl group-hover:scale-110 transition-transform duration-500`}
+                        >
+                          <IconComponent className="w-16 h-16 text-white drop-shadow-lg" strokeWidth={1.5} />
+                        </div>
+
+                        {/* CTA */}
+                        <AppLink href={card.ctaLink} variant="nav" className="relative z-10 w-full">
                           <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="py-1.5 px-3 sm:py-3 sm:px-5 rounded-md sm:rounded-xl font-bold text-[10px] sm:text-base bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg hover:shadow-emerald-500/50 hover:from-emerald-700 hover:to-teal-700 transition-all duration-300 min-h-[36px] sm:min-h-[44px] w-full md:w-auto"
+                            className={`w-full py-3.5 px-6 rounded-xl font-bold text-sm bg-gradient-to-r ${card.gradient} text-white shadow-lg hover:shadow-emerald-500/50 transition-all duration-300 flex items-center justify-center gap-2 group`}
                           >
                             {card.ctaText}
+                            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                           </motion.button>
-                        </Link>
+                        </AppLink>
                       </div>
 
-                      <div className="flex flex-col justify-center p-2 sm:p-6 md:p-7 md:w-[65%] bg-white relative min-w-0">
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-emerald-500/5 via-transparent to-transparent opacity-50" />
-
-                        <h3 className="text-xs sm:text-lg md:text-xl font-bold text-gray-900 mb-0.5 sm:mb-3 group-hover:text-emerald-600 transition-colors duration-300 relative z-10">
-                          {card.title}
-                        </h3>
+                      {/* Bloco direito: conteúdo textual */}
+                      <div className="relative md:w-[65%] lg:w-[70%] p-8 sm:p-10 flex flex-col justify-center bg-white">
+                        {/* Decoração radial */}
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-emerald-500/[0.02] via-transparent to-transparent" />
 
                         <div className="relative z-10">
-                          <p
-                            className={`text-[10px] sm:text-base text-gray-700 leading-snug sm:leading-relaxed text-pretty ${
-                              !isExpanded ? "line-clamp-2 sm:line-clamp-none" : ""
-                            }`}
-                          >
+                          <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 group-hover:text-emerald-600 transition-colors duration-300">
+                            {card.title}
+                          </h3>
+                          <p className="text-sm font-semibold text-emerald-600 mb-4 tracking-wide uppercase">
+                            {card.subtitle}
+                          </p>
+                          <p className="text-base sm:text-lg text-gray-700 leading-relaxed max-w-2xl">
                             {card.description}
                           </p>
-                          <button
-                            onClick={() => toggleCard(card.id)}
-                            className="sm:hidden mt-1 text-[9px] text-emerald-600 hover:text-emerald-700 flex items-center gap-0.5 font-medium"
-                          >
-                            {isExpanded ? "Ver menos" : "Ver mais"}
-                            <ChevronDown
-                              className={`w-2.5 h-2.5 transition-transform ${isExpanded ? "rotate-180" : ""}`}
-                            />
-                          </button>
                         </div>
+
+                        {/* Borda dourada sutil no hover */}
+                        <div className="absolute inset-0 border-2 border-amber-500/0 group-hover:border-amber-500/20 rounded-2xl transition-all duration-500 pointer-events-none" />
                       </div>
                     </div>
 
-                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/0 via-teal-400/0 to-emerald-400/0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none" />
-
-                    <div className="absolute inset-0 border-2 border-emerald-500/0 group-hover:border-emerald-500/30 rounded-2xl transition-all duration-500 pointer-events-none" />
+                    {/* Overlay gradiente no hover */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 via-teal-500/0 to-transparent opacity-0 group-hover:opacity-[0.03] transition-opacity duration-700 pointer-events-none" />
                   </div>
                 </Reveal>
               </motion.div>
             )
           })}
         </motion.div>
-      </div>
-
-      <div className="relative h-0 mt-0">
-        <div className="absolute inset-0 bg-white" />
       </div>
     </motion.section>
   )
