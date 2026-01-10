@@ -8,9 +8,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useState, useEffect } from "react"
 import { ArrowLeft } from "lucide-react"
+import { encodeReturnTo, saveReturnTo } from "@/lib/return-to"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -19,6 +20,15 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const returnTo = searchParams.get("returnTo")
+
+  useEffect(() => {
+    if (returnTo) {
+      saveReturnTo(returnTo)
+    }
+  }, [returnTo])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -32,7 +42,9 @@ export default function LoginPage() {
         password,
       })
       if (error) throw error
-      router.push("/chat")
+
+      const finalPath = returnTo || "/"
+      router.push(finalPath)
       router.refresh()
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "Erro ao fazer login")
@@ -47,20 +59,34 @@ export default function LoginPage() {
     setError(null)
 
     try {
-      const redirectUrl =
-        typeof window !== "undefined"
-          ? process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${window.location.origin}/chat`
-          : "/chat"
+      console.log("[v0] Iniciando login com Google")
 
-      const { error } = await supabase.auth.signInWithOAuth({
+      const siteUrl =
+        process.env.NEXT_PUBLIC_SITE_URL ||
+        (typeof window !== "undefined" ? window.location.origin : "http://localhost:3000")
+
+      const callbackUrl = `${siteUrl}/auth/callback${returnTo ? `?returnTo=${encodeReturnTo(returnTo)}` : ""}`
+
+      console.log("[v0] Site URL:", siteUrl)
+      console.log("[v0] Callback URL:", callbackUrl)
+      console.log("[v0] Return to:", returnTo)
+
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: redirectUrl,
+          redirectTo: callbackUrl,
         },
       })
+
+      console.log("[v0] OAuth response data:", data)
+      console.log("[v0] OAuth response error:", error)
+
       if (error) throw error
+
+      console.log("[v0] OAuth iniciado com sucesso, aguardando redirect...")
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "Erro ao fazer login com Google")
+      console.error("[v0] Erro ao iniciar OAuth Google:", error)
+      setError(error instanceof Error ? error.message : "Não foi possível entrar com Google. Tente novamente.")
       setIsGoogleLoading(false)
     }
   }
@@ -139,7 +165,12 @@ export default function LoginPage() {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="password">Senha</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password">Senha</Label>
+                    <Link href="/auth/forgot-password" className="text-xs text-emerald-600 hover:underline">
+                      Esqueci minha senha
+                    </Link>
+                  </div>
                   <Input
                     id="password"
                     type="password"
@@ -159,7 +190,10 @@ export default function LoginPage() {
               </div>
               <div className="mt-4 text-center text-sm">
                 Não tem conta?{" "}
-                <Link href="/auth/sign-up" className="underline underline-offset-4 text-emerald-600">
+                <Link
+                  href={`/auth/sign-up${returnTo ? `?returnTo=${encodeReturnTo(returnTo)}` : ""}`}
+                  className="underline underline-offset-4 text-emerald-600"
+                >
                   Cadastre-se
                 </Link>
               </div>

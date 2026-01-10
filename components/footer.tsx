@@ -2,11 +2,12 @@
 import { motion } from "framer-motion"
 import type React from "react"
 import Link from "next/link"
-import { analytics } from "@/lib/analytics"
 
-import { Instagram, Youtube, Phone, Mail, Clock, MapPin, Shield, MessageCircle } from "lucide-react"
+import { Instagram, Youtube, Mail, Clock, MapPin, Shield, HelpCircle } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
+
+const INSTAGRAM_URL = process.env.NEXT_PUBLIC_INSTAGRAM_URL || "https://www.instagram.com/viabetel/"
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
@@ -30,9 +31,8 @@ export function Footer() {
   }
 
   const socialLinks = [
-    { name: "Instagram", icon: Instagram, href: "https://instagram.com/viabetel" },
+    { name: "Instagram", icon: Instagram, href: INSTAGRAM_URL },
     { name: "YouTube", icon: Youtube, href: "https://youtube.com/@viabetel" },
-    { name: "TikTok", icon: MessageCircle, href: "https://tiktok.com/@viabetel" },
   ]
 
   const governmentBadges = [
@@ -68,10 +68,6 @@ export function Footer() {
     setEmail("")
   }
 
-  const handleWhatsAppClick = () => {
-    analytics.clickWhatsApp("footer")
-  }
-
   return (
     <footer className="bg-neutral-900 border-t border-green-800/20 mt-16 sm:mt-20 md:mt-24">
       <div className="container mx-auto px-4 sm:px-6 py-10 sm:py-12 lg:py-16 max-w-7xl w-full">
@@ -102,25 +98,19 @@ export function Footer() {
                   <span>Juiz de Fora e região (DDD 32)</span>
                 </div>
                 <a
-                  href="https://wa.me/5532988093506"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center space-x-2 text-neutral-400 hover:text-green-400 transition-colors text-sm group"
-                  onClick={handleWhatsAppClick}
-                >
-                  <Phone
-                    size={16}
-                    className="text-green-400 group-hover:scale-110 transition-transform flex-shrink-0"
-                  />
-                  <span>(32) 98809-3506</span>
-                </a>
-                <a
                   href="mailto:contato@viabetel.com"
                   className="flex items-center space-x-2 text-neutral-400 hover:text-green-400 transition-colors text-sm"
                 >
                   <Mail size={16} className="text-green-400 flex-shrink-0" />
                   <span>contato@viabetel.com</span>
                 </a>
+                <Link
+                  href="/suporte"
+                  className="flex items-center space-x-2 text-neutral-400 hover:text-green-400 transition-colors text-sm"
+                >
+                  <HelpCircle size={16} className="text-green-400 flex-shrink-0" />
+                  <span>Central de Ajuda</span>
+                </Link>
                 <div className="flex items-center space-x-2 text-neutral-400 text-sm">
                   <Clock size={16} className="text-green-400 flex-shrink-0" />
                   <span>Seg-Sex: 8h às 18h</span>
@@ -196,21 +186,17 @@ export function Footer() {
                 <p className="text-xs text-neutral-400">Pagamentos e dados protegidos</p>
               </div>
 
-              {/* WhatsApp CTA */}
-              <motion.a
-                href="https://wa.me/5532988093506"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 text-center text-sm"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleWhatsAppClick}
-              >
-                <div className="flex items-center justify-center space-x-2">
-                  <Phone size={16} />
-                  <span>Fale no WhatsApp</span>
-                </div>
-              </motion.a>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Link
+                  href="/suporte"
+                  className="block w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 text-center text-sm"
+                >
+                  <div className="flex items-center justify-center space-x-2">
+                    <HelpCircle size={16} />
+                    <span>Central de Ajuda</span>
+                  </div>
+                </Link>
+              </motion.div>
             </motion.div>
           </div>
         </div>

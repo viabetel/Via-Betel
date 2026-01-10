@@ -5,41 +5,25 @@ import { motion, useScroll, useTransform } from "framer-motion"
 import Image from "next/image"
 import Link from "next/link"
 import { useMotionDebug } from "@/hooks/use-motion-debug"
+import { useRef } from "react"
+import { HeaderContent } from "@/components/header-content"
 
 export function HeroSection() {
   const { shouldDisableMotion } = useMotionDebug()
   const { scrollY } = useScroll()
+  const heroRef = useRef<HTMLElement>(null)
+  const heroEndRef = useRef<HTMLDivElement>(null)
 
-  // Logo parallax intenso + scale sutil
   const logoY = useTransform(scrollY, [0, 500], [0, -80])
   const logoScale = useTransform(scrollY, [0, 400], [1, 0.85])
-
-  // Título parallax médio rápido
   const titleY = useTransform(scrollY, [0, 500], [0, -60])
   const titleScale = useTransform(scrollY, [0, 400], [1, 0.95])
-
-  // Subtítulo parallax médio lento
   const subtitleY = useTransform(scrollY, [0, 500], [0, -40])
-
-  // Botões parallax leve (sempre visíveis e clicáveis)
   const buttonsY = useTransform(scrollY, [0, 500], [0, -20])
-
-  // Stats parallax inverso (sobe enquanto scrolla)
   const statsY = useTransform(scrollY, [0, 500], [0, 30])
-
-  // Badge parallax super rápido
   const badgeY = useTransform(scrollY, [0, 500], [0, -100])
-
-  // Background blobs parallax original
   const parallaxY = useTransform(scrollY, [0, 500], [0, -28])
   const parallaxYInverse = useTransform(parallaxY, (v) => -v * 0.7)
-
-  const handleWhatsAppClick = () => {
-    const message = encodeURIComponent(
-      "Olá! Vim do site da Via Betel. Quero aulas de direção. Pode me orientar sobre valores e disponibilidade?",
-    )
-    window.open(`https://wa.me/5532988093506?text=${message}`, "_blank")
-  }
 
   const containerVariants = shouldDisableMotion
     ? { initial: { opacity: 1 }, animate: { opacity: 1 } }
@@ -62,7 +46,23 @@ export function HeroSection() {
       }
 
   return (
-    <motion.section className="relative min-h-[75vh] sm:min-h-[90vh] lg:min-h-[560px] flex items-center justify-center bg-gradient-to-br from-[var(--color-brand-primary-darkest)] via-[var(--color-brand-primary-dark)] to-[var(--color-brand-secondary-dark)] text-[var(--color-brand-text-light)] overflow-hidden">
+    <motion.section
+      ref={heroRef}
+      className="relative min-h-[75vh] sm:min-h-[90vh] lg:min-h-[560px] flex items-center justify-center bg-gradient-to-br from-[var(--color-brand-primary-darkest)] via-[var(--color-brand-primary-dark)] to-[var(--color-brand-secondary-dark)] text-[var(--color-brand-text-light)] overflow-hidden"
+    >
+      <div className="fixed top-0 left-0 right-0 z-[100] w-full">
+        <div
+          className="bg-gradient-to-r from-emerald-800/95 via-emerald-700/95 to-teal-700/95 backdrop-blur-md shadow-lg border-b border-white/10"
+          style={{
+            transition: "all 0.4s ease-in-out",
+          }}
+        >
+          <div className="container mx-auto max-w-7xl w-full">
+            <HeaderContent variant="hero" />
+          </div>
+        </div>
+      </div>
+
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
 
@@ -144,6 +144,7 @@ export function HeroSection() {
             </span>
           </motion.p>
 
+          {/* Buttons */}
           <motion.div
             variants={itemVariants}
             style={{
@@ -182,20 +183,6 @@ export function HeroSection() {
                 <Link href="/orcamento">Quero Orçamento Rápido</Link>
               </Button>
             </motion.div>
-
-            <motion.div
-              whileHover={shouldDisableMotion ? {} : { scale: 1.02 }}
-              whileTap={shouldDisableMotion ? {} : { scale: 0.98 }}
-            >
-              <Button
-                size="lg"
-                onClick={handleWhatsAppClick}
-                variant="ghost"
-                className="w-full sm:w-auto text-[var(--color-brand-text-muted)] hover:bg-[var(--color-brand-accent)]/10 font-medium px-4 py-3 text-[0.8125rem] sm:text-base transition-all"
-              >
-                Suporte WhatsApp
-              </Button>
-            </motion.div>
           </motion.div>
 
           {/* Stats */}
@@ -223,6 +210,8 @@ export function HeroSection() {
           </motion.div>
         </motion.div>
       </div>
+
+      <div ref={heroEndRef} className="absolute bottom-0 left-0 right-0 h-1 pointer-events-none" aria-hidden="true" />
     </motion.section>
   )
 }

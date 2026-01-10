@@ -60,10 +60,11 @@ export default function SignUpPage() {
     setError(null)
 
     try {
-      const redirectUrl =
-        typeof window !== "undefined"
-          ? process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${window.location.origin}/chat`
-          : "/chat"
+      const redirectUrl = process.env.NEXT_PUBLIC_SITE_URL
+        ? `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`
+        : typeof window !== "undefined"
+          ? `${window.location.origin}/auth/callback`
+          : "/auth/callback"
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
@@ -77,7 +78,7 @@ export default function SignUpPage() {
       })
       if (error) throw error
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "Erro ao cadastrar com Google")
+      setError(error instanceof Error ? error.message : "Não foi possível cadastrar com Google. Tente novamente.")
       setIsGoogleLoading(false)
     }
   }
