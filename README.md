@@ -47,20 +47,32 @@ Escolha uma opção:
 No Vercel Dashboard, adicione:
 
 ```env
+# Database (obrigatório)
 DATABASE_URL=postgresql://user:password@host/database?pgbouncer=true
 DIRECT_URL=postgresql://user:password@host/database
-RESEND_API_KEY=re_xxxxxxxxxxxx
-EMAIL_TO=seu-email@dominio.com
+
+# Email via Gmail SMTP (obrigatório para notificações)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=contato@viabetel.com
+SMTP_PASS=sua-app-password-aqui
 EMAIL_FROM=contato@viabetel.com
+EMAIL_TO=contato@viabetel.com
+
+# Bootstrap (opcional, apenas para criar tabela via API)
 BOOTSTRAP_TOKEN=seu-token-secreto-aqui
-```
 
-Opcional (Analytics):
-
-```env
+# Analytics (opcional)
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
 NEXT_PUBLIC_FB_PIXEL_ID=XXXXXXXXXX
 ```
+
+**Importante sobre Gmail SMTP:**
+- Você precisa criar uma "App Password" no Google, não use sua senha normal
+- Acesse: https://myaccount.google.com/apppasswords
+- Crie uma senha específica para "Mail" e copie o código de 16 caracteres
+- Use esse código como `SMTP_PASS`
 
 ### 3. Execute as Migrations
 
@@ -183,7 +195,8 @@ npx prisma generate
 │   ├── aluno/          # Landing page de captação
 │   ├── api/
 │   │   ├── health/db/  # Health check do banco
-│   │   └── admin/      # Endpoints administrativos
+│   │   ├── admin/      # Endpoints administrativos
+│   │   └── debug/      # Debug endpoints
 │   ├── instrutor/      # Cadastro de instrutores
 │   └── page.tsx        # Landing page principal
 ├── components/
@@ -258,6 +271,73 @@ npx prisma studio
 2. Selecione seu projeto
 3. Vá em **Table Editor**
 4. Verá a tabela `leads` criada pelo Prisma
+
+## Testando Email Localmente
+
+Para testar se o email está configurado corretamente:
+
+### 1. Verifique a configuração
+
+```bash
+curl http://localhost:3000/api/debug/mail
+```
+
+Resposta esperada:
+
+```json
+{
+  "has_SMTP_USER": true,
+  "has_SMTP_PASS": true,
+  "smtp_host": "smtp.gmail.com",
+  "smtp_port": "465",
+  "smtp_secure": "true",
+  "email_from": "contato@viabetel.com",
+  "email_to": "contato@viabetel.com"
+}
+```
+
+### 2. Teste criando um lead
+
+No console do navegador (F12):
+
+```javascript
+fetch('http://localhost:3000/api/leads', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    name: 'João Teste',
+    phone: '31999999999',
+    city: 'Juiz de Fora',
+    type: 'aluno',
+    message: 'Quero aulas de direção',
+    email: 'joao@teste.com'
+  })
+})
+.then(r => r.json())
+.then(data => console.log(data))
+```
+
+Resposta esperada:
+
+```json
+{
+  "ok": true,
+  "leadId": "...",
+  "createdAt": "2024-01-09T...",
+  "email": {
+    "ok": true,
+    "error": null
+  }
+}
+```
+
+Se o email foi enviado com sucesso, você verá nos logs do terminal:
+
+```bash
+[v0] Configurando transporter SMTP...
+[v0] Enviando email...
+[v0] Email enviado com sucesso!
+```
 
 ## Troubleshooting
 
