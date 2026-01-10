@@ -4,7 +4,7 @@ import { HeroSection } from "@/components/hero-section"
 import { FeaturedProducts } from "@/components/featured-products"
 import { HowItWorksSection } from "@/components/how-it-works-section"
 import { MaterialsSection } from "@/components/materials-section"
-import { RegionalInstructorsSection } from "@/components/regional-instructors-section"
+import { NearbyDiscoverySection } from "@/components/home/nearby-discovery-section"
 import { ResourcesSection } from "@/components/resources-section"
 import { Footer } from "@/components/footer"
 import { useState, useEffect } from "react"
@@ -251,7 +251,7 @@ export default function HomePage() {
         <div id="como-funciona">
           <HowItWorksSection />
         </div>
-        <RegionalInstructorsSection />
+        <NearbyDiscoverySection />
         <ResourcesSection />
         <Footer />
       </main>

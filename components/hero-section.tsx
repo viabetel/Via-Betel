@@ -110,9 +110,12 @@ export function HeroSection() {
   return (
     <motion.section
       ref={heroRef}
-      className="relative h-[500px] sm:h-[520px] lg:h-[550px] flex flex-col overflow-hidden"
+      className="relative h-[625px] sm:h-[650px] lg:h-[687px] flex flex-col overflow-hidden"
       style={{
         background: "linear-gradient(135deg, #064e3b 0%, #065f46 35%, #047857 70%, #0d9488 100%)",
+        WebkitBackgroundClip: "padding-box",
+        MozBackgroundClip: "padding-box",
+        backgroundClip: "padding-box",
       }}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
@@ -120,15 +123,28 @@ export function HeroSection() {
       onBlur={() => setIsPaused(false)}
     >
       {/* Background texture sutil */}
-      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
+      <div
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: "url('/grid.svg')",
+          backgroundRepeat: "repeat",
+          WebkitBackfaceVisibility: "hidden",
+          backfaceVisibility: "hidden",
+        }}
+      />
 
       {/* Organic shape na base */}
-      <div className="absolute bottom-0 left-0 right-0 h-20 sm:h-24 overflow-hidden">
+      <div className="absolute bottom-0 left-0 right-0 h-[125px] sm:h-[150px] overflow-hidden">
         <svg
           viewBox="0 0 1200 120"
           preserveAspectRatio="none"
           className="absolute bottom-0 w-full h-full"
-          style={{ transform: "scaleY(-1)" }}
+          style={{
+            transform: "scaleY(-1)",
+            WebkitTransform: "scaleY(-1)",
+            MozTransform: "scaleY(-1)",
+            msTransform: "scaleY(-1)",
+          }}
         >
           <path
             d="M0,0 C150,80 350,80 600,60 C850,40 1050,80 1200,0 L1200,120 L0,120 Z"
@@ -139,17 +155,37 @@ export function HeroSection() {
       </div>
 
       {/* Glow shapes decorativos */}
-      <div className="absolute top-20 left-10 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-20 right-10 w-80 h-80 bg-teal-400/10 rounded-full blur-3xl animate-pulse delay-1000" />
+      <div
+        className="absolute top-20 left-10 w-[360px] h-[360px] bg-amber-500/10 rounded-full blur-3xl"
+        style={{
+          animation: "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+          WebkitAnimation: "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        }}
+      />
+      <div
+        className="absolute bottom-20 right-10 w-[400px] h-[400px] bg-teal-400/10 rounded-full blur-3xl"
+        style={{
+          animation: "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+          animationDelay: "1s",
+          WebkitAnimation: "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+          WebkitAnimationDelay: "1s",
+        }}
+      />
 
-      <div className="relative z-50 w-full bg-emerald-900/85 backdrop-blur-md border-b border-white/10">
-        <div className="container mx-auto max-w-7xl px-6">
+      <div
+        className="relative z-50 w-full bg-emerald-900/85 border-b border-white/10"
+        style={{
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+        }}
+      >
+        <div className="container mx-auto max-w-7xl px-4 sm:px-6">
           <HeaderContent variant="hero" />
         </div>
       </div>
 
-      <div className="container relative z-10 px-6 flex-1 flex items-center max-w-7xl w-full">
-        <div className="grid lg:grid-cols-2 gap-6 lg:gap-10 items-center w-full">
+      <div className="container relative z-10 px-4 sm:px-6 flex-1 flex items-center max-w-7xl w-full mx-auto">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full">
           {/* Conteúdo esquerdo com carousel */}
           <AnimatePresence mode="wait">
             <motion.div
@@ -158,28 +194,37 @@ export function HeroSection() {
               animate={{ opacity: 1, x: 0 }}
               exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, x: 50 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              className="text-white space-y-3"
+              className="text-white space-y-4 sm:space-y-5"
             >
               <div
-                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold text-white shadow-lg bg-gradient-to-r ${slide.badgeColor}`}
+                className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-bold text-white shadow-lg bg-gradient-to-r ${slide.badgeColor}`}
               >
-                <Icon className="w-3 h-3" />
+                <Icon className="w-4 h-4" />
                 {slide.badge}
               </div>
 
               <div>
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight mb-1">{slide.title}</h1>
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 bg-clip-text text-transparent">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-2">{slide.title}</h1>
+                <h2
+                  className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 bg-clip-text text-transparent"
+                  style={{
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                  }}
+                >
                   {slide.subtitle}!
                 </h2>
               </div>
 
-              <p className="text-sm sm:text-base text-emerald-100 max-w-lg leading-relaxed">{slide.description}</p>
+              <p className="text-base sm:text-lg text-emerald-100 max-w-lg leading-relaxed">{slide.description}</p>
 
               <Button
                 asChild
                 size="lg"
-                className="bg-gradient-to-r from-teal-400 to-teal-500 hover:from-teal-500 hover:to-teal-600 text-emerald-900 font-bold shadow-2xl shadow-teal-500/50 border-0 px-6 py-4 text-sm rounded-xl hover:scale-105 transition-all duration-300"
+                className="bg-gradient-to-r from-teal-400 to-teal-500 hover:from-teal-500 hover:to-teal-600 text-emerald-900 font-bold shadow-2xl shadow-teal-500/50 border-0 px-8 py-5 text-base rounded-xl hover:scale-105 transition-all duration-300"
+                style={{
+                  WebkitTapHighlightColor: "transparent",
+                }}
               >
                 <AppLink href={slide.ctaLink}>{slide.cta}</AppLink>
               </Button>
@@ -196,24 +241,40 @@ export function HeroSection() {
               transition={{ duration: 0.6, ease: "easeOut" }}
               className="flex justify-center lg:justify-end"
             >
-              <div className="relative w-52 h-64 sm:w-56 sm:h-72">
-                <div className="absolute inset-0 bg-gradient-to-br from-white via-emerald-50 to-teal-50 rounded-3xl shadow-2xl border-4 border-white/30 backdrop-blur-sm overflow-hidden">
-                  <div className="absolute top-4 left-4 right-4">
+              <div className="relative w-[260px] h-[320px] sm:w-[280px] sm:h-[360px]">
+                <div
+                  className="absolute inset-0 bg-gradient-to-br from-white via-emerald-50 to-teal-50 rounded-3xl shadow-2xl border-4 border-white/30 overflow-hidden"
+                  style={{
+                    backdropFilter: "blur(8px)",
+                    WebkitBackdropFilter: "blur(8px)",
+                  }}
+                >
+                  <div className="absolute top-5 left-5 right-5">
                     <div
-                      className={`text-6xl sm:text-7xl font-black bg-gradient-to-r ${slide.badgeColor} bg-clip-text text-transparent leading-none`}
+                      className={`text-7xl sm:text-8xl font-black bg-gradient-to-r ${slide.badgeColor} bg-clip-text text-transparent leading-none`}
+                      style={{
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                      }}
                     >
                       {slide.id}
                     </div>
                   </div>
 
-                  <div className="absolute bottom-4 left-4 right-4 space-y-1">
-                    <div className="text-lg sm:text-xl font-bold text-teal-900 leading-tight">{slide.badge}</div>
-                    <div className="text-sm sm:text-base font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                  <div className="absolute bottom-5 left-5 right-5 space-y-2">
+                    <div className="text-xl sm:text-2xl font-bold text-teal-900 leading-tight">{slide.badge}</div>
+                    <div
+                      className="text-base sm:text-lg font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent"
+                      style={{
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                      }}
+                    >
                       Via Betel 2025
                     </div>
                   </div>
 
-                  <div className="absolute bottom-20 left-4 right-4 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent opacity-30" />
+                  <div className="absolute bottom-28 left-5 right-5 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent opacity-30" />
                 </div>
 
                 <div className={`absolute inset-0 bg-gradient-to-r ${slide.badgeColor} opacity-20 blur-2xl -z-10`} />
@@ -222,28 +283,36 @@ export function HeroSection() {
           </AnimatePresence>
         </div>
 
-        <div className="absolute bottom-6 left-0 right-0 flex items-center justify-center gap-3">
+        <div className="absolute bottom-8 left-0 right-0 flex items-center justify-center gap-4">
           <button
             onClick={handlePrevSlide}
-            className="p-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all hover:scale-110"
+            className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all hover:scale-110"
+            style={{
+              WebkitTapHighlightColor: "transparent",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+            }}
             aria-label="Slide anterior"
             onKeyDown={(e) => {
               if (e.key === "ArrowLeft") handlePrevSlide()
             }}
           >
-            <ChevronLeft className="w-4 h-4 text-white" />
+            <ChevronLeft className="w-5 h-5 text-white" />
           </button>
 
-          <div className="flex gap-2" role="tablist" aria-label="Slides do carousel">
+          <div className="flex gap-2.5" role="tablist" aria-label="Slides do carousel">
             {HERO_SLIDES.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => handleDotClick(idx)}
-                className={`h-2 rounded-full transition-all ${
+                className={`h-2.5 rounded-full transition-all ${
                   idx === currentSlide
-                    ? "w-8 bg-gradient-to-r from-teal-400 to-teal-500 shadow-lg shadow-teal-500/50"
-                    : "w-2 bg-white/40 hover:bg-white/60"
+                    ? "w-10 bg-gradient-to-r from-teal-400 to-teal-500 shadow-lg shadow-teal-500/50"
+                    : "w-2.5 bg-white/40 hover:bg-white/60"
                 }`}
+                style={{
+                  WebkitTapHighlightColor: "transparent",
+                }}
                 aria-label={`Ir para slide ${idx + 1}`}
                 aria-current={idx === currentSlide ? "true" : "false"}
                 role="tab"
@@ -253,13 +322,18 @@ export function HeroSection() {
 
           <button
             onClick={handleNextSlide}
-            className="p-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all hover:scale-110"
+            className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all hover:scale-110"
+            style={{
+              WebkitTapHighlightColor: "transparent",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+            }}
             aria-label="Próximo slide"
             onKeyDown={(e) => {
               if (e.key === "ArrowRight") handleNextSlide()
             }}
           >
-            <ChevronRight className="w-4 h-4 text-white" />
+            <ChevronRight className="w-5 h-5 text-white" />
           </button>
         </div>
       </div>
