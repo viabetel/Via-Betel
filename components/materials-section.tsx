@@ -6,6 +6,7 @@ import { Reveal } from "./reveal"
 import { cn } from "@/lib/utils"
 import { instructors } from "@/data/instructors-data"
 import Image from "next/image"
+import Link from "next/link"
 
 const CarImageIcon = () => (
   <div className="w-full h-full flex items-center justify-center p-8">
@@ -60,9 +61,11 @@ const cnhCategories = [
     id: "categoria-b",
     name: "Categoria B",
     description: "Para veículos de passeio - carros comuns e utilitários leves",
-    icon: CarImageIcon, // Carro PNG na categoria B
+    icon: CarImageIcon,
     tint: "bg-blue-50",
     gradient: "from-blue-500 to-blue-600",
+    ctaLink: "/instrutores?category=B",
+    ctaText: "VER INSTRUTORES",
     details: {
       vehicles: "Carros, vans e utilitários até 3.500kg",
       passengers: "Até 8 passageiros",
@@ -74,9 +77,11 @@ const cnhCategories = [
     id: "categoria-a",
     name: "Categoria A",
     description: "Para motos, motonetas, ciclomotores e triciclos motorizados",
-    icon: BikeImageIcon, // Moto PNG na categoria A
+    icon: BikeImageIcon,
     tint: "bg-amber-50",
     gradient: "from-amber-500 to-amber-600",
+    ctaLink: "/instrutores?category=A",
+    ctaText: "VER INSTRUTORES",
     details: {
       vehicles: "Motos, motonetas e triciclos",
       passengers: "Conforme especificação do fabricante",
@@ -91,6 +96,8 @@ const cnhCategories = [
     icon: TruckImageIcon,
     tint: "bg-green-50",
     gradient: "from-green-500 to-green-600",
+    ctaLink: "/instrutores?category=C",
+    ctaText: "VER INSTRUTORES",
     details: {
       vehicles: "Caminhões, tratores e veículos acima de 3.500kg",
       passengers: "Conforme especificação",
@@ -102,9 +109,11 @@ const cnhCategories = [
     id: "categoria-d",
     name: "Categoria D",
     description: "Para transporte de passageiros - ônibus e vans",
-    icon: BusImageIcon, // Substituído BusIcon SVG por BusImageIcon PNG
+    icon: BusImageIcon,
     tint: "bg-purple-50",
     gradient: "from-purple-500 to-purple-600",
+    ctaLink: "/instrutores?category=D",
+    ctaText: "VER INSTRUTORES",
     details: {
       vehicles: "Ônibus, vans e micro-ônibus com mais de 8 passageiros",
       passengers: "Acima de 8 passageiros",
@@ -303,6 +312,29 @@ export function MaterialsSection() {
                           </motion.a>
                         </motion.div>
                       </AnimatePresence>
+
+                      <motion.div
+                        className="mt-6 flex justify-center"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.8 }}
+                      >
+                        <Link href={activeCategoryData.ctaLink}>
+                          <motion.button
+                            className={cn(
+                              "px-8 py-4 rounded-xl font-bold text-base bg-gradient-to-r text-white",
+                              "shadow-xl hover:shadow-2xl transition-all duration-300",
+                              activeCategoryData.gradient,
+                              "hover:scale-105 active:scale-95",
+                            )}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            {activeCategoryData.ctaText}
+                            <span className="ml-2 text-sm">({activeInstructorCount} disponíveis)</span>
+                          </motion.button>
+                        </Link>
+                      </motion.div>
 
                       <div className="mt-1 sm:mt-2.5 relative z-30">
                         <Reveal delay={0.1}>

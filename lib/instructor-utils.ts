@@ -38,15 +38,22 @@ export function parseRating(rating: string): number {
 }
 
 export function generateSlug(name: string, city: string): string {
-  const normalize = (str: string) =>
-    str
+  const normalize = (str: string) => {
+    if (!str || typeof str !== "string") {
+      return ""
+    }
+    return str
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "")
+  }
 
-  return `${normalize(name)}-${normalize(city)}`
+  const safeName = name || "instrutor"
+  const safeCity = city || "cidade"
+
+  return `${normalize(safeName)}-${normalize(safeCity)}`
 }
 
 export function findInstructorBySlug(instructors: Instructor[], slug: string): Instructor | null {

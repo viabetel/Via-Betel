@@ -6,7 +6,19 @@ import { cn } from "@/lib/utils"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { MessageCircle, ChevronDown, User, LogOut, ClipboardList, Instagram } from "lucide-react"
+import {
+  MessageCircle,
+  ChevronDown,
+  User,
+  LogOut,
+  ClipboardList,
+  Instagram,
+  Heart,
+  Briefcase,
+  Calendar,
+  Shield,
+  Settings,
+} from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { createClient } from "@/lib/supabase/client"
 
@@ -400,23 +412,165 @@ export function HeaderContent({ isScrolled = false, variant = "header" }: Header
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
                     transition={{ duration: 0.2, ease: "easeOut" }}
-                    className="absolute top-full right-0 mt-2 bg-gradient-to-br from-emerald-50 via-white to-amber-50 rounded-xl shadow-2xl py-3 min-w-[200px] z-[9999] border-2 border-emerald-300/50"
+                    className="absolute top-full right-0 mt-2 bg-gradient-to-br from-emerald-50 via-white to-amber-50 rounded-xl shadow-2xl py-2 min-w-[240px] z-[9999] border-2 border-emerald-300/50"
                   >
-                    <div className="px-4 py-2 border-b border-emerald-200">
-                      <p className="text-sm font-semibold text-emerald-900">{profile?.full_name || "Usuário"}</p>
-                      <p className="text-xs text-emerald-600 truncate">{user?.email}</p>
+                    <div className="px-4 py-3 border-b border-emerald-200/50">
+                      <div className="flex items-center gap-3">
+                        {profile?.avatar_url ? (
+                          <Image
+                            src={profile.avatar_url || "/placeholder.svg"}
+                            alt={profile.full_name || "User"}
+                            width={48}
+                            height={48}
+                            className="rounded-full border-2 border-emerald-300"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white font-bold text-lg">
+                            {(profile?.full_name || user?.email || "U").charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-bold text-emerald-900 truncate">
+                            {profile?.full_name || "Usuário"}
+                          </p>
+                          <p className="text-xs text-emerald-600 truncate">{user?.email}</p>
+                          {profile?.role && (
+                            <span className="inline-block mt-1 px-2 py-0.5 text-[10px] font-semibold rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white">
+                              {profile.role === "STUDENT"
+                                ? "Aluno"
+                                : profile.role === "INSTRUCTOR"
+                                  ? "Instrutor"
+                                  : "Admin"}
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                    <Link
-                      href={profile?.role === "STUDENT" ? "/aluno" : "/instrutor"}
-                      onClick={() => setOpenDropdown(null)}
-                      className="flex items-center gap-2 px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium"
-                    >
-                      <ClipboardList className="w-4 h-4" />
-                      Minhas Solicitações
-                    </Link>
+
+                    <div className="py-1">
+                      <Link
+                        href="/conta"
+                        onClick={() => setOpenDropdown(null)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-semibold"
+                      >
+                        <User className="w-4 h-4" />
+                        Minha Conta
+                      </Link>
+                      <Link
+                        href="/conta/perfil"
+                        onClick={() => setOpenDropdown(null)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium"
+                      >
+                        <User className="w-4 h-4" />
+                        Ver meu perfil
+                      </Link>
+                    </div>
+
+                    <div className="border-t border-emerald-200/50 my-1"></div>
+
+                    {profile?.role === "STUDENT" ? (
+                      <div className="py-1">
+                        <Link
+                          href="/conta/solicitacoes"
+                          onClick={() => setOpenDropdown(null)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium"
+                        >
+                          <ClipboardList className="w-4 h-4" />
+                          Minhas Solicitações
+                        </Link>
+                        <Link
+                          href="/conta/favoritos"
+                          onClick={() => setOpenDropdown(null)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium"
+                        >
+                          <Heart className="w-4 h-4" />
+                          Favoritos
+                        </Link>
+                        <Link
+                          href="/inbox"
+                          onClick={() => setOpenDropdown(null)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium"
+                        >
+                          <MessageCircle className="w-4 h-4" />
+                          Mensagens
+                          {unreadCount > 0 && (
+                            <span className="ml-auto bg-red-500 text-white text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[18px] text-center">
+                              {unreadCount > 9 ? "9+" : unreadCount}
+                            </span>
+                          )}
+                        </Link>
+                      </div>
+                    ) : profile?.role === "INSTRUCTOR" ? (
+                      <div className="py-1">
+                        <Link
+                          href="/conta/anuncios"
+                          onClick={() => setOpenDropdown(null)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium"
+                        >
+                          <Briefcase className="w-4 h-4" />
+                          Meu anúncio
+                        </Link>
+                        <Link
+                          href="/conta/disponibilidade"
+                          onClick={() => setOpenDropdown(null)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium"
+                        >
+                          <Calendar className="w-4 h-4" />
+                          Disponibilidade
+                        </Link>
+                        <Link
+                          href="/inbox"
+                          onClick={() => setOpenDropdown(null)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium"
+                        >
+                          <MessageCircle className="w-4 h-4" />
+                          Mensagens
+                          {unreadCount > 0 && (
+                            <span className="ml-auto bg-red-500 text-white text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[18px] text-center">
+                              {unreadCount > 9 ? "9+" : unreadCount}
+                            </span>
+                          )}
+                        </Link>
+                      </div>
+                    ) : (
+                      <div className="py-1">
+                        <Link
+                          href="/inbox"
+                          onClick={() => setOpenDropdown(null)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium"
+                        >
+                          <MessageCircle className="w-4 h-4" />
+                          Mensagens
+                        </Link>
+                      </div>
+                    )}
+
+                    <div className="border-t border-emerald-200/50 my-1"></div>
+
+                    <div className="py-1">
+                      <Link
+                        href="/conta/seguranca"
+                        onClick={() => setOpenDropdown(null)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium"
+                      >
+                        <Shield className="w-4 h-4" />
+                        Segurança
+                      </Link>
+                      <Link
+                        href="/conta/preferencias"
+                        onClick={() => setOpenDropdown(null)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium"
+                      >
+                        <Settings className="w-4 h-4" />
+                        Preferências
+                      </Link>
+                    </div>
+
+                    <div className="border-t border-emerald-200/50 my-1"></div>
+
                     <button
                       onClick={handleSignOut}
-                      className="flex items-center gap-2 w-full px-4 py-2.5 text-red-600 hover:bg-red-50 text-sm transition-all font-medium border-t border-emerald-200"
+                      className="flex items-center gap-3 w-full px-4 py-2.5 text-red-600 hover:bg-red-50 text-sm transition-all font-semibold rounded-b-lg"
                     >
                       <LogOut className="w-4 h-4" />
                       Sair
