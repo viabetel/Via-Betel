@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import Image from "next/image"
+import Link from "next/link"
 
 export function HeroSection() {
   const handleWhatsAppClick = () => {
@@ -87,18 +88,18 @@ export function HeroSection() {
           >
             <Button
               size="lg"
-              onClick={handleWhatsAppClick}
+              asChild
               className="w-full sm:w-auto bg-gradient-to-r from-[var(--color-brand-accent)] to-[var(--color-brand-accent-dark)] hover:from-[var(--color-brand-accent-dark)] hover:to-[var(--color-brand-accent-darker)] text-[var(--color-brand-text-light)] font-semibold px-4 sm:px-8 lg:px-10 py-3 sm:py-4 lg:py-5 text-[0.8125rem] sm:text-base lg:text-lg shadow-xl shadow-[var(--color-brand-accent)]/30 hover:shadow-2xl hover:shadow-[var(--color-brand-accent)]/40 transition-all hover:scale-105 min-h-[48px] border border-[var(--color-brand-accent-light)]/50 active:scale-95"
             >
-              Chamar no WhatsApp
+              <Link href="/instrutores">Encontrar Instrutores</Link>
             </Button>
             <Button
               size="lg"
+              onClick={handleWhatsAppClick}
               variant="outline"
-              asChild
               className="w-full sm:w-auto border-2 border-[var(--color-brand-accent-light)] bg-transparent text-[var(--color-brand-text-muted)] hover:bg-[var(--color-brand-accent)]/20 hover:border-[var(--color-brand-accent-light)] font-semibold px-4 sm:px-8 lg:px-10 py-3 sm:py-4 lg:py-5 text-[0.8125rem] sm:text-base lg:text-lg transition-all hover:scale-105 min-h-[48px] active:scale-95"
             >
-              <a href="/aluno">Quero orçamento rápido</a>
+              Chamar no WhatsApp
             </Button>
           </motion.div>
 

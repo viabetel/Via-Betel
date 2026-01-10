@@ -25,3 +25,51 @@ model Lead {
   
   @@map("leads")
 }
+
+model Order {
+  id               String             @id @default(cuid())
+  instructorSlug   String
+  planId           String            // PLAN_1, PLAN_5, PLAN_10
+  amount           Int                // em centavos
+  currency         String             @default("brl")
+  status           OrderStatus        @default(PENDING)
+  stripeSessionId  String?           @unique
+  customerEmail    String?
+  customerName     String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  
+  bookingRequests  BookingRequest[]
+
+  @@map("orders")
+}
+
+model BookingRequest {
+  id            String   @id @default(cuid())
+  orderId       String
+  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  city          String
+  neighborhood  String?
+  option1       String   // "Segunda 08:00-12:00"
+  option2       String?
+  option3       String?
+  notes         String?
+  
+  status        BookingStatus @default(PENDING_CONFIRMATION)
+  createdAt     DateTime @default(now())
+
+  @@map("booking_requests")
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  CANCELED
+}
+
+enum BookingStatus {
+  PENDING_CONFIRMATION
+  CONFIRMED
+  REJECTED
+}
