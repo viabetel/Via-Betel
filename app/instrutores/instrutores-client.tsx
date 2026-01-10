@@ -24,11 +24,16 @@ export default function InstrutoresClient() {
 
   useEffect(() => {
     const checkDesktop = () => {
-      setIsDesktop(window.innerWidth >= 768)
+      if (typeof window !== "undefined") {
+        setIsDesktop(window.innerWidth >= 768)
+      }
     }
     checkDesktop()
-    window.addEventListener("resize", checkDesktop)
-    return () => window.removeEventListener("resize", checkDesktop)
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", checkDesktop)
+      return () => window.removeEventListener("resize", checkDesktop)
+    }
   }, [])
 
   const allSpecialties = useMemo(() => {

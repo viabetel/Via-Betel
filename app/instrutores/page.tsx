@@ -1,9 +1,5 @@
 import type { Metadata } from "next"
-import dynamic from "next/dynamic"
-
-const InstrutoresClient = dynamic(() => import("./instrutores-client"), {
-  ssr: false,
-})
+import InstrutoresDynamic from "./instrutores-dynamic"
 
 export const metadata: Metadata = {
   title: "Encontre Instrutores de Direção | Via Betel",
@@ -31,5 +27,5 @@ export const metadata: Metadata = {
 }
 
 export default function InstrutoresPage() {
-  return <InstrutoresClient />
+  return <InstrutoresDynamic />
 }
