@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
 import { prisma } from "@/lib/prisma"
+import { Resend } from "resend"
 
 const leadSchema = z.object({
   name: z.string().min(2, "Nome deve ter no mínimo 2 caracteres"),
@@ -9,8 +10,8 @@ const leadSchema = z.object({
   type: z.enum(["aluno", "instrutor"], {
     errorMap: () => ({ message: 'Tipo deve ser "aluno" ou "instrutor"' }),
   }),
-  message: z.string().max(1000, "Mensagem deve ter no máximo 1000 caracteres").optional(),
-  // Campos opcionais adicionais do schema Prisma
+  message: z.string().min(2, "Mensagem deve ter no mínimo 2 caracteres"),
+  // Campos opcionais do formulário
   categoria: z.string().optional(),
   objetivo: z.string().optional(),
   horario: z.string().optional(),
@@ -18,24 +19,31 @@ const leadSchema = z.object({
   experiencia: z.string().optional(),
   disponibilidade: z.string().optional(),
   veiculo: z.string().optional(),
+  email: z.string().email().optional(),
 })
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    },
+  })
+}
 
 export async function POST(req: Request) {
   try {
     const body = await req.json()
 
-    // Valida os dados com Zod
     const validationResult = leadSchema.safeParse(body)
 
     if (!validationResult.success) {
       return NextResponse.json(
         {
           ok: false,
-          error: "invalid_payload",
-          details: validationResult.error.errors.map((err) => ({
-            field: err.path.join("."),
-            message: err.message,
-          })),
+          error: "Dados inválidos: " + validationResult.error.errors.map((e) => e.message).join(", "),
         },
         { status: 400 },
       )
@@ -43,7 +51,16 @@ export async function POST(req: Request) {
 
     const data = validationResult.data
 
-    // Mapeia os campos para o schema Prisma
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "Banco de dados não configurado",
+        },
+        { status: 500 },
+      )
+    }
+
     const lead = await prisma.lead.create({
       data: {
         tipo: data.type,
@@ -60,23 +77,62 @@ export async function POST(req: Request) {
       },
     })
 
-    return NextResponse.json(
-      {
-        ok: true,
-        id: lead.id,
-        createdAt: lead.createdAt,
-      },
-      { status: 201 },
-    )
+    let emailResult = { ok: true, error: null }
+
+    try {
+      const apiKey = process.env.RESEND_API_KEY
+      const emailTo = process.env.EMAIL_TO
+      const emailFrom = process.env.EMAIL_FROM || "contato@viabetel.com"
+
+      if (apiKey && emailTo) {
+        const resend = new Resend(apiKey)
+
+        await resend.emails.send({
+          from: emailFrom,
+          to: emailTo,
+          subject: `Novo Lead: ${data.type} - ${data.name}`,
+          html: `
+            <h2>Novo Lead Recebido</h2>
+            <p><strong>Tipo:</strong> ${data.type}</p>
+            <p><strong>Nome:</strong> ${data.name}</p>
+            <p><strong>Telefone:</strong> ${data.phone}</p>
+            <p><strong>Cidade:</strong> ${data.city}</p>
+            <p><strong>Mensagem:</strong> ${data.message}</p>
+            ${data.email ? `<p><strong>Email:</strong> ${data.email}</p>` : ""}
+            ${data.categoria ? `<p><strong>Categoria:</strong> ${data.categoria}</p>` : ""}
+            ${data.objetivo ? `<p><strong>Objetivo:</strong> ${data.objetivo}</p>` : ""}
+            ${data.horario ? `<p><strong>Horário:</strong> ${data.horario}</p>` : ""}
+            ${data.categorias ? `<p><strong>Categorias (Instrutor):</strong> ${data.categorias}</p>` : ""}
+            ${data.experiencia ? `<p><strong>Experiência:</strong> ${data.experiencia}</p>` : ""}
+            ${data.disponibilidade ? `<p><strong>Disponibilidade:</strong> ${data.disponibilidade}</p>` : ""}
+            ${data.veiculo ? `<p><strong>Veículo:</strong> ${data.veiculo}</p>` : ""}
+            <p><strong>Data:</strong> ${new Date(lead.createdAt).toLocaleString("pt-BR")}</p>
+          `,
+        })
+      }
+    } catch (emailError) {
+      console.error("[Email] Falha ao enviar:", emailError)
+      emailResult = {
+        ok: false,
+        error: emailError instanceof Error ? emailError.message : "Erro desconhecido",
+      }
+    }
+
+    return NextResponse.json({
+      ok: true,
+      leadId: lead.id,
+      createdAt: lead.createdAt.toISOString(),
+      email: emailResult,
+    })
   } catch (error) {
-    console.error("[v0] Erro ao criar lead:", error)
+    console.error("[API] Erro ao criar lead:", error)
 
     // Erro de parsing JSON
     if (error instanceof SyntaxError) {
       return NextResponse.json(
         {
           ok: false,
-          error: "invalid_json",
+          error: "JSON inválido",
         },
         { status: 400 },
       )
@@ -86,7 +142,7 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         ok: false,
-        error: "db_error",
+        error: "Erro ao salvar no banco de dados",
       },
       { status: 500 },
     )

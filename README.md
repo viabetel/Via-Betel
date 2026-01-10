@@ -49,6 +49,10 @@ No Vercel Dashboard, adicione:
 ```env
 DATABASE_URL=postgresql://user:password@host/database?pgbouncer=true
 DIRECT_URL=postgresql://user:password@host/database
+RESEND_API_KEY=re_xxxxxxxxxxxx
+EMAIL_TO=seu-email@dominio.com
+EMAIL_FROM=contato@viabetel.com
+BOOTSTRAP_TOKEN=seu-token-secreto-aqui
 ```
 
 Opcional (Analytics):
