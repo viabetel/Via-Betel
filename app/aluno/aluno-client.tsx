@@ -150,7 +150,7 @@ export default function AlunoClientPage() {
               </h3>
 
               <div>
-                <label className="block text-[11px] font-semibold text-emerald-900 mb-1">
+                <label className="block text-sm font-medium mb-2 text-gray-700">
                   Nome completo <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -164,7 +164,7 @@ export default function AlunoClientPage() {
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-emerald-900 mb-1">
+                <label className="block text-sm font-medium mb-2 text-gray-700">
                   E-mail <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -178,20 +178,22 @@ export default function AlunoClientPage() {
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-emerald-900 mb-1">Telefone (opcional)</label>
-                <input
-                  type="tel"
-                  value={formData.telefone}
-                  onChange={(e) => setFormData({ ...formData, telefone: formatPhone(e.target.value) })}
-                  className="w-full px-2.5 py-1.5 text-xs border border-emerald-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-white"
-                  placeholder="(32) 98888-8888"
-                  maxLength={15}
-                />
+                <label className="block text-sm font-medium mb-2 text-gray-700">Telefone (opcional)</label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-600" />
+                  <input
+                    type="tel"
+                    value={formData.telefone}
+                    onChange={(e) => setFormData({ ...formData, telefone: formatPhone(e.target.value) })}
+                    placeholder="(32) 99999-9999"
+                    className="w-full pl-10 pr-4 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-3 gap-1.5">
                 <div className="col-span-2">
-                  <label className="block text-[11px] font-semibold text-emerald-900 mb-1 flex items-center gap-1">
+                  <label className="block text-sm font-medium mb-2 text-gray-700 flex items-center gap-1">
                     <MapPin className="w-2.5 h-2.5" />
                     Cidade <span className="text-red-500">*</span>
                   </label>
@@ -205,7 +207,7 @@ export default function AlunoClientPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-emerald-900 mb-1">
+                  <label className="block text-sm font-medium mb-2 text-gray-700">
                     UF <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -228,7 +230,7 @@ export default function AlunoClientPage() {
               </h3>
 
               <div className="relative">
-                <label className="block text-[11px] font-semibold text-amber-900 mb-1">
+                <label className="block text-sm font-medium mb-2 text-gray-700">
                   Categoria desejada <span className="text-red-500">*</span>
                 </label>
                 <button
@@ -281,7 +283,7 @@ export default function AlunoClientPage() {
               </div>
 
               <div className="relative">
-                <label className="block text-[11px] font-semibold text-amber-900 mb-1">
+                <label className="block text-sm font-medium mb-2 text-gray-700">
                   Seu objetivo <span className="text-red-500">*</span>
                 </label>
                 <button
@@ -341,7 +343,7 @@ export default function AlunoClientPage() {
               </div>
 
               <div className="relative">
-                <label className="block text-[11px] font-semibold text-amber-900 mb-1">
+                <label className="block text-sm font-medium mb-2 text-gray-700">
                   Melhor horário <span className="text-red-500">*</span>
                 </label>
                 <button
@@ -402,15 +404,15 @@ export default function AlunoClientPage() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-3 text-sm min-h-[42px] rounded-lg shadow-xl hover:shadow-2xl transition-all border-2 border-amber-400"
+              className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all"
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                   Enviando...
                 </>
               ) : (
-                "Enviar solicitação"
+                "Enviar Solicitação"
               )}
             </Button>
           </form>

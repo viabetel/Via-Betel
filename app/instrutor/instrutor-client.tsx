@@ -3,7 +3,7 @@
 import { useState, useMemo, useRef, useEffect, type FormEvent } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, CheckCircle2, Loader2, Clock, ChevronDown, Calendar } from "lucide-react"
+import { ArrowLeft, CheckCircle2, Loader2, ChevronDown, Calendar, Phone } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
@@ -369,15 +369,18 @@ Telefone: ${formData.phone}`,
               </div>
 
               <div>
-                <label className="block text-[10px] font-semibold text-emerald-900 mb-0.5">Telefone (opcional)</label>
-                <input
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: formatPhone(e.target.value) })}
-                  className="w-full px-2 py-1 text-[11px] border border-emerald-300 rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-white"
-                  placeholder="(32) 98888-8888"
-                  maxLength={15}
-                />
+                <label className="block text-sm font-medium mb-2 text-gray-700">Telefone</label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-600" />
+                  <input
+                    type="tel"
+                    required
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: formatPhone(e.target.value) })}
+                    placeholder="(32) 99999-9999"
+                    className="w-full pl-10 pr-4 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-3 gap-1.5">
@@ -630,18 +633,15 @@ Telefone: ${formData.phone}`,
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-3 text-sm min-h-[42px] rounded-lg shadow-xl hover:shadow-2xl transition-all border-2 border-amber-400"
+              className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all border-2 border-amber-400"
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Enviando...
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Cadastrando...
                 </>
               ) : (
-                <>
-                  <Clock className="w-3.5 h-3.5 mr-1.5" />
-                  Enviar e falar no WhatsApp
-                </>
+                "Cadastrar como Instrutor"
               )}
             </Button>
           </form>

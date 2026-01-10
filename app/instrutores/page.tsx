@@ -1,6 +1,9 @@
 import type { Metadata } from "next"
 import InstrutoresDynamic from "./instrutores-dynamic"
 
+export const dynamic = "force-dynamic"
+export const revalidate = 0
+
 export const metadata: Metadata = {
   title: "Encontre Instrutores de Direção | Via Betel",
   description:

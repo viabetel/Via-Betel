@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { AppLink } from "@/components/app-link"
 import {
   MessageCircle,
   ChevronDown,
@@ -99,7 +100,7 @@ export function HeaderContent({ isScrolled = false, variant = "header" }: Header
     <div className="flex items-center justify-between h-12 sm:h-14 md:h-16 px-2 sm:px-4 md:px-6 lg:px-8 w-full">
       {/* Logo */}
       <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }} className="flex-shrink-0 min-w-0">
-        <Link href="/" aria-label="Via Betel Home">
+        <AppLink href="/" hardNavigation aria-label="Via Betel Home">
           <Image
             src="/images/viabetel-logo.png"
             alt="Via Betel"
@@ -108,7 +109,7 @@ export function HeaderContent({ isScrolled = false, variant = "header" }: Header
             className="h-7 sm:h-8 md:h-10 lg:h-11 w-auto drop-shadow-lg"
             priority
           />
-        </Link>
+        </AppLink>
       </motion.div>
 
       <nav ref={dropdownRef} className="flex items-center gap-2 lg:gap-3 min-w-0">
@@ -133,27 +134,30 @@ export function HeaderContent({ isScrolled = false, variant = "header" }: Header
                 transition={{ duration: 0.2, ease: "easeOut" }}
                 className="absolute top-full right-0 mt-2 bg-gradient-to-br from-emerald-50 via-white to-amber-50 rounded-xl shadow-2xl py-2 min-w-[180px] z-[9999] border-2 border-emerald-300/50 backdrop-blur-sm"
               >
-                <Link
+                <AppLink
                   href="/instrutores"
+                  hardNavigation
                   onClick={() => setOpenDropdown(null)}
                   className="block px-3 py-2 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-xs transition-all font-medium"
                 >
                   Encontrar Instrutores
-                </Link>
-                <Link
+                </AppLink>
+                <AppLink
                   href="/aluno"
+                  hardNavigation
                   onClick={() => setOpenDropdown(null)}
                   className="block px-3 py-2 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-xs transition-all font-medium"
                 >
                   Para Alunos
-                </Link>
-                <Link
+                </AppLink>
+                <AppLink
                   href="/instrutor"
+                  hardNavigation
                   onClick={() => setOpenDropdown(null)}
                   className="block px-3 py-2 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-xs transition-all font-medium"
                 >
                   Para Instrutores
-                </Link>
+                </AppLink>
                 <div className="border-t border-emerald-200 my-1"></div>
                 <a
                   href="#aulas-praticas"
@@ -211,27 +215,30 @@ export function HeaderContent({ isScrolled = false, variant = "header" }: Header
                   transition={{ duration: 0.2, ease: "easeOut" }}
                   className="absolute top-full left-0 mt-2 bg-gradient-to-br from-emerald-50 via-white to-amber-50 rounded-xl shadow-2xl py-3 min-w-[220px] z-[9999] border-2 border-emerald-300/50 backdrop-blur-sm"
                 >
-                  <Link
+                  <AppLink
                     href="/instrutores"
+                    hardNavigation
                     onClick={() => setOpenDropdown(null)}
                     className="block px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-bold rounded-md mx-2 mb-2 transition-all hover:from-emerald-600 hover:to-teal-600"
                   >
                     🔍 Encontrar Instrutores
-                  </Link>
-                  <Link
+                  </AppLink>
+                  <AppLink
                     href="/orcamento"
+                    hardNavigation
                     onClick={() => setOpenDropdown(null)}
                     className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2"
                   >
                     Pedir Orçamento
-                  </Link>
-                  <Link
+                  </AppLink>
+                  <AppLink
                     href="/aluno"
+                    hardNavigation
                     onClick={() => setOpenDropdown(null)}
                     className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2"
                   >
                     Para Alunos
-                  </Link>
+                  </AppLink>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -360,23 +367,23 @@ export function HeaderContent({ isScrolled = false, variant = "header" }: Header
 
         {!user ? (
           <>
-            <Link href="/auth/login">
+            <AppLink href="/auth/login" hardNavigation>
               <Button
                 variant="ghost"
                 className={cn("text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2", textColor, hoverBg)}
               >
                 Entrar
               </Button>
-            </Link>
-            <Link href="/auth/sign-up">
+            </AppLink>
+            <AppLink href="/auth/sign-up" hardNavigation>
               <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2 shadow-lg">
                 Criar conta
               </Button>
-            </Link>
+            </AppLink>
           </>
         ) : (
           <>
-            <Link href="/chat" className="relative">
+            <AppLink href="/chat" className="relative">
               <Button variant="ghost" size="sm" className={cn("p-2 rounded-full relative", textColor, hoverBg)}>
                 <MessageCircle className="w-5 h-5" />
                 {unreadCount > 0 && (
@@ -385,7 +392,7 @@ export function HeaderContent({ isScrolled = false, variant = "header" }: Header
                   </span>
                 )}
               </Button>
-            </Link>
+            </AppLink>
 
             <div className="relative">
               <Button
@@ -448,14 +455,15 @@ export function HeaderContent({ isScrolled = false, variant = "header" }: Header
                     </div>
 
                     <div className="py-1">
-                      <Link
+                      <AppLink
                         href="/conta"
+                        hardNavigation
                         onClick={() => setOpenDropdown(null)}
                         className="flex items-center gap-3 px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-semibold"
                       >
                         <User className="w-4 h-4" />
                         Minha Conta
-                      </Link>
+                      </AppLink>
                       <Link
                         href="/conta/perfil"
                         onClick={() => setOpenDropdown(null)}

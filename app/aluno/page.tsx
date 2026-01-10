@@ -1,6 +1,9 @@
 import type { Metadata } from "next"
 import AlunoClientPage from "./aluno-client"
 
+export const dynamic = "force-dynamic"
+export const revalidate = 0
+
 export const metadata: Metadata = {
   title: "Quero Aprender - Encontre seu Instrutor de Direção",
   description:

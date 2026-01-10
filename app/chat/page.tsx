@@ -2,6 +2,9 @@ import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import ChatClient from "./chat-client"
 
+export const dynamic = "force-dynamic"
+export const revalidate = 0
+
 export default async function ChatPage() {
   const supabase = await createClient()
   const { data, error } = await supabase.auth.getUser()

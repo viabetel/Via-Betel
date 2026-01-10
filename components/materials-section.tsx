@@ -63,7 +63,6 @@ const cnhCategories = [
     description: "Para veículos de passeio - carros comuns e utilitários leves",
     icon: CarImageIcon,
     tint: "bg-blue-50",
-    gradient: "from-blue-500 to-blue-600",
     ctaLink: "/instrutores?category=B",
     ctaText: "VER INSTRUTORES",
     details: {
@@ -79,7 +78,6 @@ const cnhCategories = [
     description: "Para motos, motonetas, ciclomotores e triciclos motorizados",
     icon: BikeImageIcon,
     tint: "bg-amber-50",
-    gradient: "from-amber-500 to-amber-600",
     ctaLink: "/instrutores?category=A",
     ctaText: "VER INSTRUTORES",
     details: {
@@ -95,7 +93,6 @@ const cnhCategories = [
     description: "Para veículos de carga - caminhões e tratores",
     icon: TruckImageIcon,
     tint: "bg-green-50",
-    gradient: "from-green-500 to-green-600",
     ctaLink: "/instrutores?category=C",
     ctaText: "VER INSTRUTORES",
     details: {
@@ -111,7 +108,6 @@ const cnhCategories = [
     description: "Para transporte de passageiros - ônibus e vans",
     icon: BusImageIcon,
     tint: "bg-purple-50",
-    gradient: "from-purple-500 to-purple-600",
     ctaLink: "/instrutores?category=D",
     ctaText: "VER INSTRUTORES",
     details: {
@@ -292,7 +288,7 @@ export function MaterialsSection() {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -10 }}
                           transition={{ duration: 0.3 }}
-                          className="flex flex-wrap gap-1 sm:gap-2 mt-2 sm:mt-4 mb-2 sm:mb-5"
+                          className="flex flex-wrap gap-1 sm:gap-2 mt-2 sm:mt-4 mb-2 sm:mb-3"
                         >
                           <motion.a
                             href="/aluno"
@@ -314,25 +310,20 @@ export function MaterialsSection() {
                       </AnimatePresence>
 
                       <motion.div
-                        className="mt-6 flex justify-center"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.8 }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.5 }}
+                        className="mt-2 sm:mt-3"
                       >
-                        <Link href={activeCategoryData.ctaLink}>
-                          <motion.button
-                            className={cn(
-                              "px-8 py-4 rounded-xl font-bold text-base bg-gradient-to-r text-white",
-                              "shadow-xl hover:shadow-2xl transition-all duration-300",
-                              activeCategoryData.gradient,
-                              "hover:scale-105 active:scale-95",
-                            )}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                          >
-                            {activeCategoryData.ctaText}
-                            <span className="ml-2 text-sm">({activeInstructorCount} disponíveis)</span>
-                          </motion.button>
+                        <Link
+                          href={activeCategoryData.ctaLink}
+                          className="text-white/90 hover:text-white text-[10px] sm:text-xs font-medium underline underline-offset-2 hover:underline-offset-4 transition-all duration-200 inline-flex items-center gap-1"
+                        >
+                          Ver {activeInstructorCount} instrutor{activeInstructorCount !== 1 ? "es" : ""} disponíve
+                          {activeInstructorCount !== 1 ? "is" : "l"}
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
                         </Link>
                       </motion.div>
 
