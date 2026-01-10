@@ -27,11 +27,16 @@ export default function SignUpPage() {
     setError(null)
 
     try {
+      const redirectUrl =
+        typeof window !== "undefined"
+          ? process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${window.location.origin}/chat`
+          : process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || "/chat"
+
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${window.location.origin}/chat`,
+          emailRedirectTo: redirectUrl,
           data: {
             full_name: fullName,
             user_type: userType,

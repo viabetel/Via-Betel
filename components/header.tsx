@@ -25,8 +25,10 @@ export function Header() {
   }, [])
 
   useEffect(() => {
-    const userToken = localStorage.getItem("userToken")
-    setIsLoggedIn(!!userToken)
+    if (typeof window !== "undefined") {
+      const userToken = localStorage.getItem("userToken")
+      setIsLoggedIn(!!userToken)
+    }
   }, [])
 
   useEffect(() => {

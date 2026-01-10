@@ -1,12 +1,18 @@
 "use client"
 
 import { useMotionDebug } from "@/hooks/use-motion-debug"
+import { useEffect, useState } from "react"
 
 export function MotionDebugBadge() {
   const { shouldDisableMotion, motionState, prefersReduced, isDebugMode } = useMotionDebug()
+  const [isDev, setIsDev] = useState(false)
 
-  // Only show in dev/preview (not in production)
-  const isDev = process.env.NODE_ENV === "development" || window.location.hostname.includes("v0.app")
+  useEffect(() => {
+    setIsDev(
+      process.env.NODE_ENV === "development" ||
+        (typeof window !== "undefined" && window.location.hostname.includes("v0.app")),
+    )
+  }, [])
 
   if (!isDev && !isDebugMode) return null
 
