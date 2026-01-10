@@ -1,32 +1,29 @@
 "use client"
 
 import type React from "react"
+import { useRouter, usePathname, useSearchParams } from "next/navigation"
+import { cn } from "@/lib/utils"
+import { Heart } from "lucide-react"
 
-import { useState, useMemo, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import {
-  Search,
-  SlidersHorizontal,
-  MapPin,
-  Star,
-  Award,
-  X,
-  ChevronDown,
-  Shield,
-  CheckCircle2,
-  GraduationCap,
-  Lock,
-  TrendingUp,
-  MessageCircle,
-} from "lucide-react"
+import { useState, useMemo, useEffect, useRef } from "react"
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
+import { Search, SlidersHorizontal, MapPin, Star, Award, X, ChevronDown, CheckCircle2 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { instructors } from "@/data/instructors-data"
+import type { instructors } from "@/data/instructors-data"
 import { extractCategories, parsePrice, parseRating, generateSlug } from "@/lib/instructor-utils"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
-import Header from "@/components/header" // Fixed import to use lowercase 'header' matching actual filename
+import { HeaderContent } from "@/components/header-content"
 import Breadcrumb from "@/components/breadcrumb"
+import { SectionHeader } from "@/components/ui/section-header"
+import { PremiumCard } from "@/components/ui/premium-card"
+import { BadgeChip } from "@/components/ui/badge-chip"
+import { ExpandableMenu } from "@/components/ui/expandable-menu"
+import { useMotionDebug } from "@/hooks/use-motion-debug"
+import { useMarketplaceSync } from "@/hooks/use-marketplace-sync"
+import { LoginGuardModal } from "@/components/auth/login-guard-modal"
+import { useAuth } from "@/lib/auth-context"
 
 type SortOption = "rating" | "price" | "students" | "experience"
 
@@ -63,10 +60,59 @@ const FAQ_ITEMS = [
   },
 ]
 
-export default function InstrutoresClient() {
-  const [searchText, setSearchText] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState<string>("Todas")
-  const [sortBy, setSortBy] = useState<SortOption>("rating")
+type Props = {
+  initialInstructors: typeof instructors
+}
+
+export default function InstrutoresClient({ initialInstructors }: Props) {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  const { user } = useAuth()
+  const { favorites, compareList, toggleFavorite, toggleCompare, clearCompare } = useMarketplaceSync()
+
+  const [showLoginGuard, setShowLoginGuard] = useState(false)
+  const [loginGuardFeature, setLoginGuardFeature] = useState<"favoritar" | "comparar" | "salvar busca">("favoritar")
+
+  const { shouldDisableMotion } = useMotionDebug()
+  const { scrollY } = useScroll()
+  const heroRef = useRef<HTMLElement>(null)
+  const heroEndRef = useRef<HTMLDivElement>(null)
+
+  const logoY = useTransform(scrollY, [0, 500], [0, -80])
+  const logoScale = useTransform(scrollY, [0, 400], [1, 0.85])
+  const titleY = useTransform(scrollY, [0, 500], [0, -60])
+  const titleScale = useTransform(scrollY, [0, 400], [1, 0.95])
+  const subtitleY = useTransform(scrollY, [0, 500], [0, -40])
+  const buttonsY = useTransform(scrollY, [0, 500], [0, -20])
+  const badgeY = useTransform(scrollY, [0, 500], [0, -100])
+  const parallaxY = useTransform(scrollY, [0, 500], [0, -28])
+  const parallaxYInverse = useTransform(parallaxY, (v) => -v * 0.7)
+
+  const containerVariants = shouldDisableMotion
+    ? { initial: { opacity: 1 }, animate: { opacity: 1 } }
+    : {
+        initial: { opacity: 0 },
+        animate: {
+          opacity: 1,
+          transition: {
+            staggerChildren: 0.15,
+            delayChildren: 0.2,
+          },
+        },
+      }
+
+  const itemVariants = shouldDisableMotion
+    ? { initial: { opacity: 1, y: 0 }, animate: { opacity: 1, y: 0 } }
+    : {
+        initial: { opacity: 0, y: 24 },
+        animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+      }
+
+  const [searchText, setSearchText] = useState(searchParams?.get("q") || "")
+  const [selectedCategory, setSelectedCategory] = useState(searchParams?.get("category") || "Todas")
+  const [sortBy, setSortBy] = useState<"rating" | "price" | "students" | "experience">("rating")
   const [maxPrice, setMaxPrice] = useState(200)
   const [minRating, setMinRating] = useState(0)
   const [onlyJF, setOnlyJF] = useState(false)
@@ -111,12 +157,22 @@ export default function InstrutoresClient() {
 
   const allSpecialties = useMemo(() => {
     const specs = new Set<string>()
-    instructors.forEach((inst) => inst.specialties.forEach((s) => specs.add(s)))
+    if (initialInstructors && Array.isArray(initialInstructors)) {
+      initialInstructors.forEach((inst) => {
+        if (inst.specialties && Array.isArray(inst.specialties)) {
+          inst.specialties.forEach((s) => specs.add(s))
+        }
+      })
+    }
     return Array.from(specs).sort()
-  }, [])
+  }, [initialInstructors])
 
   const filteredInstructors = useMemo(() => {
-    const result = instructors.filter((inst) => {
+    if (!initialInstructors || !Array.isArray(initialInstructors)) {
+      return []
+    }
+
+    const result = initialInstructors.filter((inst) => {
       // Search filter
       if (searchText) {
         const search = searchText.toLowerCase()
@@ -234,25 +290,75 @@ export default function InstrutoresClient() {
     }
   }
 
+  const handleFavorite = async (instructorSlug: string, instructorName: string) => {
+    if (!user) {
+      setLoginGuardFeature("favoritar")
+      setShowLoginGuard(true)
+      return
+    }
+    await toggleFavorite(instructorSlug, instructorName)
+  }
+
+  const handleCompare = async (instructorSlug: string, instructorName: string) => {
+    if (!user) {
+      setLoginGuardFeature("comparar")
+      setShowLoginGuard(true)
+      return
+    }
+    await toggleCompare(instructorSlug, instructorName)
+  }
+
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50">
-        <Header />
-        <Breadcrumb />
+      <motion.section
+        ref={heroRef}
+        className="relative min-h-[75vh] sm:min-h-[90vh] lg:min-h-[560px] flex items-center justify-center bg-gradient-to-br from-[var(--color-brand-primary-darkest)] via-[var(--color-brand-primary-dark)] to-[var(--color-brand-secondary-dark)] text-[var(--color-brand-text-light)] overflow-hidden"
+      >
+        <div className="fixed top-0 left-0 right-0 z-[100] w-full">
+          <div
+            className="bg-gradient-to-r from-emerald-800/95 via-emerald-700/95 to-teal-700/95 backdrop-blur-md shadow-lg border-b border-white/10"
+            style={{
+              transition: "all 0.4s ease-in-out",
+            }}
+          >
+            <div className="container mx-auto max-w-7xl w-full">
+              <HeaderContent variant="hero" />
+            </div>
+          </div>
+        </div>
 
-        {/* Hero Section - COMPACTADO para não duplicar navegação */}
-        <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 text-white py-8 sm:py-16 relative overflow-hidden">
-          <div className="container mx-auto px-3 sm:px-4 max-w-7xl relative z-10">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+
+        <motion.div
+          style={{ y: shouldDisableMotion ? 0 : parallaxY }}
+          className="absolute top-10 left-10 w-48 h-48 lg:w-72 lg:h-72 bg-[var(--color-brand-accent)]/30 rounded-full blur-2xl lg:blur-3xl"
+        />
+        <motion.div
+          style={{ y: shouldDisableMotion ? 0 : parallaxYInverse }}
+          className="absolute bottom-10 right-10 w-56 h-56 lg:w-80 lg:h-80 bg-[var(--color-brand-primary)]/20 rounded-full blur-2xl lg:blur-3xl"
+        />
+
+        <div className="container relative z-10 px-6 sm:px-6 py-8 sm:py-16 md:py-20 lg:py-24 max-w-7xl w-full">
+          <motion.div
+            variants={containerVariants}
+            initial="initial"
+            animate="animate"
+            className="mx-auto max-w-full text-center space-y-3 sm:space-y-5 lg:space-y-8"
+          >
+            {/* Logo */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6 }}
-              className="flex justify-center mb-3 sm:mb-6"
+              variants={itemVariants}
+              style={{
+                y: shouldDisableMotion ? 0 : logoY,
+                scale: shouldDisableMotion ? 1 : logoScale,
+              }}
+              className="flex justify-center mb-2 sm:mb-4"
             >
-              <div className="relative w-28 h-10 sm:w-56 sm:h-20">
+              <div className="relative w-32 h-12 sm:w-48 sm:h-16 md:w-56 md:h-20 lg:w-64 lg:h-24">
                 <Image
                   src="/images/viabetel-logo.png"
-                  alt="Via Betel"
+                  alt="Via Betel - Auto Escola"
                   fill
                   className="object-contain drop-shadow-2xl"
                   priority
@@ -260,157 +366,176 @@ export default function InstrutoresClient() {
               </div>
             </motion.div>
 
+            {/* Badge */}
+            <motion.div
+              variants={itemVariants}
+              style={{
+                y: shouldDisableMotion ? 0 : badgeY,
+              }}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-[var(--color-brand-accent)]/20 to-[var(--color-brand-primary)]/20 backdrop-blur-sm border border-[var(--color-brand-accent-light)]/30 rounded-full px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 lg:py-2.5 shadow-lg shadow-[var(--color-brand-accent)]/20"
+            >
+              <span className="text-xs sm:text-sm lg:text-base font-medium text-[var(--color-brand-text-muted)]">
+                Marketplace de Instrutores
+              </span>
+            </motion.div>
+
+            {/* Title */}
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-2xl sm:text-4xl lg:text-5xl font-bold mb-2 sm:mb-4 text-center text-balance"
+              variants={itemVariants}
+              style={{
+                y: shouldDisableMotion ? 0 : titleY,
+                scale: shouldDisableMotion ? 1 : titleScale,
+              }}
+              className="text-[1.625rem] sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight leading-[1.25] sm:leading-tight px-0 max-w-full"
             >
-              Catálogo de Instrutores
+              <span className="block text-balance">Catálogo Completo de </span>
+              <span className="bg-gradient-to-r from-[var(--color-brand-accent-light)] via-[var(--color-brand-accent)] to-[var(--color-brand-accent-dark)] bg-clip-text text-transparent drop-shadow-lg">
+                Instrutores
+              </span>
             </motion.h1>
+
+            {/* Subtitle */}
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-xs sm:text-lg text-emerald-100 text-center max-w-2xl mx-auto text-pretty px-2"
+              variants={itemVariants}
+              style={{
+                y: shouldDisableMotion ? 0 : subtitleY,
+              }}
+              className="mx-auto max-w-full sm:max-w-2xl text-[0.8125rem] sm:text-base md:text-lg lg:text-xl leading-relaxed text-[var(--color-brand-text-muted)] px-0"
             >
-              Filtre por cidade, bairro e categoria CNH. Solicite orçamento e a Via Betel intermedia todo o processo.
+              <span className="block text-pretty">
+                Navegue pelo catálogo completo, filtre por cidade, categoria e preço. Encontre o instrutor perfeito para
+                você.
+              </span>
             </motion.p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mt-4 sm:mt-10 max-w-4xl mx-auto"
-            >
-              {[
-                { icon: Shield, label: "Avaliados" },
-                { icon: CheckCircle2, label: "Suporte" },
-                { icon: Lock, label: "Privacidade" },
-                { icon: GraduationCap, label: "DETRAN OK" },
-              ].map((item, idx) => (
-                <div
-                  key={idx}
-                  className="flex flex-col items-center gap-1 sm:gap-2 bg-amber-50 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg p-2 sm:p-3 border border-amber-600/30"
-                >
-                  <item.icon className="w-4 h-4 sm:w-6 sm:h-6 text-emerald-600" />
-                  <span className="text-[9px] sm:text-sm text-center text-amber-700 leading-tight">{item.label}</span>
+            <motion.div variants={itemVariants} className="mx-auto max-w-4xl w-full px-0 sm:px-4">
+              <PremiumCard className="p-3 sm:p-6 bg-white/95 backdrop-blur-sm">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-2 sm:gap-4">
+                  {/* Search input */}
+                  <div className="md:col-span-2 relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
+                    <input
+                      type="text"
+                      placeholder="Buscar cidade/bairro"
+                      value={searchText}
+                      onChange={(e) => setSearchText(e.target.value)}
+                      className="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
+                    />
+                  </div>
+
+                  {/* Category select */}
+                  <div className="relative">
+                    <select
+                      value={selectedCategory}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all appearance-none bg-white"
+                    >
+                      <option value="Todas">Todas</option>
+                      <option value="A">Cat. A</option>
+                      <option value="B">Cat. B</option>
+                      <option value="C">Cat. C</option>
+                      <option value="D">Cat. D</option>
+                      <option value="E">Cat. E</option>
+                      <option value="AB">AB</option>
+                    </select>
+                    <ChevronDown className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400 pointer-events-none" />
+                  </div>
+
+                  {/* Sort select */}
+                  <div className="relative">
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value as SortOption)}
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all appearance-none bg-white"
+                    >
+                      <option value="rating">⭐ Avaliação</option>
+                      <option value="price">💰 Preço</option>
+                      <option value="students">👥 Aprovados</option>
+                      <option value="experience">🏆 Experiência</option>
+                    </select>
+                    <ChevronDown className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400 pointer-events-none" />
+                  </div>
                 </div>
-              ))}
-            </motion.div>
-          </div>
-        </div>
 
-        <div className="container mx-auto px-3 sm:px-4 max-w-7xl -mt-6 sm:-mt-8 relative z-20">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-xl shadow-2xl p-3 sm:p-6 border-2 border-emerald-100"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-2 sm:gap-4">
-              {/* Search input */}
-              <div className="md:col-span-2 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
-                <input
-                  type="text"
-                  placeholder="Buscar cidade/bairro"
-                  value={searchText}
-                  onChange={(e) => setSearchText(e.target.value)}
-                  className="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
-                />
-              </div>
+                <div className="mt-3 sm:mt-4 flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-2">
+                    <Button
+                      onClick={() => setShowFilters(!showFilters)}
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-1 text-xs sm:text-sm py-1 sm:py-2 px-2 sm:px-3"
+                    >
+                      <SlidersHorizontal className="w-3 h-3 sm:w-4 sm:h-4" />
+                      Filtros
+                    </Button>
+                    {hasActiveFilters && (
+                      <Button
+                        onClick={clearFilters}
+                        variant="ghost"
+                        size="sm"
+                        className="text-xs text-gray-600 py-1 px-2"
+                      >
+                        Limpar
+                      </Button>
+                    )}
+                  </div>
+                  <div className="text-xs sm:text-sm text-gray-600 font-medium">
+                    <span className="text-emerald-600 font-bold">{filteredInstructors.length}</span> instrutores
+                  </div>
+                </div>
 
-              {/* Category select */}
-              <div className="relative">
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all appearance-none bg-white"
-                >
-                  <option value="Todas">Todas</option>
-                  <option value="A">Cat. A</option>
-                  <option value="B">Cat. B</option>
-                  <option value="C">Cat. C</option>
-                  <option value="D">Cat. D</option>
-                  <option value="E">Cat. E</option>
-                  <option value="AB">AB</option>
-                </select>
-                <ChevronDown className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400 pointer-events-none" />
-              </div>
-
-              {/* Sort select */}
-              <div className="relative">
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as SortOption)}
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all appearance-none bg-white"
-                >
-                  <option value="rating">⭐ Avaliação</option>
-                  <option value="price">💰 Preço</option>
-                  <option value="students">👥 Aprovados</option>
-                  <option value="experience">🏆 Experiência</option>
-                </select>
-                <ChevronDown className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400 pointer-events-none" />
-              </div>
-            </div>
-
-            <div className="mt-3 sm:mt-4 flex items-center justify-between flex-wrap gap-2">
-              <div className="flex items-center gap-2">
-                <Button
-                  onClick={() => setShowFilters(!showFilters)}
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-1 text-xs sm:text-sm py-1 sm:py-2 px-2 sm:px-3"
-                >
-                  <SlidersHorizontal className="w-3 h-3 sm:w-4 sm:h-4" />
-                  Filtros
-                </Button>
                 {hasActiveFilters && (
-                  <Button onClick={clearFilters} variant="ghost" size="sm" className="text-xs text-gray-600 py-1 px-2">
-                    Limpar
-                  </Button>
+                  <div className="mt-2 sm:mt-3 flex flex-wrap gap-1 sm:gap-2">
+                    {searchText && (
+                      <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium">
+                        <MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                        {searchText}
+                        <button onClick={() => setSearchText("")} className="ml-0.5 hover:text-emerald-900">
+                          <X className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                        </button>
+                      </span>
+                    )}
+                    {selectedCategory !== "Todas" && (
+                      <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium">
+                        Cat. {selectedCategory}
+                        <button onClick={() => setSelectedCategory("Todas")} className="ml-0.5 hover:text-emerald-900">
+                          <X className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                        </button>
+                      </span>
+                    )}
+                    {selectedSpecialties.map((spec) => (
+                      <span
+                        key={spec}
+                        className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium"
+                      >
+                        {spec}
+                        <button onClick={() => toggleSpecialty(spec)} className="ml-0.5 hover:text-emerald-900">
+                          <X className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
                 )}
-              </div>
-              <div className="text-xs sm:text-sm text-gray-600 font-medium">
-                <span className="text-emerald-600 font-bold">{filteredInstructors.length}</span> instrutores
-              </div>
-            </div>
+              </PremiumCard>
+            </motion.div>
 
-            {hasActiveFilters && (
-              <div className="mt-2 sm:mt-3 flex flex-wrap gap-1 sm:gap-2">
-                {searchText && (
-                  <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium">
-                    <MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                    {searchText}
-                    <button onClick={() => setSearchText("")} className="ml-0.5 hover:text-emerald-900">
-                      <X className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                    </button>
-                  </span>
-                )}
-                {selectedCategory !== "Todas" && (
-                  <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium">
-                    Cat. {selectedCategory}
-                    <button onClick={() => setSelectedCategory("Todas")} className="ml-0.5 hover:text-emerald-900">
-                      <X className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                    </button>
-                  </span>
-                )}
-                {selectedSpecialties.map((spec) => (
-                  <span
-                    key={spec}
-                    className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium"
-                  >
-                    {spec}
-                    <button onClick={() => toggleSpecialty(spec)} className="ml-0.5 hover:text-emerald-900">
-                      <X className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                    </button>
-                  </span>
-                ))}
-              </div>
-            )}
+            <motion.div
+              variants={itemVariants}
+              style={{
+                y: shouldDisableMotion ? 0 : buttonsY,
+              }}
+              className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-5 justify-center items-stretch sm:items-center px-0 max-w-full"
+            >
+              <Breadcrumb />
+            </motion.div>
           </motion.div>
         </div>
 
-        <div className="container mx-auto px-3 sm:px-4 max-w-7xl mt-4 sm:mt-8 mb-8 sm:mb-16">
+        <div ref={heroEndRef} className="absolute bottom-0 left-0 right-0 h-1 pointer-events-none" aria-hidden="true" />
+      </motion.section>
+
+      <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
+        <div className="container mx-auto px-3 sm:px-4 max-w-7xl pt-8 relative z-20">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-6">
             {/* Filters Panel - mantém igual mas compacto */}
             <AnimatePresence>
@@ -495,232 +620,109 @@ export default function InstrutoresClient() {
               )}
             </AnimatePresence>
 
-            {/* Instructors Grid - mantém 2x2 mobile */}
-            <div className="md:col-span-3">
-              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                {filteredInstructors.map((instructor) => {
-                  const slug = generateSlug(instructor.name, instructor.city)
-                  const categories = extractCategories(instructor.role)
-                  const price = parsePrice(instructor.price)
-                  const rating = parseRating(instructor.rating)
+            <div className="md:col-span-3 grid gap-4 sm:gap-6">
+              {filteredInstructors.length === 0 ? (
+                <PremiumCard className="p-8 text-center">
+                  <p className="text-gray-500">Nenhum instrutor encontrado com os filtros selecionados.</p>
+                </PremiumCard>
+              ) : (
+                filteredInstructors.map((inst) => {
+                  const instructorSlug = generateSlug(inst.name, inst.city)
+                  const cats = extractCategories(inst.role)
 
                   return (
-                    <motion.div
-                      key={instructor.name}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-emerald-300 overflow-hidden flex flex-col"
-                    >
-                      <div className="relative h-32 sm:h-48 bg-gradient-to-br from-emerald-100 to-teal-100">
-                        <Image
-                          src={instructor.image || "/placeholder.svg?height=200&width=200"}
-                          alt={instructor.name}
-                          fill
-                          className="object-cover"
-                        />
-                        {instructor.isSponsored && (
-                          <div className="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 bg-gradient-to-r from-amber-500 to-amber-600 text-white text-[8px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full shadow-lg flex items-center gap-0.5 sm:gap-1">
-                            <TrendingUp className="w-2 h-2 sm:w-3 sm:h-3" />
-                            Patrocinado
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="p-2 sm:p-4 flex-1 flex flex-col">
-                        <h3 className="font-bold text-sm sm:text-lg text-gray-900 mb-0.5 sm:mb-1 line-clamp-1">
-                          {instructor.name}
-                        </h3>
-                        <p className="text-[10px] sm:text-sm text-gray-600 flex items-center gap-0.5 sm:gap-1 mb-1 sm:mb-2">
-                          <MapPin className="w-2.5 h-2.5 sm:w-4 sm:h-4 text-emerald-600 flex-shrink-0" />
-                          <span className="line-clamp-1">
-                            {instructor.neighborhood}, {instructor.city}
-                          </span>
-                        </p>
-
-                        <div className="flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2 flex-wrap">
-                          <div className="flex items-center gap-0.5 sm:gap-1 bg-amber-50 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
-                            <Star className="w-2.5 h-2.5 sm:w-4 sm:h-4 text-amber-500 fill-amber-500" />
-                            <span className="text-[10px] sm:text-sm font-bold text-gray-900">{instructor.rating}</span>
-                          </div>
-                          <div className="flex items-center gap-0.5 sm:gap-1 text-[9px] sm:text-xs text-gray-600">
-                            <Award className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 text-emerald-600" />
-                            <span className="hidden sm:inline">{instructor.studentsApproved} aprovados</span>
-                            <span className="sm:hidden">{instructor.studentsApproved}</span>
-                          </div>
+                    <PremiumCard key={instructorSlug} hover className="overflow-hidden group relative">
+                      <div className="flex flex-col sm:flex-row">
+                        <div className="w-full sm:w-1/3 h-48 sm:h-full relative">
+                          <img
+                            src={inst.photo || "/placeholder.svg"}
+                            alt={inst.name}
+                            className="w-full h-full object-cover"
+                          />
                         </div>
+                        <div className="p-4 sm:p-6 sm:w-2/3 flex flex-col justify-between">
+                          <div>
+                            <div className="flex items-start justify-between gap-4 mb-3">
+                              <div>
+                                <h3 className="text-xl font-bold text-gray-900 mb-1">{inst.name}</h3>
+                                <div className="flex items-center gap-2 text-gray-600 text-sm mb-2">
+                                  <MapPin className="w-4 h-4 text-emerald-600" />
+                                  <span>
+                                    {inst.neighborhood}, {inst.city}/{inst.state}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <BadgeChip variant="rating" icon={Star}>
+                                    {inst.rating}
+                                  </BadgeChip>
+                                  <span className="text-sm text-gray-600">{inst.experience}</span>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-2xl font-bold text-emerald-600">{inst.price}</div>
+                                <div className="text-xs text-gray-600">por aula</div>
+                              </div>
+                            </div>
 
-                        <div className="flex flex-wrap gap-0.5 sm:gap-1 mb-2 sm:mb-3 hidden sm:flex">
-                          {categories.slice(0, 2).map((cat) => (
-                            <span
-                              key={cat}
-                              className="bg-emerald-100 text-emerald-700 px-1.5 sm:px-2 py-0.5 rounded text-[9px] sm:text-xs font-medium"
-                            >
-                              Cat. {cat}
-                            </span>
-                          ))}
-                        </div>
+                            <div className="flex flex-wrap gap-2 mb-3">
+                              {cats.map((cat) => (
+                                <BadgeChip key={cat} variant="category">
+                                  Cat. {cat}
+                                </BadgeChip>
+                              ))}
+                            </div>
 
-                        <div className="mt-auto pt-1 sm:pt-2 border-t border-gray-100">
-                          <div className="flex items-center justify-between mb-1.5 sm:mb-2">
-                            <span className="text-xs sm:text-sm text-gray-600">por aula</span>
-                            <span className="text-base sm:text-xl font-bold text-emerald-600">{instructor.price}</span>
+                            <div className="grid grid-cols-2 gap-4 mb-4">
+                              <div className="flex items-center gap-2">
+                                <Award className="w-5 h-5 text-emerald-600" />
+                                <div>
+                                  <div className="font-bold text-gray-900">{inst.studentsApproved}</div>
+                                  <div className="text-xs text-gray-600">Aprovados</div>
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                          <div className="grid grid-cols-2 gap-1 sm:gap-2">
-                            <Link href={`/instrutores/${slug}`}>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="w-full text-[10px] sm:text-sm py-1 sm:py-2 h-auto border-emerald-600 text-emerald-600 hover:bg-emerald-50 bg-transparent"
-                              >
-                                Ver
+
+                          <div className="flex gap-3 mt-4">
+                            <Link href={`/instrutores/${instructorSlug}`} className="flex-1">
+                              <Button variant="outline" className="w-full bg-transparent">
+                                Ver Perfil
                               </Button>
                             </Link>
                             <Button
-                              size="sm"
-                              onClick={() => openQuoteModal(slug, instructor.name)}
-                              className="w-full text-[10px] sm:text-sm py-1 sm:py-2 h-auto bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
+                              onClick={() => openQuoteModal(instructorSlug, inst.name)}
+                              className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600"
                             >
-                              Orçamento
+                              Pedir Orçamento
                             </Button>
                           </div>
                         </div>
                       </div>
-                    </motion.div>
+                      <button
+                        onClick={() => handleFavorite(instructorSlug, inst.name)}
+                        className={cn(
+                          "absolute top-4 right-4 p-2 rounded-full transition-all",
+                          favorites.includes(instructorSlug) ? "bg-rose-500 text-white" : "bg-white/80 hover:bg-white",
+                        )}
+                      >
+                        <Heart className={cn("h-5 w-5", favorites.includes(instructorSlug) && "fill-current")} />
+                      </button>
+                    </PremiumCard>
                   )
-                })}
-              </div>
+                })
+              )}
             </div>
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 text-white py-8 sm:py-16">
-          <div className="container mx-auto px-3 sm:px-4 max-w-7xl space-y-8 sm:space-y-16">
-            {/* Como Funciona */}
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-8 text-center">Como Funciona</h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
-                {[
-                  { icon: Search, title: "1. Busque", desc: "Filtre por cidade e categoria CNH" },
-                  { icon: MessageCircle, title: "2. Peça", desc: "Solicite orçamento sem expor contato" },
-                  { icon: CheckCircle2, title: "3. Receba", desc: "Via Betel intermedia e retorna em 24h" },
-                  { icon: GraduationCap, title: "4. Aprenda", desc: "Comece suas aulas com segurança" },
-                ].map((step, idx) => (
-                  <div key={idx} className="text-center">
-                    <div className="bg-emerald-700/50 backdrop-blur-sm rounded-xl p-3 sm:p-6 border border-emerald-600/30">
-                      <step.icon className="w-6 h-6 sm:w-12 sm:h-12 mx-auto mb-2 sm:mb-4 text-amber-400" />
-                      <h3 className="font-bold text-xs sm:text-lg mb-1 sm:mb-2">{step.title}</h3>
-                      <p className="text-[9px] sm:text-sm text-emerald-100 leading-tight">{step.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Privacidade */}
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-8 text-center">Privacidade Garantida</h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
-                {[
-                  { icon: Lock, text: "Contato protegido até aprovação" },
-                  { icon: Shield, text: "Dados seguros LGPD" },
-                  { icon: CheckCircle2, text: "Suporte Via Betel 24/7" },
-                ].map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="bg-emerald-700/50 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-emerald-600/30 text-center"
-                  >
-                    <item.icon className="w-5 h-5 sm:w-8 sm:h-8 mx-auto mb-1 sm:mb-2 text-amber-400" />
-                    <p className="text-[9px] sm:text-sm text-emerald-100 leading-tight">{item.text}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Categorias CNH */}
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-8 text-center">Categorias CNH</h2>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-2 sm:gap-4">
-                {[
-                  { cat: "A", desc: "Motos" },
-                  { cat: "B", desc: "Carros" },
-                  { cat: "C", desc: "Caminhões" },
-                  { cat: "D", desc: "Ônibus" },
-                  { cat: "E", desc: "Carretas" },
-                ].map((item) => (
-                  <div
-                    key={item.cat}
-                    className="bg-emerald-700/50 backdrop-blur-sm rounded-lg p-2 sm:p-4 border border-emerald-600/30 text-center"
-                  >
-                    <div className="text-xl sm:text-3xl font-bold text-amber-400 mb-0.5 sm:mb-1">{item.cat}</div>
-                    <div className="text-[9px] sm:text-sm text-emerald-100">{item.desc}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Links Oficiais */}
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-8 text-center">Links Oficiais</h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4">
-                {[
-                  { label: "DETRAN MG", url: "https://www.detran.mg.gov.br" },
-                  {
-                    label: "Portal CNH",
-                    url: "https://www.gov.br/pt-br/servicos/obter-carteira-nacional-de-habilitacao",
-                  },
-                  { label: "Consulta CNH", url: "https://portalservicos.denatran.serpro.gov.br" },
-                ].map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-emerald-700/50 backdrop-blur-sm hover:bg-emerald-600/50 rounded-lg p-2 sm:p-4 border border-emerald-600/30 text-center transition-all text-[10px] sm:text-sm font-medium"
-                  >
-                    {link.label} →
-                  </a>
-                ))}
-              </div>
-            </div>
-
-            {/* FAQ */}
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-8 text-center">Perguntas Frequentes</h2>
-              <div className="max-w-3xl mx-auto space-y-2 sm:space-y-3">
-                {FAQ_ITEMS.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="bg-emerald-700/50 backdrop-blur-sm rounded-lg border border-emerald-600/30 overflow-hidden"
-                  >
-                    <button
-                      onClick={() => setOpenFaqIndex(openFaqIndex === idx ? null : idx)}
-                      className="w-full flex items-center justify-between p-3 sm:p-4 text-left hover:bg-emerald-600/30 transition-colors"
-                    >
-                      <span className="font-semibold text-xs sm:text-base">{item.question}</span>
-                      <ChevronDown
-                        className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform ${
-                          openFaqIndex === idx ? "rotate-180" : ""
-                        }`}
-                      />
-                    </button>
-                    <AnimatePresence>
-                      {openFaqIndex === idx && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden"
-                        >
-                          <p className="px-3 sm:px-4 pb-3 sm:pb-4 text-[10px] sm:text-sm text-emerald-100 leading-relaxed">
-                            {item.answer}
-                          </p>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                ))}
-              </div>
-            </div>
+        <div className="bg-gray-50 py-12">
+          <div className="container mx-auto px-3 sm:px-4 max-w-4xl">
+            <SectionHeader
+              title="Perguntas Frequentes"
+              subtitle="Tudo o que você precisa saber sobre o catálogo Via Betel"
+              centered
+            />
+            <ExpandableMenu items={FAQ_ITEMS.map((faq) => ({ title: faq.question, content: faq.answer }))} />
           </div>
         </div>
       </div>
@@ -923,6 +925,8 @@ export default function InstrutoresClient() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <LoginGuardModal open={showLoginGuard} onOpenChange={setShowLoginGuard} feature={loginGuardFeature} />
     </>
   )
 }

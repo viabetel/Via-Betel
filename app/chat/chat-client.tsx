@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import type { User } from "@supabase/supabase-js"
 import Link from "next/link"
+import { COLORS, SHADOWS } from "@/lib/ui/tokens"
+import { BadgeChip } from "@/components/ui/badge-chip"
 
 interface Profile {
   id: string
@@ -44,12 +46,10 @@ export default function ChatClient({ user, profile }: { user: User; profile: Pro
   const router = useRouter()
   const supabase = createClient()
 
-  // Load conversations
   useEffect(() => {
     loadConversations()
   }, [])
 
-  // Subscribe to realtime messages
   useEffect(() => {
     if (!selectedConversation) return
 
@@ -75,7 +75,6 @@ export default function ChatClient({ user, profile }: { user: User; profile: Pro
     }
   }, [selectedConversation])
 
-  // Load messages when conversation selected
   useEffect(() => {
     if (selectedConversation) {
       loadMessages(selectedConversation)
@@ -112,7 +111,6 @@ export default function ChatClient({ user, profile }: { user: User; profile: Pro
       if (error) throw error
       setMessages(data || [])
 
-      // Mark messages as read
       await supabase
         .from("messages")
         .update({ read: true })
@@ -136,7 +134,6 @@ export default function ChatClient({ user, profile }: { user: User; profile: Pro
       if (error) throw error
       setNewMessage("")
 
-      // Update conversation timestamp
       await supabase
         .from("conversations")
         .update({ updated_at: new Date().toISOString() })
@@ -154,10 +151,9 @@ export default function ChatClient({ user, profile }: { user: User; profile: Pro
   }
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50">
-      {/* Sidebar - Conversations List */}
-      <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
-        <div className="p-4 border-b bg-gradient-to-r from-emerald-600 to-teal-600">
+    <div className="flex h-screen bg-white">
+      <div className="w-80 bg-white border-r border-gray-200 flex flex-col" style={{ boxShadow: SHADOWS.md }}>
+        <div className="p-4 border-b" style={{ background: COLORS.gradients.primary }}>
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-xl font-bold text-white">Chat Via Betel</h2>
             <div className="flex items-center gap-2">
@@ -171,9 +167,12 @@ export default function ChatClient({ user, profile }: { user: User; profile: Pro
               </Button>
             </div>
           </div>
-          <p className="text-xs text-white/90">
-            {profile?.full_name || user.email} ({profile?.user_type === "student" ? "Aluno" : "Instrutor"})
-          </p>
+          <div className="flex items-center gap-2">
+            <p className="text-xs text-white/90 flex-1 truncate">{profile?.full_name || user.email}</p>
+            <BadgeChip variant={profile?.user_type === "student" ? "success" : "primary"}>
+              {profile?.user_type === "student" ? "Aluno" : "Instrutor"}
+            </BadgeChip>
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto">
@@ -190,7 +189,7 @@ export default function ChatClient({ user, profile }: { user: User; profile: Pro
                 key={conv.id}
                 onClick={() => setSelectedConversation(conv.id)}
                 className={`w-full p-4 text-left border-b hover:bg-emerald-50 transition ${
-                  selectedConversation === conv.id ? "bg-emerald-100" : ""
+                  selectedConversation === conv.id ? "bg-emerald-50 border-l-4 border-l-emerald-600" : ""
                 }`}
               >
                 <p className="font-semibold text-gray-900">Conversa</p>
@@ -201,11 +200,9 @@ export default function ChatClient({ user, profile }: { user: User; profile: Pro
         </div>
       </div>
 
-      {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col bg-gradient-to-br from-gray-50 via-white to-gray-50">
         {selectedConversation ? (
           <>
-            {/* Messages */}
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
               <AnimatePresence>
                 {messages.map((msg) => (
@@ -217,10 +214,13 @@ export default function ChatClient({ user, profile }: { user: User; profile: Pro
                   >
                     <div
                       className={`max-w-md px-4 py-2 rounded-2xl ${
-                        msg.sender_id === user.id
-                          ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white"
-                          : "bg-white border border-gray-200 text-gray-900"
+                        msg.sender_id === user.id ? "text-white" : "bg-white border border-gray-200 text-gray-900"
                       }`}
+                      style={
+                        msg.sender_id === user.id
+                          ? { background: COLORS.gradients.primary, boxShadow: SHADOWS.sm }
+                          : { boxShadow: SHADOWS.sm }
+                      }
                     >
                       <p className="text-sm">{msg.content}</p>
                       <p className="text-xs mt-1 opacity-70">
@@ -235,8 +235,7 @@ export default function ChatClient({ user, profile }: { user: User; profile: Pro
               </AnimatePresence>
             </div>
 
-            {/* Input */}
-            <div className="p-4 bg-white border-t">
+            <div className="p-4 bg-white border-t" style={{ boxShadow: SHADOWS.lg }}>
               <div className="flex gap-2">
                 <Input
                   value={newMessage}
@@ -245,7 +244,7 @@ export default function ChatClient({ user, profile }: { user: User; profile: Pro
                   placeholder="Digite sua mensagem..."
                   className="flex-1"
                 />
-                <Button onClick={sendMessage} className="bg-gradient-to-r from-emerald-600 to-teal-600">
+                <Button onClick={sendMessage} className="text-white" style={{ background: COLORS.gradients.primary }}>
                   <Send className="w-4 h-4" />
                 </Button>
               </div>

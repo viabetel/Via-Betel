@@ -12,6 +12,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { useState, useEffect } from "react"
 import { ArrowLeft } from "lucide-react"
 import { encodeReturnTo, saveReturnTo } from "@/lib/return-to"
+import { COLORS, SHADOWS } from "@/lib/ui/tokens"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -92,7 +93,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center p-6 bg-gradient-to-br from-emerald-50 via-white to-teal-50">
+    <div className="flex min-h-screen w-full items-center justify-center p-6 bg-gradient-to-br from-gray-50 via-white to-gray-50">
       <Link
         href="/"
         className="absolute top-4 left-4 flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-medium text-sm"
@@ -102,7 +103,7 @@ export default function LoginPage() {
       </Link>
 
       <div className="w-full max-w-sm">
-        <Card>
+        <Card style={{ boxShadow: SHADOWS.xl }}>
           <CardHeader>
             <CardTitle className="text-2xl">Login Via Betel</CardTitle>
             <CardDescription>Entre com seu email e senha</CardDescription>
@@ -182,7 +183,8 @@ export default function LoginPage() {
                 {error && <p className="text-sm text-red-500">{error}</p>}
                 <Button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-emerald-600 to-teal-600"
+                  className="w-full text-white"
+                  style={{ background: COLORS.gradients.primary }}
                   disabled={isLoading}
                 >
                   {isLoading ? "Entrando..." : "Entrar"}

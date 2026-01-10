@@ -1,12 +1,14 @@
 "use client"
-
-import { motion } from "framer-motion"
 import { MapPin, Star, Award, Clock, ArrowLeft, ChevronDown } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { extractCategories, generateSlug, type Instructor } from "@/lib/instructor-utils"
 import { useState } from "react"
 import { Breadcrumb } from "@/components/breadcrumb"
+import { PremiumCard } from "@/components/ui/premium-card"
+import { BadgeChip } from "@/components/ui/badge-chip"
+import { SectionHeader } from "@/components/ui/section-header"
+import { COLORS } from "@/lib/ui/tokens"
 
 export default function InstructorProfileClient({ instructor }: { instructor: Instructor }) {
   const categories = extractCategories(instructor.role)
@@ -15,8 +17,7 @@ export default function InstructorProfileClient({ instructor }: { instructor: In
   const [showAllSpecialties, setShowAllSpecialties] = useState(false)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50">
-      {/* Breadcrumb */}
+    <div className="min-h-screen bg-white">
       <Breadcrumb />
 
       {/* Back button */}
@@ -34,12 +35,7 @@ export default function InstructorProfileClient({ instructor }: { instructor: In
 
       <div className="container mx-auto px-3 sm:px-4 max-w-7xl py-4 sm:py-8">
         <div className="grid grid-cols-1 gap-4 sm:gap-8">
-          {/* Header card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-lg sm:rounded-xl shadow-lg overflow-hidden"
-          >
+          <PremiumCard className="overflow-hidden">
             <div className="flex flex-col sm:flex-row">
               <div className="w-full sm:w-1/3">
                 <img
@@ -58,11 +54,10 @@ export default function InstructorProfileClient({ instructor }: { instructor: In
                         {instructor.neighborhood}, {instructor.city}/{instructor.state}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1 sm:gap-2">
-                      <div className="flex items-center gap-0.5 sm:gap-1 bg-amber-50 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">
-                        <Star className="w-3 h-3 sm:w-5 sm:h-5 fill-amber-400 text-amber-400" />
-                        <span className="font-bold text-gray-900 text-xs sm:text-base">{instructor.rating}</span>
-                      </div>
+                    <div className="flex items-center gap-2">
+                      <BadgeChip variant="rating" icon={Star}>
+                        {instructor.rating}
+                      </BadgeChip>
                       <span className="text-gray-600 text-xs sm:text-base">•</span>
                       <span className="text-gray-600 text-xs sm:text-sm">{instructor.experience}</span>
                     </div>
@@ -76,19 +71,19 @@ export default function InstructorProfileClient({ instructor }: { instructor: In
                 {/* Categories */}
                 <div className="flex flex-wrap gap-1 sm:gap-2 mb-2 sm:mb-4">
                   {categories.map((cat) => (
-                    <span
-                      key={cat}
-                      className="px-2 sm:px-4 py-1 sm:py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold rounded-md sm:rounded-lg text-[10px] sm:text-base"
-                    >
+                    <BadgeChip key={cat} variant="category">
                       Categoria {cat}
-                    </span>
+                    </BadgeChip>
                   ))}
                 </div>
 
                 {/* Stats */}
                 <div className="grid grid-cols-2 gap-2 sm:gap-4 pt-2 sm:pt-4 border-t">
                   <div className="flex items-center gap-2 sm:gap-3">
-                    <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                    <div
+                      className="w-8 h-8 sm:w-12 sm:h-12 rounded-full flex items-center justify-center flex-shrink-0"
+                      style={{ backgroundColor: `${COLORS.brand.emerald}15` }}
+                    >
                       <Award className="w-4 h-4 sm:w-6 sm:h-6 text-emerald-600" />
                     </div>
                     <div>
@@ -110,43 +105,37 @@ export default function InstructorProfileClient({ instructor }: { instructor: In
                 </div>
               </div>
             </div>
-          </motion.div>
+          </PremiumCard>
 
-          {/* CTAs - Mobile First */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-6 space-y-2 sm:space-y-4"
-          >
+          <PremiumCard className="p-3 sm:p-6">
             <h3 className="text-base sm:text-xl font-bold text-gray-900 mb-2 sm:mb-4">Comece suas aulas</h3>
 
-            <Link href={`/orcamento?instrutor=${slug}`} className="block">
-              <Button className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-4 sm:py-6 text-sm sm:text-lg">
-                Pedir Orçamento
-              </Button>
-            </Link>
+            <div className="space-y-2 sm:space-y-4">
+              <Link href={`/orcamento?instrutor=${slug}`} className="block">
+                <Button className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-4 sm:py-6 text-sm sm:text-lg">
+                  Pedir Orçamento
+                </Button>
+              </Link>
 
-            <a href="https://wa.me/5532988093506" rel="noopener noreferrer" className="block">
               <Button
                 variant="outline"
+                asChild
                 className="w-full border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-50 font-bold py-4 sm:py-6 text-sm sm:text-lg bg-transparent"
               >
-                Falar com a Via Betel
+                <Link href="mailto:contato@viabetel.com">Falar com a Via Betel</Link>
               </Button>
-            </a>
+            </div>
 
-            <div className="pt-2 sm:pt-4 border-t space-y-2 sm:space-y-3">
+            <div className="pt-4 border-t mt-4 space-y-3">
               <div className="flex items-center justify-between text-xs sm:text-sm">
                 <span className="text-gray-600">Valor por aula</span>
                 <span className="font-bold text-emerald-600 text-base sm:text-lg">{instructor.price}</span>
               </div>
               <div className="flex items-center justify-between text-xs sm:text-sm">
                 <span className="text-gray-600">Avaliação</span>
-                <div className="flex items-center gap-1">
-                  <Star className="w-3 h-3 sm:w-4 sm:h-4 fill-amber-400 text-amber-400" />
-                  <span className="font-bold text-sm sm:text-base">{instructor.rating}</span>
-                </div>
+                <BadgeChip variant="rating" icon={Star} size="sm">
+                  {instructor.rating}
+                </BadgeChip>
               </div>
               <div className="flex items-center justify-between text-xs sm:text-sm">
                 <span className="text-gray-600">Localização</span>
@@ -156,23 +145,17 @@ export default function InstructorProfileClient({ instructor }: { instructor: In
               </div>
             </div>
 
-            <div className="bg-amber-50 border-2 border-amber-200 rounded-lg p-3 sm:p-4 mt-2 sm:mt-4">
-              <h4 className="font-bold text-amber-900 mb-1 sm:mb-2 text-xs sm:text-base">Como funciona</h4>
+            <div className="bg-amber-50 border-2 border-amber-200 rounded-lg p-3 sm:p-4 mt-4">
+              <h4 className="font-bold text-amber-900 mb-2 text-xs sm:text-base">Como funciona</h4>
               <p className="text-[10px] sm:text-xs text-amber-900">
                 A Via Betel intermedia todo o processo. Você envia sua solicitação e recebe propostas filtradas. Seu
                 contato não é exposto automaticamente aos instrutores.
               </p>
             </div>
-          </motion.div>
+          </PremiumCard>
 
-          {/* About */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-6"
-          >
-            <h2 className="text-lg sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-4">Sobre</h2>
+          <PremiumCard className="p-3 sm:p-6">
+            <SectionHeader title="Sobre" subtitle="" />
             <p
               className={`text-xs sm:text-base text-gray-600 leading-relaxed ${
                 !showFullBio ? "line-clamp-3 sm:line-clamp-none" : ""
@@ -189,24 +172,15 @@ export default function InstructorProfileClient({ instructor }: { instructor: In
                 <ChevronDown className={`w-3 h-3 transition-transform ${showFullBio ? "rotate-180" : ""}`} />
               </button>
             )}
-          </motion.div>
+          </PremiumCard>
 
-          {/* Specialties */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-white rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-6"
-          >
-            <h2 className="text-lg sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-4">Especialidades</h2>
-            <div className="flex flex-wrap gap-1.5 sm:gap-3">
+          <PremiumCard className="p-3 sm:p-6">
+            <SectionHeader title="Especialidades" subtitle="" />
+            <div className="flex flex-wrap gap-2">
               {(showAllSpecialties ? instructor.specialties : instructor.specialties.slice(0, 6)).map((spec) => (
-                <span
-                  key={spec}
-                  className="px-2 sm:px-4 py-1 sm:py-2 bg-emerald-50 text-emerald-700 font-medium rounded-md sm:rounded-lg border-2 border-emerald-200 text-[10px] sm:text-base"
-                >
+                <BadgeChip key={spec} variant="specialty">
                   {spec}
-                </span>
+                </BadgeChip>
               ))}
             </div>
             {instructor.specialties.length > 6 && (
@@ -218,7 +192,7 @@ export default function InstructorProfileClient({ instructor }: { instructor: In
                 <ChevronDown className={`w-3 h-3 transition-transform ${showAllSpecialties ? "rotate-180" : ""}`} />
               </button>
             )}
-          </motion.div>
+          </PremiumCard>
         </div>
       </div>
     </div>
