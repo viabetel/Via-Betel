@@ -4,6 +4,8 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { Suspense } from "react"
 import { MotionDebugBadge } from "@/components/motion-debug-badge"
+import { AuthProvider } from "@/lib/auth-context"
+import { SupabaseSetupAlert } from "@/components/supabase-setup-alert"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -367,10 +369,13 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
       </head>
       <body className="font-sans bg-neutral-50 text-neutral-900 overflow-x-hidden antialiased">
-        {children}
-        <Suspense fallback={null}>
-          <MotionDebugBadge />
-        </Suspense>
+        <AuthProvider>
+          <SupabaseSetupAlert />
+          {children}
+          <Suspense fallback={null}>
+            <MotionDebugBadge />
+          </Suspense>
+        </AuthProvider>
       </body>
     </html>
   )

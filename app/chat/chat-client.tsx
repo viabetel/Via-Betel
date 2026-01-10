@@ -4,10 +4,11 @@ import { createClient } from "@/lib/supabase/client"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Send, MessageSquare, LogOut } from "lucide-react"
+import { Send, MessageSquare, LogOut, Home } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import type { User } from "@supabase/supabase-js"
+import Link from "next/link"
 
 interface Profile {
   id: string
@@ -159,9 +160,16 @@ export default function ChatClient({ user, profile }: { user: User; profile: Pro
         <div className="p-4 border-b bg-gradient-to-r from-emerald-600 to-teal-600">
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-xl font-bold text-white">Chat Via Betel</h2>
-            <Button variant="ghost" size="sm" onClick={handleLogout} className="text-white hover:bg-white/20">
-              <LogOut className="w-4 h-4" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <Link href="/">
+                <Button variant="ghost" size="sm" className="text-white hover:bg-white/20">
+                  <Home className="w-4 h-4" />
+                </Button>
+              </Link>
+              <Button variant="ghost" size="sm" onClick={handleLogout} className="text-white hover:bg-white/20">
+                <LogOut className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
           <p className="text-xs text-white/90">
             {profile?.full_name || user.email} ({profile?.user_type === "student" ? "Aluno" : "Instrutor"})

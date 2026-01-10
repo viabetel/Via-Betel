@@ -25,6 +25,8 @@ import { instructors } from "@/data/instructors-data"
 import { extractCategories, parsePrice, parseRating, generateSlug } from "@/lib/instructor-utils"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
+import Header from "@/components/Header"
+import Breadcrumb from "@/components/breadcrumb"
 
 type SortOption = "rating" | "price" | "students" | "experience"
 
@@ -235,11 +237,11 @@ export default function InstrutoresClient() {
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50">
-        <div className="relative bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-700 text-white py-8 sm:py-16 overflow-hidden">
-          <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
-          <div className="absolute top-10 left-10 w-32 h-32 lg:w-72 lg:h-72 bg-amber-500/20 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-10 right-10 w-40 h-40 lg:w-80 lg:h-80 bg-teal-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
+        <Header />
+        <Breadcrumb />
 
+        {/* Hero Section - COMPACTADO para não duplicar navegação */}
+        <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 text-white py-8 sm:py-16 relative overflow-hidden">
           <div className="container mx-auto px-3 sm:px-4 max-w-7xl relative z-10">
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
@@ -288,10 +290,10 @@ export default function InstrutoresClient() {
               ].map((item, idx) => (
                 <div
                   key={idx}
-                  className="flex flex-col items-center gap-1 sm:gap-2 bg-emerald-800/40 backdrop-blur-sm rounded-lg p-2 sm:p-3 border border-emerald-600/30"
+                  className="flex flex-col items-center gap-1 sm:gap-2 bg-amber-50 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg p-2 sm:p-3 border border-amber-600/30"
                 >
-                  <item.icon className="w-4 h-4 sm:w-6 sm:h-6 text-amber-400" />
-                  <span className="text-[9px] sm:text-sm text-center text-emerald-50 leading-tight">{item.label}</span>
+                  <item.icon className="w-4 h-4 sm:w-6 sm:h-6 text-emerald-600" />
+                  <span className="text-[9px] sm:text-sm text-center text-amber-700 leading-tight">{item.label}</span>
                 </div>
               ))}
             </motion.div>
@@ -357,7 +359,7 @@ export default function InstrutoresClient() {
                   onClick={() => setShowFilters(!showFilters)}
                   variant="outline"
                   size="sm"
-                  className="flex items-center gap-1 text-xs sm:text-sm border-emerald-600 text-emerald-600 hover:bg-emerald-50 py-1 sm:py-2 px-2 sm:px-3"
+                  className="flex items-center gap-1 text-xs sm:text-sm py-1 sm:py-2 px-2 sm:px-3"
                 >
                   <SlidersHorizontal className="w-3 h-3 sm:w-4 sm:h-4" />
                   Filtros

@@ -6,6 +6,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { extractCategories, generateSlug, type Instructor } from "@/lib/instructor-utils"
 import { useState } from "react"
+import { Breadcrumb } from "@/components/breadcrumb"
 
 export default function InstructorProfileClient({ instructor }: { instructor: Instructor }) {
   const categories = extractCategories(instructor.role)
@@ -15,6 +16,9 @@ export default function InstructorProfileClient({ instructor }: { instructor: In
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50">
+      {/* Breadcrumb */}
+      <Breadcrumb />
+
       {/* Back button */}
       <div className="bg-white border-b">
         <div className="container mx-auto px-3 sm:px-4 max-w-7xl py-2 sm:py-4">
@@ -123,7 +127,7 @@ export default function InstructorProfileClient({ instructor }: { instructor: In
               </Button>
             </Link>
 
-            <a href="https://wa.me/5532988093506" target="_blank" rel="noopener noreferrer" className="block">
+            <a href="https://wa.me/5532988093506" rel="noopener noreferrer" className="block">
               <Button
                 variant="outline"
                 className="w-full border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-50 font-bold py-4 sm:py-6 text-sm sm:text-lg bg-transparent"
