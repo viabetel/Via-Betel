@@ -1,10 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useSearchParams } from "next/navigation"
 
 export function useMotionDebug() {
-  const searchParams = useSearchParams()
   const [motionState, setMotionState] = useState<"auto" | "forced-on" | "forced-off">("auto")
   const [prefersReduced, setPrefersReduced] = useState(false)
 
@@ -16,8 +14,9 @@ export function useMotionDebug() {
     const listener = (e: MediaQueryListEvent) => setPrefersReduced(e.matches)
     mediaQuery.addEventListener("change", listener)
 
-    // Check query params
-    const motionParam = searchParams?.get("motion")
+    const params = new URLSearchParams(window.location.search)
+    const motionParam = params.get("motion")
+
     if (motionParam === "1") {
       setMotionState("forced-on")
     } else if (motionParam === "0") {
@@ -27,7 +26,7 @@ export function useMotionDebug() {
     }
 
     return () => mediaQuery.removeEventListener("change", listener)
-  }, [searchParams])
+  }, []) // Removida dependência de searchParams
 
   const shouldDisableMotion = motionState === "forced-off" || (motionState === "auto" && prefersReduced)
 
