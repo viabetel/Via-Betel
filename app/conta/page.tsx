@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { ContaClient } from "./conta-client"
+import { redirect } from "next/navigation"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
@@ -10,5 +11,6 @@ export const metadata: Metadata = {
 }
 
 export default function ContaPage() {
+  redirect("/conta/perfil")
   return <ContaClient />
 }

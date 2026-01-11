@@ -9,7 +9,7 @@ export default async function InstructorOnboardingPage() {
   const userWithProfile = await getCurrentUserWithInstructorProfile()
 
   if (!userWithProfile) {
-    redirect("/auth/login?redirectTo=/instrutor/onboarding")
+    redirect("/auth/login?returnTo=/instrutor/onboarding")
   }
 
   return <OnboardingClient initialProfile={userWithProfile.instructorProfile} />

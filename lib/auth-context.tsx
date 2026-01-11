@@ -41,6 +41,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (user) {
         try {
+          const syncResponse = await fetch("/api/account/sync", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+          })
+          if (!syncResponse.ok) {
+            console.warn("[v0] Sync failed:", syncResponse.statusText)
+          }
+        } catch (syncError) {
+          console.warn("[v0] Sync error:", syncError)
+          // Continua mesmo se sync falhar
+        }
+
+        try {
           const { data: profileData, error } = await supabase.from("profiles").select("*").eq("id", user.id).single()
 
           if (error && error.code === "PGRST205") {

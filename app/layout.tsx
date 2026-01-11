@@ -317,10 +317,10 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.png", sizes: "any" },
       { url: "/favicon.svg", type: "image/svg+xml" },
     ],
-    apple: "/apple-touch-icon.jpg",
+    apple: "/apple-touch-icon.png",
   },
   alternates: {
     canonical: "https://viabetel.com/",

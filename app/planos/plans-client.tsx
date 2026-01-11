@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Check, Zap, Crown, Star, Shield, Loader2 } from "lucide-react"
+import { Check, Zap, Crown, Star, Shield } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { formatPrice, formatPricePerMonth, type Plan } from "@/lib/plans"
@@ -63,69 +63,29 @@ export function PlansClient({ plans }: PlansClientProps) {
   })
 
   const handleSelectPlan = async (plan: Plan) => {
-    // Se não estiver logado, redirecionar para login
+    // Se não estiver logado, redirecionar para login com returnTo
     if (!user) {
-      router.push(`/auth/login?returnTo=/planos`)
+      router.push(`/auth/login?returnTo=/planos/checkout?plan=${plan.slug}`)
       return
     }
 
-    // Se não for instrutor, mostrar mensagem
+    // Se não for instrutor, mostrar mensagem e direcionar para onboarding
     if (profile?.user_type !== "instructor") {
       toast({
-        title: "Planos para Instrutores",
-        description: "Os planos são destinados apenas para instrutores. Crie uma conta de instrutor para assinar.",
-        variant: "destructive",
+        title: "Cadastro de Instrutor Necessário",
+        description: "Para assinar planos, complete seu cadastro como instrutor.",
+        variant: "default",
       })
+      router.push("/instrutor/onboarding")
       return
     }
 
-    // Se já tem esse plano ativo, não fazer nada
+    // Se já tem esse plano ativo, desabilitar botão
     if (currentSubscription?.plan.slug === plan.slug) {
       return
     }
 
-    // Chamar API de checkout diretamente (simulação de pagamento aprovado)
-    setLoadingPlan(plan.slug)
-
-    try {
-      const res = await fetch("/api/planos/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planSlug: plan.slug }),
-      })
-
-      const data = await res.json()
-
-      if (data.ok) {
-        toast({
-          title: "Assinatura realizada!",
-          description: `Bem-vindo ao plano ${plan.name}!`,
-        })
-        setCurrentSubscription({
-          id: data.subscription.id,
-          status: data.subscription.status,
-          expiresAt: data.subscription.expiresAt,
-          plan: {
-            slug: data.subscription.plan.slug,
-            name: data.subscription.plan.name,
-          },
-        })
-      } else {
-        toast({
-          title: "Erro ao assinar",
-          description: data.error || "Tente novamente mais tarde",
-          variant: "destructive",
-        })
-      }
-    } catch (error) {
-      toast({
-        title: "Erro ao assinar",
-        description: "Erro de conexão. Tente novamente.",
-        variant: "destructive",
-      })
-    } finally {
-      setLoadingPlan(null)
-    }
+    router.push(`/planos/checkout?plan=${plan.slug}`)
   }
 
   const getPlanIcon = (slug: string) => {
@@ -156,7 +116,7 @@ export function PlansClient({ plans }: PlansClientProps) {
             Aumente sua visibilidade, conquiste a confiança dos alunos e faça sua carreira decolar
           </p>
 
-          {currentSubscription && (
+          {user && currentSubscription && (
             <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-full">
               <Crown className="w-4 h-4 text-emerald-600" />
               <span className="text-sm text-emerald-700">
@@ -206,7 +166,6 @@ export function PlansClient({ plans }: PlansClientProps) {
             const features = Array.isArray(plan.features) ? plan.features : JSON.parse(plan.features as string)
             const isPopular = plan.highlight
             const isCurrent = isCurrentPlan(plan.slug)
-            const isLoading = loadingPlan === plan.slug
 
             return (
               <div
@@ -270,7 +229,7 @@ export function PlansClient({ plans }: PlansClientProps) {
                 {/* CTA Button */}
                 <Button
                   onClick={() => handleSelectPlan(plan)}
-                  disabled={isCurrent || isLoading || loadingSubscription}
+                  disabled={isCurrent || loadingSubscription}
                   className={cn(
                     "w-full py-6 text-base font-semibold",
                     isCurrent
@@ -282,20 +241,13 @@ export function PlansClient({ plans }: PlansClientProps) {
                           : "bg-emerald-500 hover:bg-emerald-600 text-white",
                   )}
                 >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      Processando...
-                    </>
-                  ) : isCurrent ? (
-                    "Plano Atual"
-                  ) : !user ? (
-                    "Entrar para contratar"
-                  ) : plan.priceCents === 0 ? (
-                    "Começar Grátis"
-                  ) : (
-                    "Assinar Agora"
-                  )}
+                  {isCurrent
+                    ? "Plano Atual"
+                    : !user
+                      ? "Entrar para contratar"
+                      : plan.priceCents === 0
+                        ? "Começar Grátis"
+                        : "Assinar Agora"}
                 </Button>
               </div>
             )

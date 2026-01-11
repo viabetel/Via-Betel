@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Check, CreditCard, Shield, Loader2 } from "lucide-react"
+import { Check, CreditCard, Shield, Loader2, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -16,11 +16,56 @@ interface CheckoutClientProps {
   plan: Plan
 }
 
+const isValidCardNumber = (cardNumber: string): boolean => {
+  const digits = cardNumber.replace(/\s+/g, "").replace(/[^0-9]/g, "")
+  if (digits.length < 13 || digits.length > 19) return false
+
+  let sum = 0
+  let isEven = false
+
+  for (let i = digits.length - 1; i >= 0; i--) {
+    let digit = Number.parseInt(digits[i], 10)
+
+    if (isEven) {
+      digit *= 2
+      if (digit > 9) digit -= 9
+    }
+
+    sum += digit
+    isEven = !isEven
+  }
+
+  return sum % 10 === 0
+}
+
+const isValidExpiry = (expiry: string): boolean => {
+  const [month, year] = expiry.split("/")
+  if (!month || !year || month.length !== 2 || year.length !== 2) return false
+
+  const monthNum = Number.parseInt(month, 10)
+  if (monthNum < 1 || monthNum > 12) return false
+
+  const currentDate = new Date()
+  const currentYear = currentDate.getFullYear() % 100
+  const currentMonth = currentDate.getMonth() + 1
+
+  const cardYear = Number.parseInt(year, 10)
+  if (cardYear < currentYear) return false
+  if (cardYear === currentYear && monthNum < currentMonth) return false
+
+  return true
+}
+
+const isValidCVV = (cvv: string): boolean => {
+  return /^\d{3,4}$/.test(cvv)
+}
+
 export function CheckoutClient({ plan }: CheckoutClientProps) {
   const router = useRouter()
   const { toast } = useToast()
   const { user, profile } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
   const [formData, setFormData] = useState({
     cardNumber: "",
     cardName: "",
@@ -28,20 +73,55 @@ export function CheckoutClient({ plan }: CheckoutClientProps) {
     cvv: "",
   })
 
+  if (!user || profile?.user_type !== "instructor") {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-12">
+        <div className="bg-white rounded-xl border border-red-200 p-6">
+          <div className="flex items-start gap-4">
+            <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <h2 className="text-lg font-semibold text-red-900 mb-2">Acesso restrito</h2>
+              <p className="text-red-700 mb-4">Você precisa estar logado como instrutor para acessar o checkout.</p>
+              <Button onClick={() => router.push("/auth/login?returnTo=/planos")}>Fazer Login</Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const features = Array.isArray(plan.features) ? plan.features : JSON.parse(plan.features as string)
+
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {}
+
+    if (!formData.cardNumber || !isValidCardNumber(formData.cardNumber)) {
+      newErrors.cardNumber = "Número de cartão inválido"
+    }
+
+    if (!formData.cardName || formData.cardName.trim().length < 3) {
+      newErrors.cardName = "Nome deve ter pelo menos 3 caracteres"
+    }
+
+    if (!formData.expiry || !isValidExpiry(formData.expiry)) {
+      newErrors.expiry = "Data de validade inválida (formato: MM/AA)"
+    }
+
+    if (!formData.cvv || !isValidCVV(formData.cvv)) {
+      newErrors.cvv = "CVV deve ter 3 ou 4 dígitos"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!user) {
-      router.push(`/auth/login?returnTo=/planos/checkout?plan=${plan.slug}`)
-      return
-    }
-
-    if (profile?.user_type !== "instructor") {
+    if (!validateForm()) {
       toast({
-        title: "Planos para Instrutores",
-        description: "Apenas instrutores podem assinar planos.",
+        title: "Formulário inválido",
+        description: "Por favor, verifique os dados do cartão",
         variant: "destructive",
       })
       return
@@ -159,10 +239,15 @@ export function CheckoutClient({ plan }: CheckoutClientProps) {
                 id="cardNumber"
                 placeholder="0000 0000 0000 0000"
                 value={formData.cardNumber}
-                onChange={(e) => setFormData({ ...formData, cardNumber: formatCardNumber(e.target.value) })}
+                onChange={(e) => {
+                  setFormData({ ...formData, cardNumber: formatCardNumber(e.target.value) })
+                  if (errors.cardNumber) setErrors({ ...errors, cardNumber: "" })
+                }}
                 maxLength={19}
+                className={errors.cardNumber ? "border-red-500" : ""}
                 required
               />
+              {errors.cardNumber && <p className="text-xs text-red-600 mt-1">{errors.cardNumber}</p>}
             </div>
 
             <div>
@@ -171,9 +256,14 @@ export function CheckoutClient({ plan }: CheckoutClientProps) {
                 id="cardName"
                 placeholder="Como está no cartão"
                 value={formData.cardName}
-                onChange={(e) => setFormData({ ...formData, cardName: e.target.value.toUpperCase() })}
+                onChange={(e) => {
+                  setFormData({ ...formData, cardName: e.target.value.toUpperCase() })
+                  if (errors.cardName) setErrors({ ...errors, cardName: "" })
+                }}
+                className={errors.cardName ? "border-red-500" : ""}
                 required
               />
+              {errors.cardName && <p className="text-xs text-red-600 mt-1">{errors.cardName}</p>}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -183,10 +273,15 @@ export function CheckoutClient({ plan }: CheckoutClientProps) {
                   id="expiry"
                   placeholder="MM/AA"
                   value={formData.expiry}
-                  onChange={(e) => setFormData({ ...formData, expiry: formatExpiry(e.target.value) })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, expiry: formatExpiry(e.target.value) })
+                    if (errors.expiry) setErrors({ ...errors, expiry: "" })
+                  }}
                   maxLength={5}
+                  className={errors.expiry ? "border-red-500" : ""}
                   required
                 />
+                {errors.expiry && <p className="text-xs text-red-600 mt-1">{errors.expiry}</p>}
               </div>
               <div>
                 <Label htmlFor="cvv">CVV</Label>
@@ -194,10 +289,15 @@ export function CheckoutClient({ plan }: CheckoutClientProps) {
                   id="cvv"
                   placeholder="123"
                   value={formData.cvv}
-                  onChange={(e) => setFormData({ ...formData, cvv: e.target.value.replace(/[^0-9]/g, "") })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, cvv: e.target.value.replace(/[^0-9]/g, "") })
+                    if (errors.cvv) setErrors({ ...errors, cvv: "" })
+                  }}
                   maxLength={4}
+                  className={errors.cvv ? "border-red-500" : ""}
                   required
                 />
+                {errors.cvv && <p className="text-xs text-red-600 mt-1">{errors.cvv}</p>}
               </div>
             </div>
 

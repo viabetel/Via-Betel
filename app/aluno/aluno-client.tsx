@@ -7,6 +7,7 @@ import { ArrowLeft, CheckCircle2, Loader2, GraduationCap, MapPin, Phone, Chevron
 import Link from "next/link"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
+import { useRouter } from "next/navigation"
 
 type FormData = {
   nome: string
@@ -34,6 +35,7 @@ export default function AlunoClientPage() {
   const [isSuccess, setIsSuccess] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -400,6 +402,15 @@ export default function AlunoClientPage() {
                 </AnimatePresence>
               </div>
             </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push("/inscricao?userType=student")}
+              className="w-full border-emerald-300 text-emerald-700 hover:bg-emerald-50 py-3 rounded-lg font-semibold"
+            >
+              Continuar no App
+            </Button>
 
             <Button
               type="submit"

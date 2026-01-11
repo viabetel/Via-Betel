@@ -18,10 +18,24 @@ export async function GET(request: Request) {
 
     if (error) {
       console.error("[v0] OAuth callback error:", error)
-      return NextResponse.redirect(`${origin}/auth/login?error=auth_failed${returnTo ? `&returnTo=${returnTo}` : ""}`)
+      return NextResponse.redirect(
+        `${origin}/auth/login?error=auth_failed${returnTo ? `&returnTo=${encodeURIComponent(returnTo)}` : ""}`,
+      )
     }
 
     console.log("[v0] Session criada com sucesso")
+
+    const userType = requestUrl.searchParams.get("userType")
+    try {
+      const syncUrl = new URL("/api/account/sync", origin)
+      if (userType) {
+        syncUrl.searchParams.set("userType", userType)
+      }
+      await fetch(syncUrl.toString(), { method: "POST" })
+    } catch (syncError) {
+      console.error("[v0] Erro ao chamar sync:", syncError)
+      // Continuar mesmo se sync falhar
+    }
 
     const finalPath = resolveReturnTo(returnTo, origin, "/")
     clearReturnTo()
@@ -31,5 +45,5 @@ export async function GET(request: Request) {
   }
 
   console.log("[v0] Code não encontrado, redirecionando para login")
-  return NextResponse.redirect(`${origin}/auth/login${returnTo ? `?returnTo=${returnTo}` : ""}`)
+  return NextResponse.redirect(`${origin}/auth/login${returnTo ? `?returnTo=${encodeURIComponent(returnTo)}` : ""}`)
 }
