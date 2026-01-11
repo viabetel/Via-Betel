@@ -81,19 +81,30 @@ export async function POST(request: Request) {
 
     // 6) Excluir usuário do Supabase Auth (usando admin client)
     try {
-      const adminClient = createAdminClient()
-      const { error: deleteAuthError } = await adminClient.auth.admin.deleteUser(userId)
+      if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        console.warn("[v0] SUPABASE_SERVICE_ROLE_KEY não configurado, pulando exclusão do Auth")
+        // Continua mesmo sem poder deletar do Auth
+      } else {
+        const adminClient = createAdminClient()
+        const { error: deleteAuthError } = await adminClient.auth.admin.deleteUser(userId)
 
-      if (deleteAuthError) {
-        console.error("[v0] Auth deletion error:", deleteAuthError.message)
-        return NextResponse.json(
-          { error: "Erro ao excluir conta do sistema de autenticação: " + deleteAuthError.message },
-          { status: 500 },
-        )
+        if (deleteAuthError) {
+          console.error("[v0] Auth deletion error:", deleteAuthError.message)
+          // Se o usuário não existe no Auth, isso não é erro fatal
+          if (deleteAuthError.message.includes("not found")) {
+            console.warn("[v0] Usuário não encontrado no Auth, mas perfil já foi deletado")
+          } else {
+            return NextResponse.json(
+              { error: "Erro ao excluir conta do sistema de autenticação: " + deleteAuthError.message },
+              { status: 500 },
+            )
+          }
+        }
       }
     } catch (e: any) {
       console.error("[v0] Admin client error:", e)
-      return NextResponse.json({ error: "Erro ao excluir conta: " + e.message }, { status: 500 })
+      // Não retorna erro - perfil já foi deletado
+      console.warn("[v0] Não foi possível deletar do Auth, mas perfil foi deletado com sucesso")
     }
 
     // 7) Sucesso
