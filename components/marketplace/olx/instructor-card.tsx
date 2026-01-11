@@ -55,6 +55,15 @@ export function InstructorCard({
   const price = instructor.price?.replace(/[^\d]/g, "") || "0"
   const rating = Number.parseFloat(instructor.rating || "0")
   const planBadge = instructor.planBadge ? PLAN_BADGES[instructor.planBadge] : null
+  const verificationBadge = instructor.isVerified
+    ? {
+        label: "Instrutor Verificado",
+        icon: Shield,
+        color: "text-emerald-700",
+        bgColor: "bg-emerald-100",
+      }
+    : null
+  const displayBadge = verificationBadge || planBadge
 
   if (viewMode === "list") {
     return (
@@ -70,6 +79,18 @@ export function InstructorCard({
             {instructor.isSponsored && (
               <div className="absolute top-1.5 left-1.5 bg-amber-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
                 Destaque
+              </div>
+            )}
+            {displayBadge && (
+              <div
+                className={cn(
+                  "absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded text-[9px] font-bold flex items-center gap-0.5",
+                  displayBadge.bgColor,
+                  displayBadge.color,
+                )}
+              >
+                <displayBadge.icon className="w-2.5 h-2.5" />
+                {displayBadge.label}
               </div>
             )}
             <button
@@ -90,16 +111,16 @@ export function InstructorCard({
                 <div className="min-w-0">
                   <div className="flex items-center gap-1.5">
                     <h3 className="text-sm font-semibold text-gray-900 truncate">{instructor.name}</h3>
-                    {planBadge && (
+                    {displayBadge && (
                       <span
                         className={cn(
                           "px-1.5 py-0.5 rounded text-[9px] font-bold flex items-center gap-0.5",
-                          planBadge.bgColor,
-                          planBadge.color,
+                          displayBadge.bgColor,
+                          displayBadge.color,
                         )}
                       >
-                        <planBadge.icon className="w-2.5 h-2.5" />
-                        {planBadge.label}
+                        <displayBadge.icon className="w-2.5 h-2.5" />
+                        {displayBadge.label}
                       </span>
                     )}
                   </div>
@@ -127,7 +148,6 @@ export function InstructorCard({
                     {cat}
                   </span>
                 ))}
-                {instructor.isVerified && !planBadge && <Shield className="w-3 h-3 text-emerald-600" />}
               </div>
               <div className="flex items-center gap-0.5 text-xs text-amber-600">
                 <Star className="w-3 h-3 fill-current" />
@@ -156,16 +176,16 @@ export function InstructorCard({
               Destaque
             </div>
           )}
-          {planBadge && (
+          {displayBadge && (
             <div
               className={cn(
                 "absolute top-1.5 right-8 px-1.5 py-0.5 rounded text-[9px] font-bold flex items-center gap-0.5",
-                planBadge.bgColor,
-                planBadge.color,
+                displayBadge.bgColor,
+                displayBadge.color,
               )}
             >
-              <planBadge.icon className="w-2.5 h-2.5" />
-              {planBadge.label}
+              <displayBadge.icon className="w-2.5 h-2.5" />
+              {displayBadge.label}
             </div>
           )}
           <button
@@ -197,7 +217,6 @@ export function InstructorCard({
                 {cat}
               </span>
             ))}
-            {instructor.isVerified && !planBadge && <Shield className="w-3 h-3 text-emerald-600" />}
           </div>
 
           <div className="flex items-center justify-between pt-1.5 border-t border-gray-100">

@@ -98,6 +98,18 @@ export function HeaderContent({ isScrolled = false, variant = "header" }: Header
   const userMenuItems =
     profile?.role === "INSTRUCTOR"
       ? [
+          {
+            label: "Cadastro de Instrutor",
+            icon: Briefcase,
+            href: "/instrutor/onboarding",
+            divider: false,
+          },
+          {
+            label: "Minha Conta",
+            icon: User,
+            href: "/conta",
+            divider: false,
+          },
           { icon: User, label: "Meu Perfil", href: "/conta/perfil" },
           { icon: Briefcase, label: "Meus Anúncios", href: "/conta/anuncios" },
           { icon: Calendar, label: "Disponibilidade", href: "/conta/disponibilidade" },
@@ -106,6 +118,12 @@ export function HeaderContent({ isScrolled = false, variant = "header" }: Header
           { icon: Shield, label: "Segurança", href: "/conta/seguranca" },
         ]
       : [
+          {
+            label: "Minha Conta",
+            icon: User,
+            href: "/conta",
+            divider: false,
+          },
           { icon: User, label: "Meu Perfil", href: "/conta/perfil" },
           { icon: Heart, label: "Favoritos", href: "/conta/favoritos" },
           { icon: ClipboardList, label: "Minhas Solicitações", href: "/conta/solicitacoes" },

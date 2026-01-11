@@ -51,6 +51,7 @@ export function MeusPlansClient() {
   const [subscription, setSubscription] = useState<Subscription | null>(null)
   const [loading, setLoading] = useState(true)
   const [chatUsage, setChatUsage] = useState<ChatUsageInfo | null>(null)
+  const [showOnboardingBanner, setShowOnboardingBanner] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
@@ -96,7 +97,21 @@ export function MeusPlansClient() {
       }
     }
 
+    async function checkInstructorStatus() {
+      if (profile?.user_type !== "instructor") return
+      try {
+        const res = await fetch("/instrutor/api/profile-status")
+        const data = await res.json()
+        if (data.status !== "APROVADO") {
+          setShowOnboardingBanner(true)
+        }
+      } catch (err) {
+        console.log("[v0] Erro ao verificar status instrutor:", err)
+      }
+    }
+
     fetchData()
+    checkInstructorStatus()
   }, [user, profile?.user_type])
 
   if (loading) {
@@ -225,15 +240,17 @@ export function MeusPlansClient() {
           </div>
         )}
 
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-          <div>
-            <h4 className="font-medium text-red-800">Seu perfil não está visível no marketplace</h4>
-            <p className="text-sm text-red-600 mt-1">
-              Sem um plano ativo, alunos não conseguem encontrar você no marketplace.
-            </p>
+        {showOnboardingBanner && (
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <h4 className="font-medium text-amber-800">Seu perfil não está visível no marketplace</h4>
+              <p className="text-sm text-amber-600 mt-1">
+                Complete o onboarding para aumentar sua visibilidade no marketplace.
+              </p>
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
           <Crown className="w-16 h-16 text-amber-400 mx-auto mb-4" />
@@ -285,6 +302,18 @@ export function MeusPlansClient() {
                 </AppLink>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showOnboardingBanner && (
+        <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+          <div>
+            <h4 className="font-medium text-amber-800">Seu perfil não está visível no marketplace</h4>
+            <p className="text-sm text-amber-600 mt-1">
+              Complete o onboarding para aumentar sua visibilidade no marketplace.
+            </p>
           </div>
         </div>
       )}

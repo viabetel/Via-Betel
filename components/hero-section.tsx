@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { AppLink } from "@/components/app-link"
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
 import { useRef, useState, useEffect } from "react"
-import { ChevronLeft, ChevronRight, Shield, MessageCircle, Search, MapPin, Car } from "lucide-react"
+import { ChevronLeft, ChevronRight, Shield, MessageCircle, Search, MapPin, Car, Briefcase } from "lucide-react"
 
 const HERO_SLIDES = [
   {
@@ -37,6 +37,16 @@ const HERO_SLIDES = [
     cta: "Abrir Chat",
     ctaLink: "/chat",
     icon: MessageCircle,
+  },
+  {
+    id: 4,
+    title: "Seja um instrutor",
+    subtitle: "verificado na Via Betel",
+    description: "Expanda seus negócios e alcance mais alunos através da nossa plataforma.",
+    badge: "CADASTRO",
+    cta: "Cadastrar como Instrutor",
+    ctaLink: "/instrutor/onboarding",
+    icon: Briefcase,
   },
 ]
 

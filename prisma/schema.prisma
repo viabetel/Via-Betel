@@ -191,3 +191,49 @@ enum BoostType {
   IMPULSIONAR_7_DIAS
   VITRINE_30_DIAS
 }
+
+enum InstructorVerificationStatus {
+  INCOMPLETO
+  EM_ANALISE
+  APROVADO
+  REPROVADO
+}
+
+model InstructorProfile {
+  id                   String                     @id @default(cuid())
+  userId               String                     @unique
+  fullName             String
+  phone                String?
+  city                 String?
+  state                String?
+  categories           String?                    // ex: "A,B,C"
+  yearsExp             Int?
+
+  // Vínculo profissional
+  isLinkedToAutoescola Boolean                    @default(false)
+  autoescolaName       String?
+  autoescolaCnpj       String?
+
+  // Documentos (URLs)
+  cnhUrl               String?
+  certificadoUrl       String?
+  vinculoUrl           String?
+
+  status               InstructorVerificationStatus @default(INCOMPLETO)
+  createdAt            DateTime                   @default(now())
+  updatedAt            DateTime                   @updatedAt
+
+  user                 User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("instructor_profiles")
+}
+
+model User {
+  id                   String                     @id @default(cuid())
+  email                String                     @unique
+  created_at           DateTime                   @default(now())
+
+  instructorProfile    InstructorProfile?
+
+  @@map("users")
+}

@@ -61,6 +61,7 @@ export default function ChatClient({ user, profile }: { user: User; profile: Pro
 
   const [chatUsage, setChatUsage] = useState<ChatUsageInfo | null>(null)
   const [loadingUsage, setLoadingUsage] = useState(true)
+  const [instructorStatus, setInstructorStatus] = useState<string | null>(null)
 
   useEffect(() => {
     async function fetchChatUsage() {
@@ -126,6 +127,23 @@ export default function ChatClient({ user, profile }: { user: User; profile: Pro
       loadMessages(selectedConversation)
     }
   }, [selectedConversation])
+
+  useEffect(() => {
+    async function checkOnboardingStatus() {
+      if (profile?.user_type !== "instructor") return
+      try {
+        const res = await fetch("/instrutor/api/profile-status")
+        const data = await res.json()
+        if (data.status !== "APROVADO") {
+          // Mostrar banner de aviso no chat
+          setInstructorStatus(data.status)
+        }
+      } catch (err) {
+        console.log("[v0] Erro ao verificar status instrutor:", err)
+      }
+    }
+    checkOnboardingStatus()
+  }, [profile])
 
   const loadConversations = async () => {
     setLoading(true)
@@ -265,6 +283,27 @@ export default function ChatClient({ user, profile }: { user: User; profile: Pro
             </BadgeChip>
           </div>
         </div>
+
+        {isInstructor && instructorStatus && instructorStatus !== "APROVADO" && (
+          <div className="p-3 bg-yellow-50 border-b border-yellow-100">
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 text-yellow-500 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-xs font-medium text-yellow-700">Status de Instrutor</p>
+                <p className="text-xs text-yellow-600 mt-0.5">
+                  Seu perfil de instrutor está atualmente {instructorStatus}. Por favor, complete o onboarding para
+                  continuar.
+                </p>
+                <AppLink href="/onboarding">
+                  <Button size="sm" className="mt-2 h-7 text-xs bg-yellow-500 hover:bg-yellow-600 text-white">
+                    <Crown className="w-3 h-3 mr-1" />
+                    Completar Onboarding
+                  </Button>
+                </AppLink>
+              </div>
+            </div>
+          </div>
+        )}
 
         {isInstructor && !loadingUsage && chatUsage && !chatUsage.hasActivePlan && (
           <div

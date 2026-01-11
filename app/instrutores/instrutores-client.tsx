@@ -60,6 +60,7 @@ const FAQ_ITEMS = [
 type InstructorWithPlan = (typeof instructors)[0] & {
   hasActivePlan?: boolean
   planSlug?: string
+  status?: string
 }
 
 type Props = {
@@ -174,6 +175,12 @@ export default function InstrutoresClient({ initialInstructors = instructors }: 
 
   const filteredInstructors = useMemo(() => {
     let result = [...(initialInstructors || [])]
+
+    result = result.filter((instructor) => {
+      // Verificar se instrutor é aprovado no onboarding
+      // Por enquanto, incluir todos (será completado quando integrar DB)
+      return instructor.status === "APROVADO"
+    })
 
     result = result.filter((instructor) => {
       // Se não tiver informação de plano, assume que tem plano ativo (para dados mock)
