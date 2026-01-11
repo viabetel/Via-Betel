@@ -67,13 +67,7 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  if (request.nextUrl.pathname.startsWith("/marketplace") && !user) {
-    const url = request.nextUrl.clone()
-    url.pathname = "/inscricao"
-    url.searchParams.set("userType", "student")
-    url.searchParams.set("returnTo", request.nextUrl.pathname)
-    return NextResponse.redirect(url)
-  }
+  // /marketplace é uma rota pública que qualquer um pode acessar
 
   return supabaseResponse
 }
