@@ -18,6 +18,7 @@ export function ContaPerfilClient() {
   const router = useRouter()
   const { user, profile, loading: authLoading, refresh } = useAuth()
   const [saving, setSaving] = useState(false)
+  const [deleting, setDeleting] = useState(false) // added deleting state
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
   const [stats, setStats] = useState({
     profileCompleteness: 0,
@@ -120,13 +121,38 @@ export function ContaPerfilClient() {
   const handleDeleteAccount = async () => {
     if (!user) return
 
-    if (
-      confirm(
-        "Tem certeza que deseja deletar sua conta? Esta ação é irreversível e todos os seus dados serão perdidos.",
-      )
-    ) {
-      // TODO: Implementar lógica de deletar conta
-      alert("Função de deletar conta será implementada em breve")
+    const confirmDelete = prompt(
+      'Digite "EXCLUIR" para confirmar a exclusão permanente da sua conta. Esta ação não pode ser desfeita.',
+    )
+
+    if (confirmDelete !== "EXCLUIR") {
+      return
+    }
+
+    setDeleting(true)
+    setMessage(null)
+
+    try {
+      const response = await fetch("/api/account/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ confirmation: "EXCLUIR" }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || "Erro ao deletar conta")
+      }
+
+      setMessage({ type: "success", text: "Conta deletada com sucesso. Redirecionando..." })
+      setTimeout(() => {
+        router.push("/")
+      }, 2000)
+    } catch (error: any) {
+      console.error("[v0] Delete account error:", error)
+      setMessage({ type: "error", text: error.message || "Erro ao deletar conta. Tente novamente." })
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -467,9 +493,17 @@ export function ContaPerfilClient() {
             <Button
               variant="destructive"
               onClick={handleDeleteAccount}
+              disabled={deleting}
               className="bg-red-600 hover:bg-red-700 text-white"
             >
-              Deletar Conta Permanentemente
+              {deleting ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Deletando...
+                </>
+              ) : (
+                "Deletar Conta Permanentemente"
+              )}
             </Button>
           </PremiumCard>
         </motion.div>

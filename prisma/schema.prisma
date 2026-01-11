@@ -62,6 +62,7 @@ model Instructor {
   subscription     Subscription?
   boosts           Boost[]
   proposals        LeadProposal[]
+  profile          InstructorProfile? @relation(fields: [id], references: [userId], onDelete: Cascade)
   
   @@map("instructors")
 }
@@ -163,42 +164,141 @@ model ConversationUsageLog {
   @@map("conversation_usage_logs")
 }
 
-enum LeadStatus {
-  PENDING
-  CONTACTED
-  CLOSED
+// Solicitação do aluno para instrutor
+model Request {
+  id              String          @id @default(cuid())
+  studentId       String
+  instructorId    String?         // null = pedido aberto
+  title           String
+  description     String
+  category        String
+  city            String
+  preferredDates  String?         // JSON array
+  budget          Int?            // em centavos
+  status          RequestStatus   @default(NEW)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  events          RequestEvent[]
+  conversation    Conversation?
+
+  @@index([studentId])
+  @@index([instructorId])
+  @@index([status])
+  @@map("requests")
 }
 
-enum InstructorStatus {
-  PENDING
-  ACTIVE
-  INACTIVE
-}
-
-enum SubscriptionStatus {
-  ACTIVE
-  PAST_DUE
+enum RequestStatus {
+  NEW
+  VIEWED
+  RESPONDED
+  AGREED
+  COMPLETED
   CANCELED
   EXPIRED
 }
 
-enum PlanInterval {
-  MONTHLY
-  YEARLY
+// Eventos da solicitação (timeline)
+model RequestEvent {
+  id          String    @id @default(cuid())
+  requestId   String
+  request     Request   @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  type        String    // ex: "created", "viewed", "responded", "agreed", "completed"
+  description String?
+  createdAt   DateTime  @default(now())
+
+  @@index([requestId])
+  @@map("request_events")
 }
 
-enum BoostType {
-  IMPULSIONAR_7_DIAS
-  VITRINE_30_DIAS
+// Conversa entre aluno e instrutor
+model Conversation {
+  id          String      @id @default(cuid())
+  requestId   String      @unique
+  request     Request     @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  studentId   String
+  instructorId String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  messages    Message[]
+
+  @@index([requestId])
+  @@index([studentId])
+  @@index([instructorId])
+  @@map("conversations")
 }
 
-enum InstructorVerificationStatus {
-  INCOMPLETO
-  EM_ANALISE
-  APROVADO
-  REPROVADO
+// Mensagem no chat
+model Message {
+  id              String      @id @default(cuid())
+  conversationId  String
+  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId        String
+  content         String?     // null se for arquivo
+  fileUrl         String?     // URL do arquivo em storage
+  fileType        String?     // "file" ou "image"
+  fileName        String?
+  createdAt       DateTime    @default(now())
+
+  reads           MessageRead[]
+
+  @@index([conversationId])
+  @@index([createdAt])
+  @@map("messages")
 }
 
+// Marcação de lido
+model MessageRead {
+  id          String    @id @default(cuid())
+  messageId   String
+  message     Message   @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  userId      String
+  readAt      DateTime  @default(now())
+
+  @@unique([messageId, userId])
+  @@map("message_reads")
+}
+
+// Documento de verificação do instrutor
+model Document {
+  id          String                @id @default(cuid())
+  ownerId     String
+  type        String                // "cnh", "certificate", "license"
+  fileUrl     String
+  status      VerificationStatus    @default(PENDING_DOCS)
+  rejectReason String?
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  @@index([ownerId])
+  @@index([status])
+  @@map("documents")
+}
+
+enum VerificationStatus {
+  PENDING_DOCS
+  UNDER_REVIEW
+  VERIFIED
+  REJECTED
+}
+
+// Log de auditoria
+model AuditLog {
+  id          String    @id @default(cuid())
+  action      String    // ex: "request_created", "message_sent"
+  userId      String
+  entityType  String    // ex: "Request", "Message"
+  entityId    String
+  details     Json?     // detalhes da ação
+  createdAt   DateTime  @default(now())
+
+  @@index([userId])
+  @@index([entityType])
+  @@map("audit_logs")
+}
+
+// Instrutor Profile
 model InstructorProfile {
   id                   String                     @id @default(cuid())
   userId               String                     @unique
@@ -236,4 +336,40 @@ model User {
   instructorProfile    InstructorProfile?
 
   @@map("users")
+}
+
+enum LeadStatus {
+  PENDING
+  CONTACTED
+  CLOSED
+}
+
+enum InstructorStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  EXPIRED
+}
+
+enum PlanInterval {
+  MONTHLY
+  YEARLY
+}
+
+enum BoostType {
+  IMPULSIONAR_7_DIAS
+  VITRINE_30_DIAS
+}
+
+enum InstructorVerificationStatus {
+  INCOMPLETO
+  EM_ANALISE
+  APROVADO
+  REPROVADO
 }

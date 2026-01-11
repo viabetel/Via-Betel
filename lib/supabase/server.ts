@@ -19,3 +19,10 @@ export async function createClient() {
     },
   })
 }
+
+export async function createServerClientInstance() {
+  return createClient()
+}
+
+// Alias para compatibilidade com importações
+export const supabase = { createClient }
