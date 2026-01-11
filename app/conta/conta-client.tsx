@@ -19,6 +19,7 @@ import {
   AlertCircle,
   CheckCircle2,
   Loader2,
+  Crown,
 } from "lucide-react"
 import Link from "next/link"
 import { COLORS } from "@/lib/ui/tokens"
@@ -171,13 +172,22 @@ export function ContaClient() {
                   </TabsTrigger>
                 )}
                 {userType === "instructor" && (
-                  <TabsTrigger
-                    value="anuncio"
-                    className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-emerald-600 rounded-none px-4 py-3"
-                  >
-                    <Briefcase className="w-4 h-4 mr-2" />
-                    Meu Anúncio
-                  </TabsTrigger>
+                  <>
+                    <TabsTrigger
+                      value="planos"
+                      className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-emerald-600 rounded-none px-4 py-3"
+                    >
+                      <Crown className="w-4 h-4 mr-2" />
+                      Meus Planos
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="anuncio"
+                      className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-emerald-600 rounded-none px-4 py-3"
+                    >
+                      <Briefcase className="w-4 h-4 mr-2" />
+                      Meu Anúncio
+                    </TabsTrigger>
+                  </>
                 )}
               </TabsList>
             </div>
@@ -358,16 +368,33 @@ export function ContaClient() {
               )}
 
               {userType === "instructor" && (
-                <TabsContent value="anuncio" className="mt-0">
-                  <div className="text-center py-12">
-                    <Briefcase className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Meu Anúncio</h3>
-                    <p className="text-gray-600 mb-4">Gerencie seu perfil profissional no marketplace</p>
-                    <Button disabled variant="outline">
-                      Em breve
-                    </Button>
-                  </div>
-                </TabsContent>
+                <>
+                  <TabsContent value="planos" className="mt-0">
+                    <div className="text-center py-12">
+                      <Crown className="w-12 h-12 text-amber-500 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">Meus Planos</h3>
+                      <p className="text-gray-600 mb-4">Gerencie sua assinatura e aumente sua visibilidade</p>
+                      <div className="flex justify-center gap-3">
+                        <Button asChild variant="outline">
+                          <Link href="/conta/meus-planos">Ver Meu Plano</Link>
+                        </Button>
+                        <Button asChild className="bg-emerald-500 hover:bg-emerald-600">
+                          <Link href="/planos">Ver Todos os Planos</Link>
+                        </Button>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  <TabsContent value="anuncio" className="mt-0">
+                    <div className="text-center py-12">
+                      <Briefcase className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">Meu Anúncio</h3>
+                      <p className="text-gray-600 mb-4">Gerencie seu perfil profissional no marketplace</p>
+                      <Button disabled variant="outline">
+                        Em breve
+                      </Button>
+                    </div>
+                  </TabsContent>
+                </>
               )}
             </div>
           </Tabs>

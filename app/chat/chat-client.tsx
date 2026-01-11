@@ -4,19 +4,30 @@ import { createClient } from "@/lib/supabase/client"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Send, MessageSquare, LogOut, Home } from "lucide-react"
+import { Send, MessageSquare, LogOut, Home, AlertTriangle, Crown, Users } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import type { User } from "@supabase/supabase-js"
 import Link from "next/link"
 import { COLORS, SHADOWS } from "@/lib/ui/tokens"
 import { BadgeChip } from "@/components/ui/badge-chip"
+import { AppLink } from "@/components/app-link"
+import { useToast } from "@/hooks/use-toast"
 
 interface Profile {
   id: string
   email: string | null
   full_name: string | null
   user_type: "student" | "instructor" | "admin"
+}
+
+interface ChatUsageInfo {
+  hasActivePlan: boolean
+  usedConversations: number
+  limit: number
+  remaining: number
+  renewsAtFormatted: string
+  isNearLimit: boolean
 }
 
 interface Conversation {
@@ -43,8 +54,44 @@ export default function ChatClient({ user, profile }: { user: User; profile: Pro
   const [messages, setMessages] = useState<Message[]>([])
   const [newMessage, setNewMessage] = useState("")
   const [loading, setLoading] = useState(true)
+  const [sending, setSending] = useState(false)
   const router = useRouter()
   const supabase = createClient()
+  const { toast } = useToast()
+
+  const [chatUsage, setChatUsage] = useState<ChatUsageInfo | null>(null)
+  const [loadingUsage, setLoadingUsage] = useState(true)
+
+  useEffect(() => {
+    async function fetchChatUsage() {
+      if (profile?.user_type !== "instructor") {
+        setLoadingUsage(false)
+        return
+      }
+
+      try {
+        const res = await fetch("/api/chat/usage")
+        const data = await res.json()
+
+        if (data.ok) {
+          setChatUsage({
+            hasActivePlan: data.hasActivePlan,
+            usedConversations: data.usedConversations,
+            limit: data.limit,
+            remaining: data.remaining,
+            renewsAtFormatted: data.renewsAtFormatted,
+            isNearLimit: data.isNearLimit,
+          })
+        }
+      } catch (error) {
+        console.error("Erro ao buscar uso de chat:", error)
+      } finally {
+        setLoadingUsage(false)
+      }
+    }
+
+    fetchChatUsage()
+  }, [profile?.user_type])
 
   useEffect(() => {
     loadConversations()
@@ -64,7 +111,6 @@ export default function ChatClient({ user, profile }: { user: User; profile: Pro
           filter: `conversation_id=eq.${selectedConversation}`,
         },
         (payload) => {
-          console.log("[v0] New message received:", payload)
           setMessages((prev) => [...prev, payload.new as Message])
         },
       )
@@ -94,7 +140,7 @@ export default function ChatClient({ user, profile }: { user: User; profile: Pro
       if (error) throw error
       setConversations(data || [])
     } catch (error) {
-      console.error("[v0] Error loading conversations:", error)
+      console.error("Error loading conversations:", error)
     } finally {
       setLoading(false)
     }
@@ -117,30 +163,71 @@ export default function ChatClient({ user, profile }: { user: User; profile: Pro
         .eq("conversation_id", conversationId)
         .neq("sender_id", user.id)
     } catch (error) {
-      console.error("[v0] Error loading messages:", error)
+      console.error("Error loading messages:", error)
     }
   }
 
   const sendMessage = async () => {
-    if (!newMessage.trim() || !selectedConversation) return
+    if (!newMessage.trim() || !selectedConversation || sending) return
 
+    setSending(true)
     try {
-      const { error } = await supabase.from("messages").insert({
-        conversation_id: selectedConversation,
-        sender_id: user.id,
-        content: newMessage.trim(),
+      const res = await fetch("/api/chat/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          conversationId: selectedConversation,
+          content: newMessage.trim(),
+        }),
       })
 
-      if (error) throw error
+      const data = await res.json()
+
+      if (!res.ok) {
+        if (data.code === "FREE_LIMIT_REACHED") {
+          toast({
+            title: "Limite de conversas atingido",
+            description: `Você atingiu o limite de ${data.limit} conversas com alunos neste mês no plano gratuito.`,
+            variant: "destructive",
+          })
+          // Atualiza estado local
+          if (chatUsage) {
+            setChatUsage({
+              ...chatUsage,
+              usedConversations: data.usedConversations,
+              remaining: 0,
+            })
+          }
+          return
+        }
+        throw new Error(data.error)
+      }
+
       setNewMessage("")
 
-      await supabase
-        .from("conversations")
-        .update({ updated_at: new Date().toISOString() })
-        .eq("id", selectedConversation)
+      if (profile?.user_type === "instructor" && !chatUsage?.hasActivePlan) {
+        const usageRes = await fetch("/api/chat/usage")
+        const usageData = await usageRes.json()
+        if (usageData.ok) {
+          setChatUsage({
+            hasActivePlan: usageData.hasActivePlan,
+            usedConversations: usageData.usedConversations,
+            limit: usageData.limit,
+            remaining: usageData.remaining,
+            renewsAtFormatted: usageData.renewsAtFormatted,
+            isNearLimit: usageData.isNearLimit,
+          })
+        }
+      }
     } catch (error) {
-      console.error("[v0] Error sending message:", error)
-      alert("Erro ao enviar mensagem")
+      console.error("Error sending message:", error)
+      toast({
+        title: "Erro ao enviar mensagem",
+        description: "Tente novamente mais tarde.",
+        variant: "destructive",
+      })
+    } finally {
+      setSending(false)
     }
   }
 
@@ -150,8 +237,12 @@ export default function ChatClient({ user, profile }: { user: User; profile: Pro
     router.refresh()
   }
 
+  const isInstructor = profile?.user_type === "instructor"
+  const canSendMessages = !isInstructor || chatUsage?.hasActivePlan || (chatUsage?.remaining ?? 0) > 0
+
   return (
     <div className="flex h-screen bg-white">
+      {/* Sidebar */}
       <div className="w-80 bg-white border-r border-gray-200 flex flex-col" style={{ boxShadow: SHADOWS.md }}>
         <div className="p-4 border-b" style={{ background: COLORS.gradients.primary }}>
           <div className="flex items-center justify-between mb-2">
@@ -175,6 +266,61 @@ export default function ChatClient({ user, profile }: { user: User; profile: Pro
           </div>
         </div>
 
+        {isInstructor && !loadingUsage && chatUsage && !chatUsage.hasActivePlan && (
+          <div
+            className={`p-3 border-b ${chatUsage.isNearLimit ? "bg-amber-50 border-amber-100" : "bg-blue-50 border-blue-100"}`}
+          >
+            <div className="flex items-start gap-2">
+              <Users
+                className={`w-4 h-4 flex-shrink-0 mt-0.5 ${chatUsage.isNearLimit ? "text-amber-500" : "text-blue-500"}`}
+              />
+              <div className="flex-1">
+                <p className={`text-xs font-medium ${chatUsage.isNearLimit ? "text-amber-700" : "text-blue-700"}`}>
+                  {chatUsage.usedConversations} de {chatUsage.limit} conversas este mês
+                </p>
+                <p className={`text-xs mt-0.5 ${chatUsage.isNearLimit ? "text-amber-600" : "text-blue-600"}`}>
+                  {chatUsage.remaining > 0
+                    ? `Restam ${chatUsage.remaining} conversa${chatUsage.remaining !== 1 ? "s" : ""}`
+                    : "Limite atingido"}
+                  {" • "}Renova em {chatUsage.renewsAtFormatted}
+                </p>
+                {chatUsage.isNearLimit && (
+                  <AppLink href="/planos">
+                    <Button size="sm" className="mt-2 h-6 text-xs bg-amber-500 hover:bg-amber-600 text-white">
+                      <Crown className="w-3 h-3 mr-1" />
+                      Upgrade para ilimitado
+                    </Button>
+                  </AppLink>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isInstructor && !loadingUsage && chatUsage && !chatUsage.hasActivePlan && chatUsage.remaining === 0 && (
+          <div className="p-3 bg-red-50 border-b border-red-100">
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-xs font-medium text-red-700">Limite de conversas atingido</p>
+                <p className="text-xs text-red-600 mt-0.5">
+                  Você atingiu o limite de {chatUsage.limit} conversas com alunos neste mês.
+                </p>
+                <p className="text-xs text-red-600 mt-1">
+                  Para falar com mais alunos sem limite, ative um plano Via Betel PRO.
+                </p>
+                <AppLink href="/planos">
+                  <Button size="sm" className="mt-2 h-7 text-xs bg-red-500 hover:bg-red-600 text-white">
+                    <Crown className="w-3 h-3 mr-1" />
+                    Ver Planos
+                  </Button>
+                </AppLink>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Lista de conversas */}
         <div className="flex-1 overflow-y-auto">
           {loading ? (
             <div className="p-4 text-center text-gray-500">Carregando conversas...</div>
@@ -200,6 +346,7 @@ export default function ChatClient({ user, profile }: { user: User; profile: Pro
         </div>
       </div>
 
+      {/* Área de mensagens */}
       <div className="flex-1 flex flex-col bg-gradient-to-br from-gray-50 via-white to-gray-50">
         {selectedConversation ? (
           <>
@@ -235,19 +382,46 @@ export default function ChatClient({ user, profile }: { user: User; profile: Pro
               </AnimatePresence>
             </div>
 
+            {/* Input de mensagem */}
             <div className="p-4 bg-white border-t" style={{ boxShadow: SHADOWS.lg }}>
-              <div className="flex gap-2">
-                <Input
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
-                  placeholder="Digite sua mensagem..."
-                  className="flex-1"
-                />
-                <Button onClick={sendMessage} className="text-white" style={{ background: COLORS.gradients.primary }}>
-                  <Send className="w-4 h-4" />
-                </Button>
-              </div>
+              {canSendMessages ? (
+                <div className="flex gap-2">
+                  <Input
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
+                    placeholder="Digite sua mensagem..."
+                    className="flex-1"
+                    disabled={sending}
+                  />
+                  <Button
+                    onClick={sendMessage}
+                    className="text-white"
+                    style={{ background: COLORS.gradients.primary }}
+                    disabled={sending}
+                  >
+                    <Send className="w-4 h-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3 p-3 bg-gray-100 rounded-lg">
+                  <AlertTriangle className="w-5 h-5 text-red-400" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-700">
+                      Limite de {chatUsage?.limit || 7} conversas atingido este mês
+                    </p>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      Renova em {chatUsage?.renewsAtFormatted}. Ou faça upgrade para conversas ilimitadas.
+                    </p>
+                  </div>
+                  <AppLink href="/planos">
+                    <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600 text-white">
+                      <Crown className="w-3 h-3 mr-1" />
+                      Upgrade
+                    </Button>
+                  </AppLink>
+                </div>
+              )}
             </div>
           </>
         ) : (

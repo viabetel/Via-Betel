@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { Heart, MapPin, Star, Shield } from "lucide-react"
+import { Heart, MapPin, Star, Shield, Crown } from "lucide-react"
 import { AppLink } from "@/components/app-link"
 import { cn } from "@/lib/utils"
 
@@ -20,12 +20,28 @@ interface InstructorCardProps {
     image?: string
     isSponsored?: boolean
     isVerified?: boolean
+    planBadge?: "verificado" | "pro" | null
   }
   categories: string[]
   slug: string
   isFavorited: boolean
   onFavorite: () => void
   viewMode: "grid" | "list"
+}
+
+const PLAN_BADGES = {
+  verificado: {
+    label: "Verificado",
+    icon: Shield,
+    color: "text-emerald-700",
+    bgColor: "bg-emerald-100",
+  },
+  pro: {
+    label: "PRO",
+    icon: Crown,
+    color: "text-amber-700",
+    bgColor: "bg-amber-100",
+  },
 }
 
 export function InstructorCard({
@@ -38,6 +54,7 @@ export function InstructorCard({
 }: InstructorCardProps) {
   const price = instructor.price?.replace(/[^\d]/g, "") || "0"
   const rating = Number.parseFloat(instructor.rating || "0")
+  const planBadge = instructor.planBadge ? PLAN_BADGES[instructor.planBadge] : null
 
   if (viewMode === "list") {
     return (
@@ -71,7 +88,21 @@ export function InstructorCard({
             <div>
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <h3 className="text-sm font-semibold text-gray-900 truncate">{instructor.name}</h3>
+                  <div className="flex items-center gap-1.5">
+                    <h3 className="text-sm font-semibold text-gray-900 truncate">{instructor.name}</h3>
+                    {planBadge && (
+                      <span
+                        className={cn(
+                          "px-1.5 py-0.5 rounded text-[9px] font-bold flex items-center gap-0.5",
+                          planBadge.bgColor,
+                          planBadge.color,
+                        )}
+                      >
+                        <planBadge.icon className="w-2.5 h-2.5" />
+                        {planBadge.label}
+                      </span>
+                    )}
+                  </div>
                   <p className="text-xs text-gray-500 flex items-center gap-0.5 mt-0.5">
                     <MapPin className="w-3 h-3 flex-shrink-0" />
                     <span className="truncate">
@@ -96,7 +127,7 @@ export function InstructorCard({
                     {cat}
                   </span>
                 ))}
-                {instructor.isVerified && <Shield className="w-3 h-3 text-emerald-600" />}
+                {instructor.isVerified && !planBadge && <Shield className="w-3 h-3 text-emerald-600" />}
               </div>
               <div className="flex items-center gap-0.5 text-xs text-amber-600">
                 <Star className="w-3 h-3 fill-current" />
@@ -123,6 +154,18 @@ export function InstructorCard({
           {instructor.isSponsored && (
             <div className="absolute top-1.5 left-1.5 bg-amber-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
               Destaque
+            </div>
+          )}
+          {planBadge && (
+            <div
+              className={cn(
+                "absolute top-1.5 right-8 px-1.5 py-0.5 rounded text-[9px] font-bold flex items-center gap-0.5",
+                planBadge.bgColor,
+                planBadge.color,
+              )}
+            >
+              <planBadge.icon className="w-2.5 h-2.5" />
+              {planBadge.label}
             </div>
           )}
           <button
@@ -154,7 +197,7 @@ export function InstructorCard({
                 {cat}
               </span>
             ))}
-            {instructor.isVerified && <Shield className="w-3 h-3 text-emerald-600" />}
+            {instructor.isVerified && !planBadge && <Shield className="w-3 h-3 text-emerald-600" />}
           </div>
 
           <div className="flex items-center justify-between pt-1.5 border-t border-gray-100">

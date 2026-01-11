@@ -68,16 +68,21 @@ model Instructor {
 
 // Assinatura do instrutor (Stripe Subscription)
 model Subscription {
-  id                      String   @id @default(cuid())
-  instructorId            String   @unique
-  instructor              Instructor @relation(fields: [instructorId], references: [id], onDelete: Cascade)
-  stripeCustomerId        String   @unique
-  stripeSubscriptionId    String   @unique
-  status                  SubscriptionStatus @default(ACTIVE)
-  currentPeriodEnd        DateTime
-  createdAt               DateTime @default(now())
-  updatedAt               DateTime @updatedAt
-  
+  id                      String              @id @default(cuid())
+  instructorId            String              @unique
+  instructor              Instructor          @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+  planId                  String
+  plan                    Plan                @relation(fields: [planId], references: [id])
+  status                  SubscriptionStatus  @default(ACTIVE)
+  startedAt               DateTime            @default(now())
+  expiresAt               DateTime?
+  canceledAt              DateTime?
+  stripeCustomerId        String?             // opcional para futuro
+  stripeSubscriptionId    String?             // opcional para futuro
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
+
+  @@index([planId])
   @@map("subscriptions")
 }
 
@@ -96,6 +101,68 @@ model Boost {
   @@map("boosts")
 }
 
+// Plano do instrutor
+model Plan {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  name        String
+  description String
+  priceCents  Int
+  interval    PlanInterval
+  features    Json
+  maxListings Int           @default(1)
+  highlight   Boolean       @default(false)
+  badge       String?       // badge visual no marketplace
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  subscriptions Subscription[]
+
+  @@map("plans")
+}
+
+// Regras:
+// - Instrutores sem plano ativo podem responder até 7 alunos diferentes por mês
+// - O contador reseta no início de cada mês (baseado em year + month)
+// - Conversas já iniciadas no mês atual não contam novamente
+model MonthlyChatUsage {
+  id                String   @id @default(cuid())
+  
+  // Instrutor que está usando
+  userId            String
+  
+  // Período: ano e mês para reset automático
+  year              Int
+  month             Int
+  
+  // Quantas conversas distintas o instrutor respondeu neste mês
+  usedConversations Int      @default(0)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([userId, year, month])
+  @@index([userId])
+  @@map("monthly_chat_usage")
+}
+
+// Evita contar a mesma conversa múltiplas vezes no mesmo mês
+model ConversationUsageLog {
+  id              String   @id @default(cuid())
+  
+  userId          String      // instrutor
+  conversationId  String      // ID da conversa
+  year            Int
+  month           Int
+  
+  // Quando o instrutor respondeu pela primeira vez nesta conversa neste mês
+  firstReplyAt    DateTime @default(now())
+  
+  @@unique([userId, conversationId, year, month])
+  @@index([userId, year, month])
+  @@map("conversation_usage_logs")
+}
+
 enum LeadStatus {
   PENDING
   CONTACTED
@@ -112,6 +179,12 @@ enum SubscriptionStatus {
   ACTIVE
   PAST_DUE
   CANCELED
+  EXPIRED
+}
+
+enum PlanInterval {
+  MONTHLY
+  YEARLY
 }
 
 enum BoostType {

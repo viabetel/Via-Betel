@@ -57,8 +57,13 @@ const FAQ_ITEMS = [
   },
 ]
 
+type InstructorWithPlan = (typeof instructors)[0] & {
+  hasActivePlan?: boolean
+  planSlug?: string
+}
+
 type Props = {
-  initialInstructors?: typeof instructors
+  initialInstructors?: InstructorWithPlan[]
 }
 
 export default function InstrutoresClient({ initialInstructors = instructors }: Props) {
@@ -170,6 +175,12 @@ export default function InstrutoresClient({ initialInstructors = instructors }: 
   const filteredInstructors = useMemo(() => {
     let result = [...(initialInstructors || [])]
 
+    result = result.filter((instructor) => {
+      // Se não tiver informação de plano, assume que tem plano ativo (para dados mock)
+      if (instructor.hasActivePlan === undefined) return true
+      return instructor.hasActivePlan === true
+    })
+
     if (searchText) {
       const search = searchText.toLowerCase()
       result = result.filter(
@@ -241,8 +252,15 @@ export default function InstrutoresClient({ initialInstructors = instructors }: 
       case "relevance":
       default:
         result.sort((a, b) => {
+          // Primeiro: Patrocinados
           if (a.isSponsored && !b.isSponsored) return -1
           if (!a.isSponsored && b.isSponsored) return 1
+          // Segundo: PRO (profissional)
+          const aIsPro = a.planSlug === "profissional" || a.planSlug === "profissional-anual"
+          const bIsPro = b.planSlug === "profissional" || b.planSlug === "profissional-anual"
+          if (aIsPro && !bIsPro) return -1
+          if (!aIsPro && bIsPro) return 1
+          // Terceiro: Rating
           return parseRating(b.rating || "0") - parseRating(a.rating || "0")
         })
     }
