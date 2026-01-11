@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma"
 import { createClient } from "@/lib/supabase/server"
-import type { InstructorVerificationStatus } from "@prisma/client"
 
 /**
  * Pega usuário logado + InstructorProfile (ou null)
@@ -17,14 +16,14 @@ export async function getCurrentUserWithInstructorProfile() {
       return null
     }
 
-    const userWithProfile = await prisma.user.findUnique({
+    const profileWithInstructor = await prisma.profile.findUnique({
       where: { id: user.id },
       include: {
         instructorProfile: true,
       },
     })
 
-    return userWithProfile
+    return profileWithInstructor
   } catch (error) {
     console.error("[instructor-profile] Erro ao buscar usuário com profile:", error)
     return null
@@ -35,45 +34,41 @@ export async function getCurrentUserWithInstructorProfile() {
  * Cria ou atualiza Step 1 (dados básicos) do InstructorProfile
  */
 export async function upsertInstructorProfileBasics(
-  userId: string,
+  profileId: string,
   data: {
-    fullName: string
-    phone?: string
-    city?: string
-    state?: string
     categories?: string // "A,B,C"
-    yearsExp?: number
-    isLinkedToAutoescola?: boolean
-    autoescolaName?: string | null
-    autoescolaCnpj?: string | null
+    bio?: string
+    priceHour?: number
+    serviceAreas?: Record<string, unknown>
+    availabilityJson?: Record<string, unknown>
+    experience_years?: number
+    specialties?: string[]
+    isPublic?: boolean
   },
 ) {
   try {
     const profile = await prisma.instructorProfile.upsert({
-      where: { userId },
+      where: { profileId },
       update: {
-        fullName: data.fullName,
-        phone: data.phone,
-        city: data.city,
-        state: data.state,
-        categories: data.categories,
-        yearsExp: data.yearsExp,
-        isLinkedToAutoescola: data.isLinkedToAutoescola,
-        autoescolaName: data.autoescolaName,
-        autoescolaCnpj: data.autoescolaCnpj,
+        categories: data.categories ? data.categories.split(",") : undefined,
+        bio: data.bio,
+        priceHour: data.priceHour,
+        serviceAreas: data.serviceAreas,
+        availabilityJson: data.availabilityJson,
+        experience_years: data.experience_years,
+        specialties: data.specialties,
+        isPublic: data.isPublic,
       },
       create: {
-        userId,
-        fullName: data.fullName,
-        phone: data.phone,
-        city: data.city,
-        state: data.state,
-        categories: data.categories,
-        yearsExp: data.yearsExp,
-        isLinkedToAutoescola: data.isLinkedToAutoescola ?? false,
-        autoescolaName: data.autoescolaName,
-        autoescolaCnpj: data.autoescolaCnpj,
-        status: "INCOMPLETO",
+        profileId,
+        categories: data.categories ? data.categories.split(",") : [],
+        bio: data.bio,
+        priceHour: data.priceHour,
+        serviceAreas: data.serviceAreas,
+        availabilityJson: data.availabilityJson,
+        experience_years: data.experience_years ?? 0,
+        specialties: data.specialties ?? [],
+        isPublic: data.isPublic ?? false,
       },
     })
 
@@ -85,28 +80,26 @@ export async function upsertInstructorProfileBasics(
 }
 
 /**
- * Atualiza dados de documentos (Step 2) e muda status para EM_ANALISE
+ * Atualiza dados de documentos (Step 2)
  */
 export async function submitInstructorDocuments(
-  userId: string,
+  profileId: string,
   data: {
-    cnhUrl?: string
-    certificadoUrl?: string
-    vinculoUrl?: string
+    documentType: string
+    storagePath: string
   },
 ) {
   try {
-    const profile = await prisma.instructorProfile.update({
-      where: { userId },
+    const document = await prisma.document.create({
       data: {
-        cnhUrl: data.cnhUrl,
-        certificadoUrl: data.certificadoUrl,
-        vinculoUrl: data.vinculoUrl,
-        status: "EM_ANALISE",
+        profileId,
+        documentType: data.documentType,
+        storagePath: data.storagePath,
+        status: "PENDING",
       },
     })
 
-    return profile
+    return document
   } catch (error) {
     console.error("[instructor-profile] Erro ao enviar documentos:", error)
     throw error
@@ -114,13 +107,13 @@ export async function submitInstructorDocuments(
 }
 
 /**
- * Helper para mudar status (usado depois manualmente via admin)
+ * Helper para mudar instructor_status (usado depois manualmente via admin)
  */
-export async function setInstructorStatus(userId: string, status: InstructorVerificationStatus) {
+export async function setInstructorStatus(profileId: string, status: string) {
   try {
-    const profile = await prisma.instructorProfile.update({
-      where: { userId },
-      data: { status },
+    const profile = await prisma.profile.update({
+      where: { id: profileId },
+      data: { instructor_status: status },
     })
 
     return profile
@@ -133,26 +126,26 @@ export async function setInstructorStatus(userId: string, status: InstructorVeri
 /**
  * Verifica se usuário tem perfil de instrutor ativo/aprovado
  */
-export async function isInstructorApproved(userId: string): Promise<boolean> {
+export async function isInstructorApproved(profileId: string): Promise<boolean> {
   try {
-    const profile = await prisma.instructorProfile.findUnique({
-      where: { userId },
-      select: { status: true },
+    const profile = await prisma.profile.findUnique({
+      where: { id: profileId },
+      select: { instructor_status: true },
     })
 
-    return profile?.status === "APROVADO"
+    return profile?.instructor_status === "VERIFIED"
   } catch {
     return false
   }
 }
 
 /**
- * Busca perfil de instrutor por userId
+ * Busca perfil de instrutor por profileId
  */
-export async function getInstructorProfile(userId: string) {
+export async function getInstructorProfile(profileId: string) {
   try {
     return await prisma.instructorProfile.findUnique({
-      where: { userId },
+      where: { profileId },
     })
   } catch (error) {
     console.error("[instructor-profile] Erro ao buscar profile:", error)

@@ -243,8 +243,14 @@ export default function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteData) }} />
       <main className="min-h-screen">
         <Header />
-        <HeroSection />
-        <FeaturedProducts />
+        <HeroSection
+          instructorLink="/inscricao?userType=instructor&returnTo=/instrutor/ativar"
+          findInstructorLink="/marketplace?returnTo=/instrutor/ativar"
+        />
+        <FeaturedProducts
+          instructorLink="/inscricao?userType=instructor&returnTo=/instrutor/ativar"
+          findInstructorLink="/marketplace?returnTo=/instrutor/ativar"
+        />
         <div id="categorias">
           <MaterialsSection />
         </div>

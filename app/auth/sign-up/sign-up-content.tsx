@@ -13,6 +13,13 @@ import { useState, useEffect } from "react"
 import { ArrowLeft } from "lucide-react"
 import { SHADOWS } from "@/lib/ui/tokens"
 
+const encodeReturnTo = (returnTo: string) => encodeURIComponent(returnTo)
+const saveReturnTo = (returnTo: string) => {
+  if (typeof window !== "undefined") {
+    sessionStorage.setItem("returnTo", returnTo)
+  }
+}
+
 export default function SignUpContent() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -26,8 +33,12 @@ export default function SignUpContent() {
 
   useEffect(() => {
     const paramUserType = searchParams.get("userType")
+    const paramReturnTo = searchParams.get("returnTo")
     if (paramUserType === "student" || paramUserType === "instructor") {
       setUserType(paramUserType)
+    }
+    if (paramReturnTo) {
+      saveReturnTo(paramReturnTo)
     }
   }, [searchParams])
 
@@ -40,8 +51,8 @@ export default function SignUpContent() {
     try {
       const redirectUrl =
         typeof window !== "undefined"
-          ? process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${window.location.origin}/chat`
-          : "/chat"
+          ? process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${window.location.origin}/auth/sign-up-success`
+          : "/auth/sign-up-success"
 
       const { error } = await supabase.auth.signUp({
         email,
@@ -75,12 +86,20 @@ export default function SignUpContent() {
           ? `${window.location.origin}/auth/callback`
           : "/auth/callback"
 
-      const callbackWithUserType = `${redirectUrl}?userType=${userType}`
+      const callbackParams = new URLSearchParams()
+      callbackParams.set("userType", userType)
+
+      const savedReturnTo = typeof window !== "undefined" ? sessionStorage.getItem("returnTo") : null
+      if (savedReturnTo) {
+        callbackParams.set("returnTo", encodeReturnTo(savedReturnTo))
+      }
+
+      const callbackWithParams = `${redirectUrl}?${callbackParams}`
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: callbackWithUserType,
+          redirectTo: callbackWithParams,
           queryParams: {
             access_type: "offline",
             prompt: "consent",

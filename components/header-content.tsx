@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { AppLink } from "@/components/app-link"
+import Link from "next/link"
 import {
   MessageCircle,
   ChevronDown,
@@ -463,21 +464,17 @@ export function HeaderContent({ isScrolled = false, variant = "header" }: Header
           </a>
 
           {!user ? (
-            <>
-              <AppLink href="/auth/login" variant="nav">
-                <Button
-                  variant="ghost"
-                  className={cn("text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2", textColor, hoverBg)}
-                >
-                  Entrar
-                </Button>
-              </AppLink>
-              <AppLink href="/auth/sign-up" variant="nav">
-                <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2 shadow-lg">
-                  Criar conta
-                </Button>
-              </AppLink>
-            </>
+            <div className="flex items-center gap-3">
+              <Link href="/inscricao" className={`${textColor} hover:opacity-80 font-medium text-sm`}>
+                Entrar
+              </Link>
+              <Link
+                href="/inscricao"
+                className="px-4 py-2 rounded-lg font-medium text-sm text-white bg-emerald-600 hover:bg-emerald-700"
+              >
+                Começar
+              </Link>
+            </div>
           ) : (
             <>
               <AppLink href="/chat" variant="nav" className="relative">

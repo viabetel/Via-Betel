@@ -31,21 +31,22 @@ export async function updateSession(request: NextRequest) {
     if (!profile?.instructor_status || profile.instructor_status === "NONE") {
       const url = request.nextUrl.clone()
       url.pathname = "/inscricao"
+      url.searchParams.set("userType", "instructor")
+      url.searchParams.set("returnTo", request.nextUrl.pathname)
       return NextResponse.redirect(url)
     }
   }
 
-  // Redirecionar não autenticados
   if (request.nextUrl.pathname.startsWith("/chat") && !user) {
     const url = request.nextUrl.clone()
-    url.pathname = "/auth/login"
+    url.pathname = "/inscricao"
     url.searchParams.set("returnTo", request.nextUrl.pathname)
     return NextResponse.redirect(url)
   }
 
   if (request.nextUrl.pathname.startsWith("/instrutor/onboarding") && !user) {
     const url = request.nextUrl.clone()
-    url.pathname = "/auth/sign-up"
+    url.pathname = "/inscricao"
     url.searchParams.set("userType", "instructor")
     url.searchParams.set("returnTo", request.nextUrl.pathname)
     return NextResponse.redirect(url)
@@ -53,7 +54,23 @@ export async function updateSession(request: NextRequest) {
 
   if (request.nextUrl.pathname.startsWith("/conta") && !user) {
     const url = request.nextUrl.clone()
-    url.pathname = "/auth/login"
+    url.pathname = "/inscricao"
+    url.searchParams.set("returnTo", request.nextUrl.pathname)
+    return NextResponse.redirect(url)
+  }
+
+  if (request.nextUrl.pathname.startsWith("/aluno") && !user) {
+    const url = request.nextUrl.clone()
+    url.pathname = "/inscricao"
+    url.searchParams.set("userType", "student")
+    url.searchParams.set("returnTo", request.nextUrl.pathname)
+    return NextResponse.redirect(url)
+  }
+
+  if (request.nextUrl.pathname.startsWith("/marketplace") && !user) {
+    const url = request.nextUrl.clone()
+    url.pathname = "/inscricao"
+    url.searchParams.set("userType", "student")
     url.searchParams.set("returnTo", request.nextUrl.pathname)
     return NextResponse.redirect(url)
   }

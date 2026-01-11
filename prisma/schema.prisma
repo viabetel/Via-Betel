@@ -242,3 +242,124 @@ enum LeadStatus {
   CONTACTED
   CLOSED
 }
+
+// Modelo legado de Instrutor - usado para Planos, Subscriptions e Boost
+// Será gradualmente integrado com InstructorProfile
+model Instructor {
+  id                  String              @id @default(cuid())
+  email               String              @unique
+  firstName           String?
+  lastName            String?
+  phone               String?
+  city                String?
+  bio                 String?
+  avatar              String?
+  created_at          DateTime            @default(now())
+  updated_at          DateTime            @updatedAt
+  
+  // Relações para Subscriptions e Boosts (ESSENCIAL para sistema de planos)
+  subscriptions       Subscription[]
+  boosts              Boost[]
+  leadProposals       LeadProposal[]
+  
+  @@index([email])
+  @@map("instructors")
+}
+
+// Enum para intervalos de planos
+enum PlanInterval {
+  MONTHLY
+  YEARLY
+}
+
+// Planos de assinatura (ESSENCIAL para marketplace)
+model Plan {
+  id                  String              @id @default(cuid())
+  slug                String              @unique
+  name                String
+  description         String
+  priceCents          Int
+  interval            PlanInterval
+  features            Json?               // Array de features
+  maxListings         Int                 @default(1)
+  highlight           Boolean             @default(false)
+  badge               String?             // "verificado", "pro", etc
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  
+  subscriptions       Subscription[]
+  
+  @@index([slug])
+  @@map("plans")
+}
+
+// Enum para status de subscription
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  EXPIRED
+}
+
+// Assinatura do instrutor (ESSENCIAL para limites de chat e planos)
+model Subscription {
+  id                    String              @id @default(cuid())
+  instructorId          String              @unique
+  instructor            Instructor          @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+  planId                String?
+  plan                  Plan?               @relation(fields: [planId], references: [id], onDelete: SetNull)
+  
+  status                SubscriptionStatus  @default(ACTIVE)
+  startedAt             DateTime            @default(now())
+  expiresAt             DateTime?
+  canceledAt            DateTime?
+  
+  stripeCustomerId      String?
+  stripeSubscriptionId  String?
+  
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  
+  @@index([instructorId])
+  @@index([planId])
+  @@index([status])
+  @@map("subscriptions")
+}
+
+// Boosts para impulsionamento (ESSENCIAL para delete de conta)
+model Boost {
+  id                  String              @id @default(cuid())
+  instructorId        String
+  instructor          Instructor          @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+  
+  type                String              // "7_DAYS", "30_DAYS"
+  priceCents          Int
+  startedAt           DateTime            @default(now())
+  expiresAt           DateTime
+  
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  
+  @@index([instructorId])
+  @@index([expiresAt])
+  @@map("boosts")
+}
+
+// Lead Proposals (ESSENCIAL para delete de conta)
+model LeadProposal {
+  id                  String              @id @default(cuid())
+  leadId              String
+  instructorId        String
+  instructor          Instructor          @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+  
+  proposedPrice       Int?
+  status              String              @default("PENDING") // PENDING, ACCEPTED, REJECTED
+  
+  createdAt           DateTime            @default(now())
+  respondedAt         DateTime?
+  
+  @@unique([leadId, instructorId])
+  @@index([instructorId])
+  @@index([status])
+  @@map("lead_proposals")
+}
