@@ -139,20 +139,25 @@ export function HeaderContent({ isScrolled = false, variant = "header" }: Header
   const headerBgClass = variant === "hero" || !isScrolled ? "bg-transparent" : "bg-white"
 
   return (
-    <header className={cn("relative w-full transition-colors duration-300", headerBgClass)}>
-      <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-4">
-        {/* Logo */}
-        <AppLink href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <Image
-            src="/logo-via-betel.png"
-            alt="Via Betel Logo"
-            width={120}
-            height={40}
-            className="h-10 w-auto"
-            priority
-          />
-        </AppLink>
+    <header
+      className={cn(
+        "flex items-center justify-between px-4 md:px-8 h-20 transition-colors duration-300",
+        isScrolled ? "bg-emerald-700" : "bg-transparent",
+      )}
+    >
+      {/* Logo */}
+      <AppLink href="/" className="flex-shrink-0 transition-opacity hover:opacity-80">
+        <Image
+          src="/images/via-betel-transparent.png"
+          alt="Via Betel"
+          width={140}
+          height={48}
+          className="h-16 w-auto"
+          priority
+        />
+      </AppLink>
 
+      <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-4">
         <nav ref={dropdownRef} className="flex items-center gap-2 lg:gap-3 min-w-0">
           {/* Mobile menu button */}
           <div className="md:hidden relative">

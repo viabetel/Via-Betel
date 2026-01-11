@@ -28,7 +28,28 @@ export async function updateSession(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/chat") && !user) {
     const url = request.nextUrl.clone()
     url.pathname = "/auth/login"
+    url.searchParams.set("returnTo", request.nextUrl.pathname)
     return NextResponse.redirect(url)
+  }
+
+  if (request.nextUrl.pathname.startsWith("/instrutor/onboarding") && !user) {
+    const url = request.nextUrl.clone()
+    url.pathname = "/auth/sign-up"
+    url.searchParams.set("userType", "instructor")
+    url.searchParams.set("returnTo", request.nextUrl.pathname)
+    return NextResponse.redirect(url)
+  }
+
+  if (request.nextUrl.pathname.startsWith("/conta") && !user) {
+    const url = request.nextUrl.clone()
+    url.pathname = "/auth/login"
+    url.searchParams.set("returnTo", request.nextUrl.pathname)
+    return NextResponse.redirect(url)
+  }
+
+  if (request.nextUrl.pathname.startsWith("/planos") && !user) {
+    // planos são públicos, mas marcamos se vieram de /planos
+    request.nextUrl.searchParams.set("source", "planos")
   }
 
   return supabaseResponse
