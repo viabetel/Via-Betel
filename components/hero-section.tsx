@@ -15,7 +15,7 @@ const HERO_SLIDES = [
     description: "Explore nosso marketplace com instrutores certificados em sua região.",
     badge: "MARKETPLACE",
     cta: "Explorar Marketplace",
-    ctaLink: "/instrutores",
+    ctaLink: "/marketplace",
     icon: Search,
   },
   {
@@ -45,7 +45,7 @@ const HERO_SLIDES = [
     description: "Expanda seus negócios e alcance mais alunos através da nossa plataforma.",
     badge: "CADASTRO",
     cta: "Cadastrar como Instrutor",
-    ctaLink: "/instrutor/onboarding",
+    ctaLink: "/inscricao?userType=instructor&returnTo=/instrutor/ativar",
     icon: Briefcase,
   },
 ]

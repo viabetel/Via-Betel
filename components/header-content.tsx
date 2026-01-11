@@ -465,9 +465,11 @@ export function HeaderContent({ isScrolled = false, variant = "header" }: Header
 
           {!user ? (
             <div className="flex items-center gap-3">
-              <Link href="/inscricao" className={`${textColor} hover:opacity-80 font-medium text-sm`}>
+              {/* Updated "Entrar" link */}
+              <Link href="/inscricao?mode=login" className={`${textColor} hover:opacity-80 font-medium text-sm`}>
                 Entrar
               </Link>
+              {/* Updated "Começar" link */}
               <Link
                 href="/inscricao"
                 className="px-4 py-2 rounded-lg font-medium text-sm text-white bg-emerald-600 hover:bg-emerald-700"
