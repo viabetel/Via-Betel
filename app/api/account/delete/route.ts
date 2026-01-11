@@ -26,6 +26,25 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Confirmação inválida. Digite EXCLUIR para confirmar." }, { status: 400 })
     }
 
+    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      return NextResponse.json(
+        { error: "SUPABASE_SERVICE_ROLE_KEY não configurado. Contate o administrador." },
+        { status: 500 },
+      )
+    }
+
+    const adminClient = createAdminClient()
+
+    // Check if user exists in Auth first
+    const { data: authUser, error: getUserError } = await adminClient.auth.admin.getUserById(userId)
+
+    if (getUserError || !authUser) {
+      return NextResponse.json(
+        { error: "Usuário não encontrado no sistema de autenticação. Não é possível excluir a conta." },
+        { status: 500 },
+      )
+    }
+
     // 3) Buscar instrutor vinculado (se existir)
     let instructorId: string | null = null
     try {
@@ -35,43 +54,29 @@ export async function POST(request: Request) {
       })
       instructorId = instructor?.id || null
     } catch (e) {
-      // Tabela pode não existir ainda, continua
       console.log("[v0] Instructor table not found, skipping")
     }
 
     // 4) Excluir dados relacionados no Prisma (transação)
     try {
       await prisma.$transaction(async (tx) => {
-        // Se for instrutor, excluir dados vinculados
         if (instructorId) {
-          // Boosts
           await tx.boost.deleteMany({ where: { instructorId } }).catch(() => {})
-
-          // LeadProposals
           await tx.leadProposal.deleteMany({ where: { instructorId } }).catch(() => {})
-
-          // Subscription
           await tx.subscription.deleteMany({ where: { instructorId } }).catch(() => {})
-
-          // Instructor
           await tx.instructor.delete({ where: { id: instructorId } }).catch(() => {})
         }
 
-        // MonthlyChatUsage
         await tx.monthlyChatUsage.deleteMany({ where: { userId } }).catch(() => {})
-
-        // ConversationUsageLog
         await tx.conversationUsageLog.deleteMany({ where: { userId } }).catch(() => {})
       })
     } catch (e) {
       console.log("[v0] Prisma deletion error (tables may not exist):", e)
-      // Continua mesmo se falhar - tabelas podem não existir
     }
 
     // 5) Excluir profile do Supabase
     try {
       const { error: profileError } = await supabase.from("profiles").delete().eq("id", userId)
-
       if (profileError) {
         console.log("[v0] Profile deletion error:", profileError.message)
       }
@@ -79,37 +84,25 @@ export async function POST(request: Request) {
       console.log("[v0] Profile deletion failed:", e)
     }
 
-    // 6) Excluir usuário do Supabase Auth (usando admin client)
+    // 6) Delete from Auth AFTER local data deletion, return ok:true only if successful
     try {
-      if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
-        console.warn("[v0] SUPABASE_SERVICE_ROLE_KEY não configurado, pulando exclusão do Auth")
-        // Continua mesmo sem poder deletar do Auth
-      } else {
-        const adminClient = createAdminClient()
-        const { error: deleteAuthError } = await adminClient.auth.admin.deleteUser(userId)
+      const { error: deleteAuthError } = await adminClient.auth.admin.deleteUser(userId)
 
-        if (deleteAuthError) {
-          console.error("[v0] Auth deletion error:", deleteAuthError.message)
-          // Se o usuário não existe no Auth, isso não é erro fatal
-          if (deleteAuthError.message.includes("not found")) {
-            console.warn("[v0] Usuário não encontrado no Auth, mas perfil já foi deletado")
-          } else {
-            return NextResponse.json(
-              { error: "Erro ao excluir conta do sistema de autenticação: " + deleteAuthError.message },
-              { status: 500 },
-            )
-          }
-        }
+      if (deleteAuthError) {
+        console.error("[v0] Auth deletion error:", deleteAuthError.message)
+        return NextResponse.json(
+          { error: "Erro ao excluir conta do sistema de autenticação: " + deleteAuthError.message },
+          { status: 500 },
+        )
       }
     } catch (e: any) {
       console.error("[v0] Admin client error:", e)
-      // Não retorna erro - perfil já foi deletado
-      console.warn("[v0] Não foi possível deletar do Auth, mas perfil foi deletado com sucesso")
+      return NextResponse.json({ error: "Erro ao deletar usuário do Auth: " + e.message }, { status: 500 })
     }
 
-    // 7) Sucesso
+    // 7) Sucesso - retorna ok:true ONLY if everything succeeded
     return NextResponse.json({
-      success: true,
+      ok: true,
       message: "Conta excluída com sucesso",
     })
   } catch (error: any) {
