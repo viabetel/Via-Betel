@@ -62,7 +62,6 @@ model Instructor {
   subscription     Subscription?
   boosts           Boost[]
   proposals        LeadProposal[]
-  profile          InstructorProfile? @relation(fields: [id], references: [userId], onDelete: Cascade)
   
   @@map("instructors")
 }
