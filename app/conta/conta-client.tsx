@@ -28,7 +28,7 @@ type UserType = "student" | "instructor" | null
 
 export function ContaClient() {
   const router = useRouter()
-  const { user, profile, loading: authLoading } = useAuth()
+  const { user, profile, loading: authLoading, signOut: authSignOut } = useAuth()
   const [userType, setUserType] = useState<UserType>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -94,9 +94,8 @@ export function ContaClient() {
   }
 
   const handleSignOut = async () => {
-    const supabase = createBrowserClient()
-    await supabase.auth.signOut()
-    router.push("/")
+    await authSignOut()
+    router.push("/inscricao?mode=login")
   }
 
   if (authLoading) {

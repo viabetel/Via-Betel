@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-
+import { Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -137,8 +137,19 @@ export function InscricaoContent() {
                 <p>✓ Conversar com instrutores</p>
               </div>
               <div className="space-y-2">
-                <Button onClick={handleStudentSignUp} className="w-full bg-blue-600 hover:bg-blue-700">
-                  Criar conta
+                <Button
+                  onClick={handleStudentSignUp}
+                  disabled={isLoginLoading}
+                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-70"
+                >
+                  {isLoginLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Redirecionando...
+                    </>
+                  ) : (
+                    "Criar conta"
+                  )}
                 </Button>
                 <Button
                   onClick={() => {
@@ -147,6 +158,7 @@ export function InscricaoContent() {
                   }}
                   variant="outline"
                   className="w-full bg-transparent"
+                  disabled={isLoginLoading}
                 >
                   Já tenho conta
                 </Button>
@@ -191,10 +203,17 @@ export function InscricaoContent() {
               <div className="space-y-2">
                 <Button
                   onClick={handleInstructorSignUp}
-                  className="w-full text-white"
-                  style={{ backgroundColor: COLORS.emerald }}
+                  disabled={isLoginLoading}
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-70"
                 >
-                  Criar conta
+                  {isLoginLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Redirecionando...
+                    </>
+                  ) : (
+                    "Cadastrar como Instrutor"
+                  )}
                 </Button>
                 <Button
                   onClick={() => {
@@ -203,6 +222,7 @@ export function InscricaoContent() {
                   }}
                   variant="outline"
                   className="w-full bg-transparent"
+                  disabled={isLoginLoading}
                 >
                   Já tenho conta
                 </Button>
@@ -249,8 +269,15 @@ export function InscricaoContent() {
 
             {loginError && <div className="text-red-600 text-sm bg-red-50 p-3 rounded">{loginError}</div>}
 
-            <Button type="submit" className="w-full" disabled={isLoginLoading}>
-              {isLoginLoading ? "Entrando..." : "Entrar"}
+            <Button type="submit" disabled={isLoginLoading} className="w-full">
+              {isLoginLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Entrando...
+                </>
+              ) : (
+                "Entrar"
+              )}
             </Button>
 
             <div className="relative">

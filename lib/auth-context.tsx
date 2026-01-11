@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { createContext, useContext, useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import type { User } from "@supabase/supabase-js"
 
@@ -30,6 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
+  const router = useRouter()
   const supabase = createClient()
 
   const loadUser = async () => {
@@ -50,7 +52,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         } catch (syncError) {
           console.warn("[v0] Sync error:", syncError)
-          // Continua mesmo se sync falhar
         }
 
         try {
@@ -60,7 +61,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             console.warn(
               "[v0] Profiles table doesn't exist yet. Please run scripts/002_complete_trust_system.sql in Supabase SQL Editor",
             )
-            // Fallback: create profile from user metadata
             setProfile({
               id: user.id,
               email: user.email || "",
@@ -109,15 +109,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         setProfile(null)
       }
+      router.refresh()
     })
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, [router])
 
   const signOut = async () => {
     await supabase.auth.signOut()
     setUser(null)
     setProfile(null)
+    router.refresh()
   }
 
   const refresh = async () => {
