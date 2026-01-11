@@ -15,9 +15,7 @@ import {
   Instagram,
   Heart,
   Briefcase,
-  Calendar,
   Shield,
-  Settings,
 } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { createClient } from "@/lib/supabase/client"
@@ -99,41 +97,75 @@ export function HeaderContent({ isScrolled = false, variant = "header" }: Header
     profile?.role === "INSTRUCTOR"
       ? [
           {
-            label: "Cadastro de Instrutor",
+            label: "Dashboard Instrutor",
             icon: Briefcase,
-            href: "/instrutor/onboarding",
+            href: "/instrutor/dashboard",
             divider: false,
           },
           {
-            label: "Minha Conta",
+            label: "Solicitações recebidas",
+            icon: ClipboardList,
+            href: "/instrutor/solicitacoes",
+            divider: false,
+          },
+          {
+            label: "Conta",
             icon: User,
             href: "/conta",
             divider: false,
           },
-          { icon: User, label: "Meu Perfil", href: "/conta/perfil" },
-          { icon: Briefcase, label: "Meus Anúncios", href: "/conta/anuncios" },
-          { icon: Calendar, label: "Disponibilidade", href: "/conta/disponibilidade" },
-          { icon: ClipboardList, label: "Minhas Solicitações", href: "/conta/solicitacoes" },
-          { icon: Settings, label: "Configurações", href: "/conta/configuracoes" },
-          { icon: Shield, label: "Segurança", href: "/conta/seguranca" },
           {
-            label: "Meus Planos",
-            href: "/conta/meus-planos",
-            icon: Briefcase,
+            label: "Segurança",
+            icon: Shield,
+            href: "/conta/seguranca",
+            divider: false,
+          },
+          {
+            label: "Sair",
+            icon: LogOut,
+            href: "#",
+            onClick: handleSignOut,
+            divider: false,
           },
         ]
       : [
           {
-            label: "Minha Conta",
+            label: "Dashboard",
+            icon: Briefcase,
+            href: "/aluno",
+            divider: false,
+          },
+          {
+            label: "Minhas Solicitações",
+            icon: ClipboardList,
+            href: "/conta/solicitacoes",
+            divider: false,
+          },
+          {
+            label: "Favoritos",
+            icon: Heart,
+            href: "/conta/favoritos",
+            divider: false,
+          },
+          {
+            label: "Conta",
             icon: User,
             href: "/conta",
             divider: false,
           },
-          { icon: User, label: "Meu Perfil", href: "/conta/perfil" },
-          { icon: Heart, label: "Favoritos", href: "/conta/favoritos" },
-          { icon: ClipboardList, label: "Minhas Solicitações", href: "/conta/solicitacoes" },
-          { icon: Settings, label: "Configurações", href: "/conta/configuracoes" },
-          { icon: Shield, label: "Segurança", href: "/conta/seguranca" },
+          {
+            label: "Segurança",
+            icon: Shield,
+            href: "/conta/seguranca",
+            divider: false,
+          },
+          {
+            label: "Sair",
+            icon: LogOut,
+            href: "#",
+            onClick: handleSignOut,
+            divider: false,
+          },
         ]
 
   const headerBgClass = variant === "hero" || !isScrolled ? "bg-transparent" : "bg-white"
@@ -229,6 +261,27 @@ export function HeaderContent({ isScrolled = false, variant = "header" }: Header
                   >
                     Renovação CNH
                   </AppLink>
+                  {/* Adicionar "Seja Instrutor" e "Área do Instrutor" no menu */}
+                  {!user && (
+                    <>
+                      <AppLink
+                        href="/instrutor/seja-instrutor"
+                        variant="nav"
+                        onClick={() => setOpenDropdown(null)}
+                        className="block px-3 py-2 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-xs transition-all font-medium"
+                      >
+                        Seja Instrutor
+                      </AppLink>
+                      <AppLink
+                        href="/instrutor/area"
+                        variant="nav"
+                        onClick={() => setOpenDropdown(null)}
+                        className="block px-3 py-2 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-xs transition-all font-medium"
+                      >
+                        Área do Instrutor
+                      </AppLink>
+                    </>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -288,6 +341,27 @@ export function HeaderContent({ isScrolled = false, variant = "header" }: Header
                     >
                       Para Alunos
                     </AppLink>
+                    {/* Adicionar "Seja Instrutor" e "Área do Instrutor" no menu */}
+                    {!user && (
+                      <>
+                        <AppLink
+                          href="/instrutor/seja-instrutor"
+                          variant="nav"
+                          onClick={() => setOpenDropdown(null)}
+                          className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2 mt-2"
+                        >
+                          Seja Instrutor
+                        </AppLink>
+                        <AppLink
+                          href="/instrutor/area"
+                          variant="nav"
+                          onClick={() => setOpenDropdown(null)}
+                          className="block px-4 py-2.5 text-emerald-900 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-500 hover:text-white text-sm transition-all font-medium rounded-md mx-2"
+                        >
+                          Área do Instrutor
+                        </AppLink>
+                      </>
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -491,16 +565,6 @@ export function HeaderContent({ isScrolled = false, variant = "header" }: Header
                           </AppLink>
                         ))}
                       </div>
-
-                      <div className="border-t border-emerald-200 my-1"></div>
-
-                      <button
-                        onClick={handleSignOut}
-                        className="flex items-center gap-3 w-full px-4 py-2.5 text-red-600 hover:bg-red-50 text-sm transition-all font-semibold rounded-b-lg"
-                      >
-                        <LogOut className="w-4 h-4" />
-                        Sair
-                      </button>
                     </motion.div>
                   )}
                 </AnimatePresence>

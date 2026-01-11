@@ -24,5 +24,13 @@ export async function createServerClientInstance() {
   return createClient()
 }
 
+export async function getUser() {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  return user
+}
+
 // Alias para compatibilidade com importações
 export const supabase = { createClient }

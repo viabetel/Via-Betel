@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { ArrowLeft, AlertCircle, CheckCircle2, Loader2, User, Award, Briefcase } from "lucide-react"
 import { AppLink } from "@/components/app-link"
 import Image from "next/image"
+import { InstructorStatusCard } from "./instructor-status-card"
 
 export function ContaPerfilClient() {
   const router = useRouter()
@@ -244,6 +245,47 @@ export function ContaPerfilClient() {
             </div>
           </PremiumCard>
         </motion.div>
+
+        {/* Instructor Status Card */}
+        {profile && (
+          <motion.div
+            className="mb-8"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+          >
+            <InstructorStatusCard
+              status={profile.instructor_status || "NONE"}
+              rejectionReason={profile.instructor_rejection_reason}
+            />
+          </motion.div>
+        )}
+
+        {/* Button to become instructor if not already */}
+        {profile?.role === "STUDENT" && (!profile?.instructor_status || profile.instructor_status === "NONE") && (
+          <motion.div
+            className="mb-8"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+          >
+            <PremiumCard className="p-6 bg-gradient-to-br from-emerald-50 via-white to-teal-50 border-2 border-emerald-200">
+              <div className="text-center">
+                <Briefcase className="w-12 h-12 text-emerald-600 mx-auto mb-4" />
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Torne-se um Instrutor</h2>
+                <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                  Comece seu caminho como instrutor profissional. Ganhe dinheiro ensinando o que você sabe.
+                </p>
+                <Button
+                  onClick={() => router.push("/instrutor/ativar")}
+                  className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold px-8 py-3 rounded-lg"
+                >
+                  Começar Agora
+                </Button>
+              </div>
+            </PremiumCard>
+          </motion.div>
+        )}
 
         {/* Mensagem de feedback */}
         <AnimatePresence>

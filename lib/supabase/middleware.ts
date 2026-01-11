@@ -25,6 +25,17 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  if (request.nextUrl.pathname.startsWith("/instrutor") && user) {
+    const { data: profile } = await supabase.from("profiles").select("instructor_status").eq("id", user.id).single()
+
+    if (!profile?.instructor_status || profile.instructor_status === "NONE") {
+      const url = request.nextUrl.clone()
+      url.pathname = "/inscricao"
+      return NextResponse.redirect(url)
+    }
+  }
+
+  // Redirecionar não autenticados
   if (request.nextUrl.pathname.startsWith("/chat") && !user) {
     const url = request.nextUrl.clone()
     url.pathname = "/auth/login"
@@ -45,11 +56,6 @@ export async function updateSession(request: NextRequest) {
     url.pathname = "/auth/login"
     url.searchParams.set("returnTo", request.nextUrl.pathname)
     return NextResponse.redirect(url)
-  }
-
-  if (request.nextUrl.pathname.startsWith("/planos") && !user) {
-    // planos são públicos, mas marcamos se vieram de /planos
-    request.nextUrl.searchParams.set("source", "planos")
   }
 
   return supabaseResponse

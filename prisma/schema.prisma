@@ -24,101 +24,7 @@ model Lead {
   status           LeadStatus      @default(PENDING)
   createdAt        DateTime        @default(now())
   
-  proposals        LeadProposal[]
-  
   @@map("leads")
-}
-
-// Proposta do instrutor para um lead
-model LeadProposal {
-  id              String   @id @default(cuid())
-  leadId          String
-  lead            Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
-  instructorId    String
-  instructor      Instructor @relation(fields: [instructorId], references: [id], onDelete: Cascade)
-  message         String
-  suggestedPrice  Int      // em centavos
-  availability    String   // ex: "Segunda 08:00-12:00"
-  createdAt       DateTime @default(now())
-  
-  @@map("lead_proposals")
-}
-
-// Instrutor (paga assinatura para aparecer no catálogo)
-model Instructor {
-  id               String          @id @default(cuid())
-  slug             String          @unique
-  name             String
-  email            String          @unique
-  city             String
-  state            String
-  categories       String          // "A,B,C"
-  rating           Float           @default(4.5)
-  price            Int             // em centavos
-  specialties      String          // JSON array
-  status           InstructorStatus @default(PENDING)
-  createdAt        DateTime        @default(now())
-  
-  subscription     Subscription?
-  boosts           Boost[]
-  proposals        LeadProposal[]
-  
-  @@map("instructors")
-}
-
-// Assinatura do instrutor (Stripe Subscription)
-model Subscription {
-  id                      String              @id @default(cuid())
-  instructorId            String              @unique
-  instructor              Instructor          @relation(fields: [instructorId], references: [id], onDelete: Cascade)
-  planId                  String
-  plan                    Plan                @relation(fields: [planId], references: [id])
-  status                  SubscriptionStatus  @default(ACTIVE)
-  startedAt               DateTime            @default(now())
-  expiresAt               DateTime?
-  canceledAt              DateTime?
-  stripeCustomerId        String?             // opcional para futuro
-  stripeSubscriptionId    String?             // opcional para futuro
-  createdAt               DateTime            @default(now())
-  updatedAt               DateTime            @updatedAt
-
-  @@index([planId])
-  @@map("subscriptions")
-}
-
-// Impulsionamento/Anúncios (add-on pago)
-model Boost {
-  id                String   @id @default(cuid())
-  instructorId      String
-  instructor        Instructor @relation(fields: [instructorId], references: [id], onDelete: Cascade)
-  type              BoostType
-  city              String
-  startsAt          DateTime
-  endsAt            DateTime
-  stripePaymentId   String?
-  createdAt         DateTime @default(now())
-  
-  @@map("boosts")
-}
-
-// Plano do instrutor
-model Plan {
-  id          String        @id @default(cuid())
-  slug        String        @unique
-  name        String
-  description String
-  priceCents  Int
-  interval    PlanInterval
-  features    Json
-  maxListings Int           @default(1)
-  highlight   Boolean       @default(false)
-  badge       String?       // badge visual no marketplace
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-
-  subscriptions Subscription[]
-
-  @@map("plans")
 }
 
 // Regras:
@@ -157,13 +63,75 @@ model ConversationUsageLog {
   
   // Quando o instrutor respondeu pela primeira vez nesta conversa neste mês
   firstReplyAt    DateTime @default(now())
-  
+
   @@unique([userId, conversationId, year, month])
   @@index([userId, year, month])
   @@map("conversation_usage_logs")
 }
 
-// Solicitação do aluno para instrutor
+model Profile {
+  id                      String                @id @default(cuid())
+  email                   String                @unique
+  fullName                String?
+  phone                   String?
+  city                    String?
+  bio                     String?
+  avatar                  String?
+  created_at              DateTime              @default(now())
+  updated_at              DateTime              @updatedAt
+  
+  // Role e status
+  role                    String                @default("STUDENT") // STUDENT | INSTRUCTOR | ADMIN
+  instructor_status       String                @default("NONE") // NONE | STARTED | PROFILE_DONE | UNDER_REVIEW | VERIFIED | REJECTED
+  instructor_rejection_reason String?
+  banned_at               DateTime?
+  
+  // Relações
+  instructorProfile       InstructorProfile?
+  documents               Document[]
+  
+  @@map("profiles")
+}
+
+model InstructorProfile {
+  id                String            @id @default(cuid())
+  profileId         String            @unique
+  profile           Profile           @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  // Campos do instrutor
+  categories        String[]          @default([])
+  bio               String?
+  priceHour         Float?
+  serviceAreas      Json?
+  availabilityJson  Json?
+  experience_years  Int               @default(0)
+  specialties       String[]          @default([])
+  isPublic          Boolean           @default(false)
+  
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  @@map("instructor_profiles")
+}
+
+model Document {
+  id                String            @id @default(cuid())
+  profileId         String
+  profile           Profile           @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  documentType      String            // ID, CERTIFICATE, BACKGROUND_CHECK
+  storagePath       String            @unique
+  status            String            @default("PENDING") // PENDING, APPROVED, REJECTED
+  reviewNotes       String?
+  
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  @@index([profileId])
+  @@index([status])
+  @@map("documents")
+}
+
 model Request {
   id              String          @id @default(cuid())
   studentId       String
@@ -197,7 +165,6 @@ enum RequestStatus {
   EXPIRED
 }
 
-// Eventos da solicitação (timeline)
 model RequestEvent {
   id          String    @id @default(cuid())
   requestId   String
@@ -210,7 +177,6 @@ model RequestEvent {
   @@map("request_events")
 }
 
-// Conversa entre aluno e instrutor
 model Conversation {
   id          String      @id @default(cuid())
   requestId   String      @unique
@@ -228,7 +194,6 @@ model Conversation {
   @@map("conversations")
 }
 
-// Mensagem no chat
 model Message {
   id              String      @id @default(cuid())
   conversationId  String
@@ -247,7 +212,6 @@ model Message {
   @@map("messages")
 }
 
-// Marcação de lido
 model MessageRead {
   id          String    @id @default(cuid())
   messageId   String
@@ -259,30 +223,6 @@ model MessageRead {
   @@map("message_reads")
 }
 
-// Documento de verificação do instrutor
-model Document {
-  id          String                @id @default(cuid())
-  ownerId     String
-  type        String                // "cnh", "certificate", "license"
-  fileUrl     String
-  status      VerificationStatus    @default(PENDING_DOCS)
-  rejectReason String?
-  createdAt   DateTime              @default(now())
-  updatedAt   DateTime              @updatedAt
-
-  @@index([ownerId])
-  @@index([status])
-  @@map("documents")
-}
-
-enum VerificationStatus {
-  PENDING_DOCS
-  UNDER_REVIEW
-  VERIFIED
-  REJECTED
-}
-
-// Log de auditoria
 model AuditLog {
   id          String    @id @default(cuid())
   action      String    // ex: "request_created", "message_sent"
@@ -297,78 +237,8 @@ model AuditLog {
   @@map("audit_logs")
 }
 
-// Instrutor Profile
-model InstructorProfile {
-  id                   String                     @id @default(cuid())
-  userId               String                     @unique
-  fullName             String
-  phone                String?
-  city                 String?
-  state                String?
-  categories           String?                    // ex: "A,B,C"
-  yearsExp             Int?
-
-  // Vínculo profissional
-  isLinkedToAutoescola Boolean                    @default(false)
-  autoescolaName       String?
-  autoescolaCnpj       String?
-
-  // Documentos (URLs)
-  cnhUrl               String?
-  certificadoUrl       String?
-  vinculoUrl           String?
-
-  status               InstructorVerificationStatus @default(INCOMPLETO)
-  createdAt            DateTime                   @default(now())
-  updatedAt            DateTime                   @updatedAt
-
-  user                 User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("instructor_profiles")
-}
-
-model User {
-  id                   String                     @id @default(cuid())
-  email                String                     @unique
-  created_at           DateTime                   @default(now())
-
-  instructorProfile    InstructorProfile?
-
-  @@map("users")
-}
-
 enum LeadStatus {
   PENDING
   CONTACTED
   CLOSED
-}
-
-enum InstructorStatus {
-  PENDING
-  ACTIVE
-  INACTIVE
-}
-
-enum SubscriptionStatus {
-  ACTIVE
-  PAST_DUE
-  CANCELED
-  EXPIRED
-}
-
-enum PlanInterval {
-  MONTHLY
-  YEARLY
-}
-
-enum BoostType {
-  IMPULSIONAR_7_DIAS
-  VITRINE_30_DIAS
-}
-
-enum InstructorVerificationStatus {
-  INCOMPLETO
-  EM_ANALISE
-  APROVADO
-  REPROVADO
 }

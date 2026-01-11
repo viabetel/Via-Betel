@@ -37,18 +37,21 @@ export async function syncAccount(userType?: "student" | "instructor"): Promise<
     role = user.user_metadata.user_type === "instructor" ? "INSTRUCTOR" : "STUDENT"
   }
 
-  const { error: profileError } = await supabase.from("profiles").upsert(
-    {
-      id: user.id,
-      email: user.email,
-      full_name: user.user_metadata?.full_name || user.user_metadata?.name || "",
-      role,
-      updated_at: new Date().toISOString(),
-    },
-    {
-      onConflict: "id",
-    },
-  )
+  const profileData = {
+    id: user.id,
+    email: user.email,
+    full_name: user.user_metadata?.full_name || user.user_metadata?.name || "",
+    role,
+    updated_at: new Date().toISOString(),
+  }
+
+  if (role === "INSTRUCTOR") {
+    profileData["instructor_status"] = "STARTED"
+  }
+
+  const { error: profileError } = await supabase.from("profiles").upsert(profileData, {
+    onConflict: "id",
+  })
 
   if (profileError) {
     console.error("[v0] Profile upsert error:", profileError)
@@ -68,9 +71,9 @@ export async function syncAccount(userType?: "student" | "instructor"): Promise<
       },
     })
 
-    return { role, profile: existingProfile.data || { id: user.id, email: user.email, role }, prismaUser }
+    return { role, profile: existingProfile.data || profileData, prismaUser }
   } catch (e) {
     console.error("[v0] Prisma sync error:", e)
-    return { role, profile: existingProfile.data || { id: user.id, email: user.email, role }, prismaUser: null }
+    return { role, profile: existingProfile.data || profileData, prismaUser: null }
   }
 }

@@ -31,7 +31,17 @@ export async function GET(request: Request) {
       if (userType) {
         syncUrl.searchParams.set("userType", userType)
       }
-      await fetch(syncUrl.toString(), { method: "POST" })
+      const syncResponse = await fetch(syncUrl.toString(), { method: "POST" })
+      const syncData = await syncResponse.json()
+
+      // Redirecionar baseado em instructor_status após sync
+      if (userType === "instructor" && syncData.instructor_status === "STARTED") {
+        console.log("[v0] Redirecionando para onboarding do instrutor")
+        return NextResponse.redirect(`${origin}/instrutor/onboarding`)
+      } else if (userType === "student") {
+        console.log("[v0] Redirecionando para aluno")
+        return NextResponse.redirect(`${origin}/aluno`)
+      }
     } catch (syncError) {
       console.error("[v0] Erro ao chamar sync:", syncError)
       // Continuar mesmo se sync falhar

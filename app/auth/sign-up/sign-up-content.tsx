@@ -11,7 +11,7 @@ import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useState, useEffect } from "react"
 import { ArrowLeft } from "lucide-react"
-import { COLORS, SHADOWS } from "@/lib/ui/tokens"
+import { SHADOWS } from "@/lib/ui/tokens"
 
 export default function SignUpContent() {
   const [email, setEmail] = useState("")
@@ -107,8 +107,23 @@ export default function SignUpContent() {
       <div className="w-full max-w-sm">
         <Card style={{ boxShadow: SHADOWS.xl }}>
           <CardHeader>
-            <CardTitle className="text-2xl">Cadastro Via Betel</CardTitle>
-            <CardDescription>Crie sua conta gratuitamente</CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-2xl">Cadastro Via Betel</CardTitle>
+                <CardDescription>Crie sua conta gratuitamente</CardDescription>
+              </div>
+              <span
+                className="px-3 py-1 text-xs font-semibold rounded-full text-white"
+                style={{
+                  backgroundColor:
+                    userType === "instructor"
+                      ? "rgb(34, 197, 94)" // emerald
+                      : "rgb(59, 130, 246)", // blue
+                }}
+              >
+                {userType === "instructor" ? "Instrutor" : "Aluno"}
+              </span>
+            </div>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSignUp}>
@@ -149,90 +164,65 @@ export default function SignUpContent() {
 
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t" />
+                    <div className="w-full border-t border-gray-300" />
                   </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-white px-2 text-gray-500">Ou cadastre-se com email</span>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-white text-gray-500">ou</span>
                   </div>
                 </div>
 
-                <div className="grid gap-2">
-                  <Label htmlFor="fullName">Nome Completo</Label>
-                  <Input
-                    id="fullName"
-                    type="text"
-                    placeholder="João Silva"
-                    required
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="seu@email.com"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="password">Senha</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    required
-                    minLength={6}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label>Tipo de Usuário</Label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="userType"
-                        value="student"
-                        checked={userType === "student"}
-                        onChange={(e) => setUserType(e.target.value as "student")}
-                        className="w-4 h-4 text-emerald-600"
-                      />
-                      <span className="text-sm">Aluno</span>
-                    </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="userType"
-                        value="instructor"
-                        checked={userType === "instructor"}
-                        onChange={(e) => setUserType(e.target.value as "instructor")}
-                        className="w-4 h-4 text-emerald-600"
-                      />
-                      <span className="text-sm">Instrutor</span>
-                    </label>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="fullName">Nome Completo</Label>
+                    <Input
+                      id="fullName"
+                      type="text"
+                      placeholder="Seu nome"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="seu@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="password">Senha</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
                   </div>
                 </div>
-                {error && <p className="text-sm text-red-500">{error}</p>}
-                <Button
-                  type="submit"
-                  className="w-full text-white"
-                  style={{ background: COLORS.gradients.primary }}
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Criando conta..." : "Criar Conta"}
+
+                {error && <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg">{error}</div>}
+
+                <Button type="submit" disabled={isLoading} className="w-full bg-emerald-600 hover:bg-emerald-700">
+                  {isLoading ? "Criando..." : "Criar Conta"}
                 </Button>
               </div>
-              <div className="mt-4 text-center text-sm">
-                Já tem conta?{" "}
-                <Link href="/auth/login" className="underline underline-offset-4 text-emerald-600">
-                  Entrar
-                </Link>
-              </div>
             </form>
+
+            <p className="text-center text-sm text-gray-600 mt-6">
+              Já tem conta?{" "}
+              <Link href="/auth/login" className="text-emerald-600 hover:underline font-medium">
+                Entrar
+              </Link>
+            </p>
           </CardContent>
         </Card>
       </div>
