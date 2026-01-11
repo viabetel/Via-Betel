@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo, useRef, useEffect } from "react"
-import { ChevronDown, ChevronLeft, Info, MapPin, X, Search, Check } from "lucide-react"
+import { ChevronDown, ChevronLeft, MapPin, X, Search, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { BRAZIL_STATES, getCitiesByState } from "@/data/brazil-locations"
@@ -229,30 +229,30 @@ export function FiltersSidebar({
         className,
       )}
     >
-      <div className="px-2.5 py-1.5 space-y-0">
-        <button className="flex items-center gap-0.5 text-[10px] text-emerald-500 hover:text-emerald-600 hover:underline transition-colors">
-          <ChevronLeft className="w-2.5 h-2.5" />
+      <div className="px-4 py-2.5 space-y-0.5">
+        <button className="flex items-center gap-1 text-[11px] text-emerald-500 hover:text-emerald-600 hover:underline transition-colors">
+          <ChevronLeft className="w-3 h-3" />
           <span>Início</span>
         </button>
-        <div className="flex items-center gap-0.5 text-[10px] text-gray-500">
-          <ChevronLeft className="w-2.5 h-2.5" />
+        <div className="flex items-center gap-1 text-[11px] text-gray-500">
+          <ChevronLeft className="w-3 h-3" />
           <span>Marketplace</span>
         </div>
-        <div className="flex items-center gap-1 mt-0">
-          <span className="text-[11px] font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+        <div className="flex items-center gap-1.5 mt-0.5">
+          <span className="text-sm font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
             Instrutores
           </span>
         </div>
       </div>
 
-      <div className="mx-2.5 mb-1.5 p-2.5 border border-emerald-200 rounded-xl bg-gradient-to-br from-white to-emerald-50/50 shadow-sm">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-1.5">
-            <div className="w-5 h-5 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center shadow-sm">
-              <MapPin className="w-2.5 h-2.5 text-white" />
+      <div className="mx-4 mb-3 p-4 border border-emerald-200 rounded-xl bg-gradient-to-br from-white to-emerald-50/50 shadow-sm">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center shadow-sm">
+              <MapPin className="w-3 h-3 text-white" />
             </div>
-            <span className="text-[11px] font-semibold text-gray-900">Localização</span>
-            <span className="px-1.5 py-0.5 bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[8px] font-bold rounded-full shadow-sm">
+            <span className="text-xs font-semibold text-gray-900">Localização</span>
+            <span className="px-2 py-0.5 bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[9px] font-bold rounded-full shadow-sm">
               Novo
             </span>
           </div>
@@ -262,16 +262,16 @@ export function FiltersSidebar({
                 onCityChange("")
                 onStateChange("")
               }}
-              className="w-5 h-5 rounded-full bg-gray-100 hover:bg-red-100 text-gray-400 hover:text-red-500 flex items-center justify-center transition-colors"
+              className="w-6 h-6 rounded-full bg-gray-100 hover:bg-red-100 text-gray-400 hover:text-red-500 flex items-center justify-center transition-colors"
             >
-              <X className="w-2.5 h-2.5" />
+              <X className="w-3 h-3" />
             </button>
           )}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-3">
           <div>
-            <label className="text-[9px] font-semibold text-emerald-600 uppercase mb-1 block tracking-wide">
+            <label className="text-[10px] font-semibold text-emerald-600 uppercase mb-1.5 block tracking-wide">
               Estado
             </label>
             <CustomSelect
@@ -279,11 +279,12 @@ export function FiltersSidebar({
               onChange={handleStateChange}
               options={stateOptions}
               placeholder="Todos os estados"
+              className="[&_button]:h-9 [&_button]:text-xs"
             />
           </div>
 
           <div>
-            <label className="text-[9px] font-semibold text-emerald-600 uppercase mb-1 block tracking-wide">
+            <label className="text-[10px] font-semibold text-emerald-600 uppercase mb-1.5 block tracking-wide">
               Cidade
             </label>
             <CustomSelect
@@ -292,13 +293,14 @@ export function FiltersSidebar({
               options={cityOptions}
               placeholder={selectedState ? "Todas as cidades" : "Selecione um estado"}
               disabled={!selectedState}
+              className="[&_button]:h-9 [&_button]:text-xs"
             />
           </div>
 
           {hasLocationFilter && (
-            <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-gradient-to-r from-emerald-100 to-amber-50 border border-emerald-200 rounded-lg">
-              <MapPin className="w-3 h-3 text-emerald-600" />
-              <span className="text-[10px] font-medium text-emerald-700">
+            <div className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-emerald-100 to-amber-50 border border-emerald-200 rounded-lg">
+              <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+              <span className="text-[11px] font-medium text-emerald-700">
                 {selectedCity && selectedState
                   ? `${selectedCity}, ${selectedState}`
                   : selectedState
@@ -310,18 +312,19 @@ export function FiltersSidebar({
         </div>
       </div>
 
-      <div className="px-2.5 space-y-1.5">
-        <div className="p-2.5 border border-emerald-100 rounded-xl bg-gradient-to-br from-white to-emerald-50/30 hover:shadow-sm transition-shadow">
+      <div className="px-4 space-y-3">
+        {/* Verificados */}
+        <div className="p-3.5 border border-emerald-100 rounded-xl bg-gradient-to-br from-white to-emerald-50/30 hover:shadow-sm transition-shadow">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <div className="w-4 h-4 rounded bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center">
-                <Check className="w-2.5 h-2.5 text-white" />
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 rounded bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center">
+                <Check className="w-3 h-3 text-white" />
               </div>
-              <span className="text-[11px] font-semibold text-gray-900">Verificados</span>
+              <span className="text-xs font-semibold text-gray-900">Verificados</span>
             </div>
             <div
               className={cn(
-                "w-9 h-5 rounded-full transition-all relative cursor-pointer shadow-inner",
+                "w-10 h-5 rounded-full transition-all relative cursor-pointer shadow-inner",
                 onlyVerified ? "bg-gradient-to-r from-emerald-400 to-emerald-500" : "bg-gray-200",
               )}
               onClick={() => onVerifiedChange(!onlyVerified)}
@@ -329,42 +332,43 @@ export function FiltersSidebar({
               <div
                 className={cn(
                   "absolute top-[3px] w-3.5 h-3.5 rounded-full bg-white shadow-md transition-transform",
-                  onlyVerified ? "translate-x-[18px]" : "translate-x-[3px]",
+                  onlyVerified ? "translate-x-[22px]" : "translate-x-[3px]",
                 )}
               />
             </div>
           </div>
-          <p className="text-[9px] text-gray-500 leading-tight mt-1 ml-5.5">Documentação verificada pela Via Betel</p>
+          <p className="text-[10px] text-gray-500 leading-tight mt-1.5 ml-7">Documentação verificada pela Via Betel</p>
         </div>
 
-        <div className="p-2.5 border border-gray-100 rounded-xl hover:border-emerald-200 hover:shadow-sm transition-all">
+        {/* Categoria CNH */}
+        <div className="p-3.5 border border-gray-100 rounded-xl hover:border-emerald-200 hover:shadow-sm transition-all">
           <button
             onClick={() => toggleSection("category")}
-            className="w-full flex items-center justify-between text-[11px] font-semibold text-gray-900 mb-1.5 group"
+            className="w-full flex items-center justify-between text-xs font-semibold text-gray-900 mb-2 group"
           >
             <span className="group-hover:text-emerald-600 transition-colors">Categoria CNH</span>
             <div
               className={cn(
-                "w-5 h-5 rounded-full flex items-center justify-center transition-all",
+                "w-6 h-6 rounded-full flex items-center justify-center transition-all",
                 expandedSections.includes("category") ? "bg-emerald-100 rotate-180" : "bg-gray-100",
               )}
             >
               <ChevronDown
                 className={cn(
-                  "w-3 h-3 transition-colors",
+                  "w-3.5 h-3.5 transition-colors",
                   expandedSections.includes("category") ? "text-emerald-600" : "text-gray-500",
                 )}
               />
             </div>
           </button>
           {expandedSections.includes("category") && (
-            <div className="flex flex-wrap gap-1.5 animate-in fade-in-0 slide-in-from-top-1 duration-200">
+            <div className="flex flex-wrap gap-2 animate-in fade-in-0 slide-in-from-top-1 duration-200">
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => toggleCategory(cat)}
                   className={cn(
-                    "h-7 w-7 rounded-lg text-[11px] font-bold transition-all duration-200",
+                    "h-8 w-8 rounded-lg text-xs font-bold transition-all duration-200",
                     selectedCategory.includes(cat)
                       ? "bg-gradient-to-br from-emerald-400 to-emerald-500 text-white shadow-md scale-105"
                       : "bg-gray-100 text-gray-600 hover:bg-emerald-100 hover:text-emerald-700 border border-gray-200 hover:border-emerald-300",
@@ -377,48 +381,49 @@ export function FiltersSidebar({
           )}
         </div>
 
-        <div className="p-2.5 border border-gray-100 rounded-xl hover:border-amber-200 hover:shadow-sm transition-all">
+        {/* Preço por aula */}
+        <div className="p-3.5 border border-gray-100 rounded-xl hover:border-amber-200 hover:shadow-sm transition-all">
           <button
             onClick={() => toggleSection("price")}
-            className="w-full flex items-center justify-between text-[11px] font-semibold text-gray-900 mb-1.5 group"
+            className="w-full flex items-center justify-between text-xs font-semibold text-gray-900 mb-2 group"
           >
             <span className="group-hover:text-amber-600 transition-colors">Preço por aula</span>
             <div
               className={cn(
-                "w-5 h-5 rounded-full flex items-center justify-center transition-all",
+                "w-6 h-6 rounded-full flex items-center justify-center transition-all",
                 expandedSections.includes("price") ? "bg-amber-100 rotate-180" : "bg-gray-100",
               )}
             >
               <ChevronDown
                 className={cn(
-                  "w-3 h-3 transition-colors",
+                  "w-3.5 h-3.5 transition-colors",
                   expandedSections.includes("price") ? "text-amber-600" : "text-gray-500",
                 )}
               />
             </div>
           </button>
           {expandedSections.includes("price") && (
-            <div className="space-y-2 animate-in fade-in-0 slide-in-from-top-1 duration-200">
-              <div className="flex items-center gap-1.5">
+            <div className="space-y-3 animate-in fade-in-0 slide-in-from-top-1 duration-200">
+              <div className="flex items-center gap-2">
                 <input
                   type="number"
                   placeholder="De"
                   value={priceFrom}
                   onChange={(e) => setPriceFrom(e.target.value)}
-                  className="flex-1 h-8 px-2 text-[11px] border border-gray-200 rounded-lg focus:border-amber-400 focus:ring-2 focus:ring-amber-100 outline-none transition-all"
+                  className="flex-1 h-9 px-3 text-xs border border-gray-200 rounded-lg focus:border-amber-400 focus:ring-2 focus:ring-amber-100 outline-none transition-all"
                 />
                 <input
                   type="number"
                   placeholder="Até"
                   value={priceTo}
                   onChange={(e) => setPriceTo(e.target.value)}
-                  className="flex-1 h-8 px-2 text-[11px] border border-gray-200 rounded-lg focus:border-amber-400 focus:ring-2 focus:ring-amber-100 outline-none transition-all"
+                  className="flex-1 h-9 px-3 text-xs border border-gray-200 rounded-lg focus:border-amber-400 focus:ring-2 focus:ring-amber-100 outline-none transition-all"
                 />
                 <button
                   onClick={handlePriceApply}
-                  className="h-8 w-8 flex items-center justify-center bg-gradient-to-br from-amber-400 to-amber-500 text-white rounded-lg hover:from-amber-500 hover:to-amber-600 shadow-sm transition-all"
+                  className="h-9 w-9 flex items-center justify-center bg-gradient-to-br from-amber-400 to-amber-500 text-white rounded-lg hover:from-amber-500 hover:to-amber-600 shadow-sm transition-all"
                 >
-                  <Search className="w-3.5 h-3.5" />
+                  <Search className="w-4 h-4" />
                 </button>
               </div>
               <input
@@ -431,9 +436,9 @@ export function FiltersSidebar({
                   onPriceChange(Number(e.target.value))
                   setPriceTo(e.target.value)
                 }}
-                className="w-full h-1.5 appearance-none bg-gray-200 rounded-full [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-gradient-to-br [&::-webkit-slider-thumb]:from-amber-400 [&::-webkit-slider-thumb]:to-amber-500 [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white"
+                className="w-full h-2 appearance-none bg-gray-200 rounded-full [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-gradient-to-br [&::-webkit-slider-thumb]:from-amber-400 [&::-webkit-slider-thumb]:to-amber-500 [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white"
               />
-              <div className="flex justify-between text-[9px]">
+              <div className="flex justify-between text-[10px]">
                 <span className="text-gray-500">R$ 50</span>
                 <span className="font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
                   Até R$ {maxPrice}
@@ -444,34 +449,35 @@ export function FiltersSidebar({
           )}
         </div>
 
-        <div className="p-2.5 border border-gray-100 rounded-xl hover:border-amber-200 hover:shadow-sm transition-all">
+        {/* Avaliação mínima */}
+        <div className="p-3.5 border border-gray-100 rounded-xl hover:border-amber-200 hover:shadow-sm transition-all">
           <button
             onClick={() => toggleSection("rating")}
-            className="w-full flex items-center justify-between text-[11px] font-semibold text-gray-900 mb-1.5 group"
+            className="w-full flex items-center justify-between text-xs font-semibold text-gray-900 mb-2 group"
           >
             <span className="group-hover:text-amber-600 transition-colors">Avaliação mínima</span>
             <div
               className={cn(
-                "w-5 h-5 rounded-full flex items-center justify-center transition-all",
+                "w-6 h-6 rounded-full flex items-center justify-center transition-all",
                 expandedSections.includes("rating") ? "bg-amber-100 rotate-180" : "bg-gray-100",
               )}
             >
               <ChevronDown
                 className={cn(
-                  "w-3 h-3 transition-colors",
+                  "w-3.5 h-3.5 transition-colors",
                   expandedSections.includes("rating") ? "text-amber-600" : "text-gray-500",
                 )}
               />
             </div>
           </button>
           {expandedSections.includes("rating") && (
-            <div className="flex flex-wrap gap-1.5 animate-in fade-in-0 slide-in-from-top-1 duration-200">
+            <div className="flex flex-wrap gap-2 animate-in fade-in-0 slide-in-from-top-1 duration-200">
               {ratingOptions.map((option) => (
                 <button
                   key={option.value}
                   onClick={() => onRatingChange(minRating === option.value ? 0 : option.value)}
                   className={cn(
-                    "h-7 px-2.5 rounded-lg text-[10px] font-semibold transition-all duration-200 flex items-center gap-1",
+                    "h-8 px-3 rounded-lg text-[11px] font-semibold transition-all duration-200 flex items-center gap-1.5",
                     minRating === option.value
                       ? "bg-gradient-to-br from-amber-400 to-amber-500 text-white shadow-md scale-105"
                       : "bg-gray-100 text-gray-600 hover:bg-amber-100 hover:text-amber-700 border border-gray-200 hover:border-amber-300",
@@ -485,56 +491,57 @@ export function FiltersSidebar({
           )}
         </div>
 
-        <div className="p-2.5 border border-gray-100 rounded-xl hover:border-teal-200 hover:shadow-sm transition-all">
+        {/* Disponibilidade */}
+        <div className="p-3.5 border border-gray-100 rounded-xl hover:border-teal-200 hover:shadow-sm transition-all">
           <button
             onClick={() => toggleSection("availability")}
-            className="w-full flex items-center justify-between text-[11px] font-semibold text-gray-900 mb-1.5 group"
+            className="w-full flex items-center justify-between text-xs font-semibold text-gray-900 mb-2 group"
           >
             <span className="group-hover:text-teal-600 transition-colors">Disponibilidade</span>
             <div
               className={cn(
-                "w-5 h-5 rounded-full flex items-center justify-center transition-all",
+                "w-6 h-6 rounded-full flex items-center justify-center transition-all",
                 expandedSections.includes("availability") ? "bg-teal-100 rotate-180" : "bg-gray-100",
               )}
             >
               <ChevronDown
                 className={cn(
-                  "w-3 h-3 transition-colors",
+                  "w-3.5 h-3.5 transition-colors",
                   expandedSections.includes("availability") ? "text-teal-600" : "text-gray-500",
                 )}
               />
             </div>
           </button>
           {expandedSections.includes("availability") && (
-            <div className="space-y-2 animate-in fade-in-0 slide-in-from-top-1 duration-200">
-              <div className="flex gap-1.5">
+            <div className="space-y-3 animate-in fade-in-0 slide-in-from-top-1 duration-200">
+              <div className="flex flex-wrap gap-2">
                 {availabilityOptions.map((avail) => (
                   <button
                     key={avail}
                     onClick={() => toggleAvailability(avail)}
                     className={cn(
-                      "flex-1 h-7 rounded-lg text-[10px] font-semibold transition-all duration-200 border",
+                      "h-8 px-3 rounded-lg text-[11px] font-medium transition-all duration-200",
                       selectedAvailability.includes(avail)
-                        ? "bg-gradient-to-br from-teal-400 to-teal-500 text-white border-teal-500 shadow-md"
-                        : "bg-white text-gray-600 hover:bg-teal-50 hover:text-teal-700 border-gray-200 hover:border-teal-300",
+                        ? "bg-gradient-to-br from-teal-400 to-teal-500 text-white shadow-md"
+                        : "bg-gray-100 text-gray-600 hover:bg-teal-100 hover:text-teal-700 border border-gray-200 hover:border-teal-300",
                     )}
                   >
                     {avail}
                   </button>
                 ))}
               </div>
-              <div className="pt-1.5 border-t border-gray-100">
-                <span className="text-[9px] font-semibold text-teal-600 uppercase tracking-wide">Turno preferido</span>
-                <div className="flex flex-wrap gap-1.5 mt-1">
+              <div>
+                <p className="text-[10px] font-medium text-gray-600 mb-2">Turno preferido:</p>
+                <div className="flex flex-wrap gap-2">
                   {turnoOptions.map((turno) => (
                     <button
                       key={turno}
                       onClick={() => toggleTurno(turno)}
                       className={cn(
-                        "h-6 px-2 rounded-lg text-[10px] font-medium transition-all duration-200 border",
+                        "h-8 px-3 rounded-lg text-[11px] font-medium transition-all duration-200",
                         selectedTurno.includes(turno)
-                          ? "bg-gradient-to-br from-teal-400 to-teal-500 text-white border-teal-500 shadow-sm"
-                          : "bg-white text-gray-600 hover:bg-teal-50 hover:text-teal-700 border-gray-200 hover:border-teal-300",
+                          ? "bg-gradient-to-br from-teal-400 to-teal-500 text-white shadow-md"
+                          : "bg-gray-100 text-gray-600 hover:bg-teal-100 hover:text-teal-700 border border-gray-200 hover:border-teal-300",
                       )}
                     >
                       {turno}
@@ -546,20 +553,18 @@ export function FiltersSidebar({
           )}
         </div>
 
-        <div className="p-2.5 border border-amber-100 rounded-xl bg-gradient-to-br from-white to-amber-50/30 hover:shadow-sm transition-shadow">
+        {/* Patrocinados */}
+        <div className="p-3.5 border border-gray-100 rounded-xl hover:border-amber-200 hover:shadow-sm transition-all">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <div className="w-4 h-4 rounded bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center">
-                <span className="text-white text-[10px]">★</span>
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 rounded bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center">
+                <span className="text-white text-[10px] font-bold">★</span>
               </div>
-              <span className="text-[11px] font-semibold text-gray-900">Somente destaques</span>
-              <button className="text-gray-400 hover:text-amber-500 transition-colors" title="Instrutores em destaque">
-                <Info className="w-2.5 h-2.5" />
-              </button>
+              <span className="text-xs font-semibold text-gray-900">Patrocinados</span>
             </div>
             <div
               className={cn(
-                "w-9 h-5 rounded-full transition-all relative cursor-pointer shadow-inner",
+                "w-10 h-5 rounded-full transition-all relative cursor-pointer shadow-inner",
                 onlySponsored ? "bg-gradient-to-r from-amber-400 to-amber-500" : "bg-gray-200",
               )}
               onClick={() => onSponsoredChange(!onlySponsored)}
@@ -567,32 +572,31 @@ export function FiltersSidebar({
               <div
                 className={cn(
                   "absolute top-[3px] w-3.5 h-3.5 rounded-full bg-white shadow-md transition-transform",
-                  onlySponsored ? "translate-x-[18px]" : "translate-x-[3px]",
+                  onlySponsored ? "translate-x-[22px]" : "translate-x-[3px]",
                 )}
               />
             </div>
           </div>
+          <p className="text-[10px] text-gray-500 leading-tight mt-1.5 ml-7">Destaque no topo dos resultados</p>
         </div>
 
-        <div className="flex gap-1.5 pt-2 pb-3">
+        {/* Botões de ação */}
+        <div className="pt-3 pb-4 space-y-2">
+          <Button
+            onClick={onClearFilters}
+            variant="outline"
+            className="w-full h-10 text-xs font-medium border-gray-300 hover:border-red-300 hover:bg-red-50 hover:text-red-600 transition-all bg-transparent"
+          >
+            Limpar todos os filtros
+          </Button>
           {onApplyFilters && (
             <Button
               onClick={onApplyFilters}
-              className="flex-1 h-8 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white text-[11px] font-semibold shadow-md rounded-lg transition-all"
+              className="w-full h-10 text-xs font-semibold bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-md"
             >
               Aplicar filtros
             </Button>
           )}
-          <Button
-            onClick={onClearFilters}
-            variant="outline"
-            className={cn(
-              "h-8 border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 text-[11px] font-semibold bg-white rounded-lg transition-all",
-              onApplyFilters ? "flex-1" : "w-full",
-            )}
-          >
-            Limpar
-          </Button>
         </div>
       </div>
     </aside>

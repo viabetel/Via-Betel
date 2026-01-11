@@ -299,7 +299,7 @@ export default function InstrutoresClient({ initialInstructors = instructors }: 
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto max-w-7xl px-4 py-4">
           <div className="flex flex-col md:flex-row gap-6">
-            <aside className="hidden md:block w-72 flex-shrink-0 sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto">
+            <aside className="hidden md:block w-80 flex-shrink-0 sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto">
               <FiltersSidebar
                 selectedCity={selectedCity}
                 selectedState={selectedState}
