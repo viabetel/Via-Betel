@@ -24,6 +24,7 @@ export default function LoginPage() {
   const searchParams = useSearchParams()
 
   const returnTo = searchParams.get("returnTo")
+  const userType = searchParams.get("userType")
 
   useEffect(() => {
     if (returnTo) {
@@ -60,33 +61,24 @@ export default function LoginPage() {
     setError(null)
 
     try {
-      console.log("[v0] Iniciando login com Google")
-
       const siteUrl =
         process.env.NEXT_PUBLIC_SITE_URL ||
         (typeof window !== "undefined" ? window.location.origin : "http://localhost:3000")
 
-      const callbackUrl = `${siteUrl}/auth/callback${returnTo ? `?returnTo=${encodeReturnTo(returnTo)}` : ""}`
+      const callbackParams = new URLSearchParams()
+      if (returnTo) callbackParams.set("returnTo", encodeReturnTo(returnTo))
+      if (userType) callbackParams.set("userType", userType)
+      const callbackUrl = `${siteUrl}/auth/callback${callbackParams.toString() ? `?${callbackParams}` : ""}`
 
-      console.log("[v0] Site URL:", siteUrl)
-      console.log("[v0] Callback URL:", callbackUrl)
-      console.log("[v0] Return to:", returnTo)
-
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo: callbackUrl,
         },
       })
 
-      console.log("[v0] OAuth response data:", data)
-      console.log("[v0] OAuth response error:", error)
-
       if (error) throw error
-
-      console.log("[v0] OAuth iniciado com sucesso, aguardando redirect...")
     } catch (error: unknown) {
-      console.error("[v0] Erro ao iniciar OAuth Google:", error)
       setError(error instanceof Error ? error.message : "Não foi possível entrar com Google. Tente novamente.")
       setIsGoogleLoading(false)
     }
@@ -193,7 +185,7 @@ export default function LoginPage() {
               <div className="mt-4 text-center text-sm">
                 Não tem conta?{" "}
                 <Link
-                  href={`/auth/sign-up${returnTo ? `?returnTo=${encodeReturnTo(returnTo)}` : ""}`}
+                  href={`/auth/sign-up${userType ? `?userType=${userType}` : ""}${returnTo ? `${userType ? "&" : "?"}returnTo=${encodeReturnTo(returnTo)}` : ""}`}
                   className="underline underline-offset-4 text-emerald-600"
                 >
                   Cadastre-se

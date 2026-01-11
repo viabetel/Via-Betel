@@ -22,16 +22,18 @@ export async function syncAccount(userType?: "student" | "instructor"): Promise<
 
   let role: UserRole = "STUDENT"
 
-  // 1. Se profile já existe, manter role
+  // 1. Check existing profile
   const existingProfile = await supabase.from("profiles").select("role").eq("id", user.id).single()
+  const existingRole = existingProfile.data?.role as UserRole | undefined
 
-  if (existingProfile.data?.role) {
-    role = existingProfile.data.role as UserRole
-  } else if (userType) {
-    // 2. Senão, usar userType param
+  // 2. If userType param is present, use it (allows STUDENT -> INSTRUCTOR upgrade)
+  if (userType) {
     role = userType === "instructor" ? "INSTRUCTOR" : "STUDENT"
+  } else if (existingRole) {
+    // 3. Otherwise keep existing role
+    role = existingRole
   } else if (user.user_metadata?.user_type) {
-    // 3. Senão, usar metadata
+    // 4. Fallback to metadata
     role = user.user_metadata.user_type === "instructor" ? "INSTRUCTOR" : "STUDENT"
   }
 
