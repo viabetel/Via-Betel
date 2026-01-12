@@ -116,9 +116,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [router])
 
   const signOut = async () => {
-    await supabase.auth.signOut()
+    try {
+      // Chamar POST /api/auth/signout para limpeza SSR (cookies + sessão server)
+      const response = await fetch("/api/auth/signout", { method: "POST" })
+      if (!response.ok) {
+        console.error("[v0] Signout request failed:", response.statusText)
+      }
+    } catch (error) {
+      console.error("[v0] Signout error:", error)
+    }
+
+    // Limpar state local imediatamente
     setUser(null)
     setProfile(null)
+
+    // Revalidar e redirecionar
+    router.replace("/")
     router.refresh()
   }
 

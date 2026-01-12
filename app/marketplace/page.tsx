@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Star, MapPin, Heart } from "lucide-react"
 import Link from "next/link"
+import { MarketplaceNavbar } from "@/components/marketplace-navbar"
 
 const MOCK_INSTRUCTORS = [
   {
@@ -138,7 +139,9 @@ export default function MarketplacePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-gradient-to-r from-emerald-600 to-emerald-500 text-white sticky top-0 z-20 shadow-lg">
+      <MarketplaceNavbar />
+
+      <div className="bg-gradient-to-r from-emerald-600 to-emerald-500 text-white sticky top-16 z-20 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
